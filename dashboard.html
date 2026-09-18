@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LUCOST AI — Dashboard (corrected)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:#131110; --panel:#1A1714; --card:#211D18; --card-hi:#2A251F;
+    --line:#3B342A; --text:#E9E3D6; --muted:#948C7E;
+    --accent:#8A6440; --accent-hi:#B08653; --accent-dim:#4E3A24;
+    --danger:#B45C4A; --gray:#6B6459; --good:#7C9473;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{ background:#0B0A09; font-family:'Inter',sans-serif; color:var(--text); min-height:100vh; }
+  .app{ display:flex; max-width:1140px; margin:0 auto; min-height:100vh; background:var(--void); position:relative; }
+
+  .topleft-cluster{ position:absolute; top:14px; left:14px; z-index:30; display:flex; align-items:center; gap:8px; }
+  .ham-toggle{ width:34px; height:34px; border-radius:9px; background:var(--panel); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; cursor:pointer; }
+  .ham-toggle .bars{ display:flex; flex-direction:column; gap:3px; }
+  .ham-toggle .bars div{ width:14px; height:2px; background:var(--muted); border-radius:2px; }
+  .avatar-btn{ width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg,var(--accent-hi),var(--accent-dim)); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:13px; color:var(--void); cursor:pointer; }
+
+  .topright-logo{ position:absolute; top:14px; right:14px; z-index:30; width:34px; height:34px; border-radius:50%; background:var(--panel); border:1.5px dashed var(--line); display:flex; align-items:center; justify-content:center; overflow:hidden; }
+  .topright-logo .plus{ font-size:13px; color:var(--muted); opacity:0.6; }
+
+  .sidebar{ width:168px; flex-shrink:0; background:var(--panel); border-right:1px solid var(--line); display:flex; flex-direction:column; padding:60px 12px 16px; transition:width .18s ease, padding .18s ease, opacity .15s ease; overflow:hidden; }
+  .sidebar.collapsed{ width:0; padding-left:0; padding-right:0; opacity:0; border-right:none; }
+  .logo{ font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:2px; margin-bottom:22px; padding-left:4px; white-space:nowrap; }
+  .logo span{ color:var(--accent-hi); }
+  .nav-item{ display:flex; align-items:center; gap:9px; padding:10px 10px; border-radius:9px; color:var(--muted); font-weight:600; font-size:12.5px; cursor:pointer; margin-bottom:4px; white-space:nowrap; }
+  .nav-item .dot{ width:6px; height:6px; border-radius:50%; background:var(--line); flex-shrink:0; }
+  .nav-item.active{ background:var(--card-hi); color:var(--text); }
+  .nav-item.active .dot{ background:var(--accent-hi); }
+  .sidebar-spacer{ flex:1; }
+  .plan-box{ background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px; }
+  .plan-name{ font-size:10px; text-transform:uppercase; letter-spacing:1px; color:var(--muted); font-weight:700; margin-bottom:5px;}
+  .plan-tier{ font-size:12.5px; font-weight:800; margin-bottom:9px; }
+  .plan-bar-track{ height:5px; border-radius:4px; background:var(--line); overflow:hidden; margin-bottom:6px; }
+  .plan-bar-fill{ height:100%; background:var(--accent-hi); transition:width .3s ease; }
+  .plan-remaining{ font-size:10px; color:var(--muted); margin-bottom:10px; line-height:1.4; }
+  .upgrade-btn{ width:100%; padding:8px; border-radius:8px; border:1px solid var(--accent-dim); background:transparent; color:var(--accent-hi); font-weight:700; font-size:11px; cursor:pointer; }
+
+  .main{ flex:1; padding:60px 32px 60px; overflow-y:auto; min-width:0; }
+  .page{ display:none; } .page.active{ display:block; }
+  .section{ margin-bottom:26px; }
+  .section-label{ font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); font-weight:700; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+  .section-label::before{ content:''; width:3px; height:11px; background:var(--accent-hi); display:inline-block; border-radius:2px; }
+  .scroll-row{ display:flex; gap:10px; overflow-x:auto; padding-bottom:6px; }
+
+  .ad-card{ flex:0 0 auto; width:170px; height:98px; border-radius:12px; background:linear-gradient(150deg,var(--card-hi),var(--card)); border:1px solid var(--line); position:relative; overflow:hidden; display:flex; align-items:center; justify-content:center; }
+  .ad-card .play-ic{ width:30px; height:30px; border-radius:50%; background:rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:center; color:var(--accent-hi); font-size:12px; }
+  .ad-card .label{ position:absolute; bottom:8px; left:10px; font-size:10px; color:var(--muted); font-weight:600; }
+
+  .style-card{ flex:0 0 auto; width:92px; text-align:center; cursor:pointer; }
+  .style-preview{ width:92px; height:68px; border-radius:10px; margin-bottom:6px; background:linear-gradient(150deg,var(--card-hi),var(--card)); border:1.5px solid var(--line); display:flex; align-items:center; justify-content:center; }
+  .style-preview .play-ic{ width:22px; height:22px; border-radius:50%; background:rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:center; color:var(--accent-hi); font-size:9px; }
+  .style-card.active .style-preview{ border:1.5px solid var(--accent-hi); box-shadow:0 0 0 3px rgba(176,134,83,0.15); }
+  .style-name{ font-size:10px; color:var(--muted); font-weight:600; line-height:1.25; }
+  .style-card.active .style-name{ color:var(--text); }
+
+  .trial-banner{ display:flex; align-items:center; justify-content:space-between; gap:12px; background:linear-gradient(135deg,rgba(176,134,83,0.14),rgba(176,134,83,0.05)); border:1px solid var(--accent-dim); border-radius:12px; padding:12px 14px; margin-top:14px; }
+  .trial-banner .txt{ font-size:12.5px; }
+  .trial-banner .txt b{ color:var(--accent-hi); }
+  .trial-banner .sub{ font-size:10.5px; color:var(--muted); margin-top:2px; }
+  .trial-count{ font-size:11px; font-weight:800; background:var(--accent-hi); color:#1a1410; padding:5px 10px; border-radius:20px; white-space:nowrap; }
+
+  .script-box{ width:100%; min-height:70px; max-height:600px; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px; color:var(--text); font-size:13.5px; font-family:'Inter'; resize:none; line-height:1.5; overflow:hidden; }
+  .script-box:focus{ outline:none; border-color:var(--accent-dim); }
+  .script-note{ font-size:10.5px; color:var(--muted); margin-top:6px; }
+  .script-note.warn{ color:var(--danger); font-weight:600; }
+
+  .duration-wrap{ background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px 16px 14px; }
+  .duration-top{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:12px; }
+  .duration-value{ font-size:18px; font-weight:800; color:var(--accent-hi); }
+  .duration-cap-note{ font-size:10.5px; color:var(--muted); }
+  .duration-slider{ -webkit-appearance:none; appearance:none; width:100%; height:6px; border-radius:4px; outline:none; cursor:pointer; }
+  .duration-slider:disabled{ opacity:0.55; cursor:not-allowed; }
+  .duration-slider::-webkit-slider-thumb{ -webkit-appearance:none; width:18px; height:18px; border-radius:50%; background:var(--accent-hi); border:3px solid var(--void); cursor:pointer; }
+  .duration-labels{ display:flex; justify-content:space-between; font-size:10px; color:var(--muted); margin-top:8px; }
+
+  .cast-stack{ display:flex; flex-direction:column; gap:14px; }
+  .cast-box{ background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px; position:relative; }
+  .del-btn{ position:absolute; top:12px; right:12px; width:22px; height:22px; border-radius:50%; background:var(--panel); border:1px solid var(--line); color:var(--danger); font-size:14px; font-weight:800; line-height:1; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+  .cast-label{ font-size:10.5px; color:var(--muted); font-weight:700; letter-spacing:0.5px; margin-bottom:10px; }
+  .cast-input{ width:100%; background:var(--panel); border:1px solid var(--line); border-radius:9px; padding:10px 12px; color:var(--text); font-size:13px; font-weight:600; margin-bottom:12px; }
+  .cast-image-box{ width:100%; height:150px; border-radius:10px; margin-bottom:12px; background:var(--panel); border:1.5px dashed var(--line); display:flex; align-items:center; justify-content:center; cursor:pointer; }
+  .cast-image-box .placeholder{ text-align:center; color:var(--muted); font-size:12px; font-weight:600; }
+  .cast-image-box .placeholder .plus{ font-size:22px; display:block; margin-bottom:6px; color:var(--accent-hi); }
+  .outfits-label{ font-size:10px; color:var(--muted); font-weight:600; margin-bottom:8px; }
+  .outfits-row{ display:flex; gap:8px; overflow-x:auto; padding-bottom:4px; margin-bottom:14px; }
+  .outfit-chip{ flex:0 0 auto; width:56px; height:56px; border-radius:9px; background:var(--panel); border:1.5px dashed var(--line); display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; position:relative; }
+  .outfit-chip img{ width:100%; height:100%; object-fit:cover; }
+  .outfit-chip .plus{ font-size:16px; color:var(--accent-hi); }
+  .outfit-chip .tag-input{ position:absolute; bottom:0; left:0; right:0; background:rgba(0,0,0,0.65); font-size:7px; text-align:center; padding:2px 0; color:var(--text); border:none; width:100%; }
+  .outfit-num{ position:absolute; top:2px; left:2px; width:15px; height:15px; border-radius:50%; background:var(--accent-hi); color:#1a1410; font-size:9px; font-weight:800; display:flex; align-items:center; justify-content:center; z-index:2; }
+  .outfit-del{ position:absolute; top:2px; right:2px; width:15px; height:15px; border-radius:50%; background:rgba(0,0,0,0.6); color:var(--danger); font-size:10px; font-weight:800; display:none; align-items:center; justify-content:center; z-index:2; cursor:pointer; }
+  .outfit-chip.filled .outfit-del{ display:flex; }
+  .outfit-add{ flex:0 0 auto; width:56px; height:56px; border-radius:9px; background:transparent; border:1.5px dashed var(--line); display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--muted); font-size:18px; }
+
+  .voice-row{ display:flex; gap:8px; }
+  .voice-btn{ flex:1; padding:10px; border-radius:9px; border:1px solid var(--line); background:var(--panel); color:var(--text); font-size:12px; font-weight:600; cursor:pointer; }
+  .voice-status{ font-size:10.5px; color:var(--muted); margin-top:8px; }
+  .add-box-btn{ align-self:flex-start; display:flex; align-items:center; gap:8px; background:transparent; border:1.5px dashed var(--line); color:var(--muted); font-weight:700; font-size:12.5px; padding:10px 16px; border-radius:10px; cursor:pointer; }
+
+  .music-stack{ display:flex; flex-direction:column; gap:12px; }
+  .music-box{ background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px; display:flex; align-items:center; gap:12px; position:relative; }
+  .music-index{ width:28px; height:28px; border-radius:8px; background:var(--panel); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; color:var(--accent-hi); flex-shrink:0; }
+  .music-info{ flex:1; min-width:0; }
+  .music-name{ font-size:12.5px; font-weight:600; margin-bottom:2px; }
+  .music-sub{ font-size:10.5px; color:var(--muted); }
+
+  .ratio-row{ display:flex; gap:16px; }
+  .ratio-chip{ text-align:center; cursor:pointer; }
+  .ratio-shape{ background:var(--card); border:2px solid var(--line); border-radius:7px; margin:0 auto 6px; }
+  .ratio-chip.active .ratio-shape{ border-color:var(--accent-hi); }
+  .ratio-chip span{ font-size:10.5px; color:var(--muted); font-weight:600; }
+  .ratio-chip.active span{ color:var(--text); }
+
+  .generate-btn{ width:100%; padding:16px; border-radius:12px; border:none; background:linear-gradient(135deg,var(--accent-hi),var(--accent)); color:#181410; font-weight:800; font-size:15px; letter-spacing:0.5px; cursor:pointer; box-shadow:0 10px 26px rgba(0,0,0,0.35); }
+  .generate-btn:disabled{ opacity:0.55; cursor:not-allowed; }
+  .generate-sub{ font-size:10.5px; color:var(--muted); text-align:center; margin-top:10px; }
+  .status-banner{ font-size:12px; padding:10px 14px; border-radius:10px; margin-bottom:16px; display:none; }
+  .status-banner.show{ display:block; }
+  .status-banner.warn{ background:rgba(180,92,74,0.15); color:var(--danger); border:1px solid rgba(180,92,74,0.4); }
+  .status-banner.info{ background:rgba(176,134,83,0.15); color:var(--accent-hi); border:1px solid rgba(176,134,83,0.4); }
+  .status-banner.good{ background:rgba(124,148,115,0.15); color:var(--good); border:1px solid rgba(124,148,115,0.4); }
+
+  .gallery-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+  .gallery-item{ aspect-ratio:9/14; border-radius:10px; background:linear-gradient(160deg,var(--card-hi),var(--card)); border:1px solid var(--line); position:relative; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+  .gallery-item .play{ width:34px; height:34px; border-radius:50%; background:rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:center; color:var(--accent-hi); font-size:14px; }
+  .gallery-item .status{ position:absolute; top:8px; left:8px; font-size:9px; font-weight:700; background:rgba(0,0,0,0.5); padding:3px 7px; border-radius:5px; color:var(--muted); }
+  .gallery-item .wm-badge{ position:absolute; bottom:8px; right:8px; font-size:8px; font-weight:800; letter-spacing:.5px; background:rgba(0,0,0,0.55); color:var(--muted); padding:3px 6px; border-radius:5px; }
+
+  .video-modal-overlay{ display:none; position:fixed; inset:0; background:rgba(0,0,0,0.88); z-index:999; flex-direction:column; align-items:center; justify-content:center; gap:14px; }
+  .video-modal-overlay.open{ display:flex; }
+  .video-modal-close{ position:absolute; top:20px; right:24px; font-size:22px; color:var(--text); cursor:pointer; z-index:2; }
+  .video-modal-frame{ position:relative; max-width:92vw; max-height:78vh; background:linear-gradient(160deg,var(--card-hi),var(--card)); border:1px solid var(--line); border-radius:14px; display:flex; align-items:center; justify-content:center; }
+  .video-modal-play{ width:60px; height:60px; border-radius:50%; background:rgba(0,0,0,0.45); display:flex; align-items:center; justify-content:center; color:var(--accent-hi); font-size:22px; }
+  .video-modal-watermark{ position:absolute; bottom:14px; right:16px; font-size:12px; font-weight:800; letter-spacing:1px; color:rgba(255,255,255,0.75); text-shadow:0 1px 3px rgba(0,0,0,0.6); display:none; }
+  .video-modal-watermark.show{ display:block; }
+  .video-modal-label{ font-size:12.5px; color:var(--muted); }
+  .empty-note{ color:var(--muted); font-size:12.5px; }
+
+  .plans-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:14px; }
+  .plan-card{ background:var(--card); border:1px solid var(--line); border-radius:14px; padding:18px; }
+  .plan-card h3{ font-size:15px; margin-bottom:6px; }
+  .price-row{ display:flex; align-items:baseline; gap:8px; margin-bottom:10px; }
+  .price-strike{ font-size:13px; color:var(--muted); text-decoration:line-through; }
+  .price-now{ font-size:22px; font-weight:800; color:var(--accent-hi); }
+  .plan-card ul{ list-style:none; margin-bottom:14px; }
+  .plan-card li{ font-size:12px; color:var(--muted); margin-bottom:6px; padding-left:14px; position:relative; }
+  .plan-card li::before{ content:'—'; position:absolute; left:0; color:var(--accent-hi); }
+  .plan-card button{ width:100%; padding:10px; border-radius:9px; border:1px solid var(--accent-dim); background:transparent; color:var(--accent-hi); font-weight:700; font-size:12.5px; cursor:pointer; }
+  .plan-card button:hover{ background:var(--accent-dim); color:var(--text); }
+
+  input[type="file"]{ display:none; }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="topleft-cluster">
+    <div class="ham-toggle" id="hamToggle"><div class="bars"><div></div><div></div><div></div></div></div>
+    <div class="avatar-btn">P</div>
+  </div>
+  <div class="topright-logo"><span class="plus">+</span></div>
+
+  <div class="sidebar" id="sidebar">
+    <div class="logo">LUCOST <span>AI</span></div>
+    <div class="nav-item active" data-page="dashboard"><span class="dot"></span> Dashboard</div>
+    <div class="nav-item" data-page="gallery"><span class="dot"></span> Gallery</div>
+    <div class="nav-item" data-page="plans"><span class="dot"></span> Subscription Plans</div>
+    <div class="sidebar-spacer"></div>
+    <div class="plan-box" id="planBox"></div>
+  </div>
+
+  <div class="main">
+    <div class="page active" id="page-dashboard">
+      <div class="status-banner" id="statusBanner"></div>
+
+      <div class="section">
+        <div class="section-label">Featured</div>
+        <div class="scroll-row" id="adRow"></div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">Style</div>
+        <div class="scroll-row" id="styleRow"></div>
+        <div class="trial-banner" id="trialBanner" style="display:none;">
+          <div class="txt"><b>Generate on Trial</b><div class="sub" id="trialSub">30-second video</div></div>
+          <div class="trial-count" id="trialCount">2x LEFT</div>
+        </div>
+      </div>
+
+      <div class="section" id="othersBox" style="display:none;">
+        <div class="section-label">What are you shooting?</div>
+        <textarea class="script-box" id="othersDescription" style="min-height:60px;" placeholder="e.g. a red sports car drifting through a city at night, a golden retriever playing in the snow, a modern kitchen renovation reveal..."></textarea>
+        <div class="script-note">Tell the AI what your content is about — this isn't part of the script, just context so it knows what it's generating.</div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">Your Script</div>
+        <textarea class="script-box" id="scriptBox">Ella: I'm in love with John.
+John: I feel the same way, always have.</textarea>
+        <div class="script-note" id="scriptNote"></div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">Cast</div>
+        <div class="cast-stack" id="castStack"></div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">Background Music</div>
+        <div class="music-stack" id="musicStack"></div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">Frame</div>
+        <div class="ratio-row" id="ratioRow">
+          <div class="ratio-chip active" data-ratio="16:9"><div class="ratio-shape" style="width:52px; height:30px;"></div><span>16:9</span></div>
+          <div class="ratio-chip" data-ratio="1:1"><div class="ratio-shape" style="width:36px; height:36px;"></div><span>1:1</span></div>
+          <div class="ratio-chip" data-ratio="9:16"><div class="ratio-shape" style="width:24px; height:44px;"></div><span>9:16</span></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <button class="generate-btn" id="generateBtn">GENERATE (TRIAL)</button>
+        <div class="generate-sub" id="generateSub">After your 2 trial videos, Generate will take you to Subscription Plans.</div>
+      </div>
+    </div>
+
+    <div class="page" id="page-gallery">
+      <div class="section">
+        <div class="section-label">Your Videos</div>
+        <div class="gallery-grid" id="galleryGrid"><div class="empty-note">No videos yet.</div></div>
+      </div>
+    </div>
+
+    <div class="video-modal-overlay" id="videoModalOverlay">
+      <div class="video-modal-close" id="videoModalClose">✕</div>
+      <div class="video-modal-frame" id="videoModalFrame">
+        <div class="video-modal-play">▶</div>
+        <div class="video-modal-watermark" id="videoModalWatermark">LUCOST AI</div>
+      </div>
+      <div class="video-modal-label" id="videoModalLabel"></div>
+    </div>
+
+    <div class="page" id="page-plans">
+      <div class="section">
+        <div class="section-label">Subscription Plans</div>
+        <div class="plans-grid" id="plansGrid"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const TIERS = {
+    tier_1: { label:"Tier 1", strike:35, price:21, generations:20, capSeconds:5*60 },
+    tier_2: { label:"Tier 2", strike:50, price:35, generations:15, capSeconds:15*60 },
+    tier_3: { label:"Tier 3", strike:95, price:75, generations:10, capSeconds:30*60 },
+  };
+
+  // ---- Account state: starts as a brand-new, never-subscribed trial account ----
+  let trialsRemaining = 2;
+  let subscription = null; // becomes {tier, generationsUsed, ...} once they subscribe
+  let selectedStyle = "narration_drama";
+  let selectedRatio = "16:9";
+  const API_BASE = window.location.origin + '/api';
+  let currentUserId = localStorage.getItem('user_id') || 'guest';
+
+  async function loadJobs(){
+    try{
+      const res = await fetch(API_BASE + '/gallery?user_id=' + currentUserId);
+      const data = await res.json();
+      jobs = data.jobs || [];
+    } catch(e){
+      console.log('Backend not connected, using local storage');
+      try{
+        const res = await window.storage.get("jobs", false);
+        jobs = res ? JSON.parse(res.value) : [];
+      } catch(e2){ jobs = []; }
+    }
+  }
+  
+  async function saveJobs(){
+    // Backend auto-saves on generation, no need to explicitly save
+  }
+
+  function showBanner(msg, type){
+    const b = document.getElementById("statusBanner");
+    b.textContent = msg; b.className = "status-banner show " + type;
+  }
+
+  document.getElementById("hamToggle").addEventListener("click", () => document.getElementById("sidebar").classList.toggle("collapsed"));
+
+  // ---- Featured: 10 slots ----
+  const adRow = document.getElementById("adRow");
+  for(let i=1;i<=10;i++){
+    const c = document.createElement("div");
+    c.className = "ad-card";
+    c.innerHTML = `<div class="play-ic">▶</div><div class="label">Reel ${i}</div>`;
+    adRow.appendChild(c);
+  }
+
+  // ---- Style: 7 cards (6 story styles + "Others" for non-character content) ----
+  const styleLabels = { narration_anime:"Narration Anime", narration_drama:"Narration Drama", drama:"Drama", drama_anime:"Drama Anime", cgi_idol:"CGI Idol", cinematic_3d:"Cinematic 3D", others:"Others" };
+  const styleRow = document.getElementById("styleRow");
+  Object.keys(styleLabels).forEach(key => {
+    const c = document.createElement("div");
+    c.className = "style-card" + (key===selectedStyle ? " active" : "");
+    c.innerHTML = `<div class="style-preview"><div class="play-ic">▶</div></div><div class="style-name">${styleLabels[key]}</div>`;
+    c.addEventListener("click", () => {
+      selectedStyle = key;
+      document.querySelectorAll(".style-card").forEach(x=>x.classList.remove("active"));
+      c.classList.add("active");
+      refreshOthersBox();
+    });
+    styleRow.appendChild(c);
+  });
+
+  function refreshOthersBox(){
+    othersBox.style.display = (selectedStyle === "others") ? "block" : "none";
+  }
+
+  // ---- Script box: auto-grows, and only WARNS (never blocks typing) when the
+  //      script would run past 30s during trial mode ----
+  const scriptBox = document.getElementById("scriptBox");
+  const othersBox = document.getElementById("othersBox");
+  const scriptNote = document.getElementById("scriptNote");
+  const WORDS_PER_30_SEC = 75; // ~150 wpm speaking pace, used only to estimate — never shown as a hard rule up front
+
+  function autoGrow(){
+    scriptBox.style.height = "auto";
+    scriptBox.style.height = Math.min(scriptBox.scrollHeight, 600) + "px";
+  }
+  function countWords(t){ return (t.trim().match(/\S+/g) || []).length; }
+
+  // No live word-count string here — the script-note div stays empty.
+  // Over-limit scripts are caught by the alert banner when Generate is tapped.
+  scriptBox.addEventListener("input", () => { autoGrow(); });
+  setTimeout(() => { autoGrow(); }, 50);
+
+  function isOnTrial(){ return !subscription && trialsRemaining > 0; }
+
+  function formatTime(sec){
+    sec = parseInt(sec);
+    const h=Math.floor(sec/3600), m=Math.floor((sec%3600)/60), s=sec%60;
+    const parts=[]; if(h>0) parts.push(h);
+    parts.push(String(m).padStart(h>0?2:1,"0")); parts.push(String(s).padStart(2,"0"));
+    return parts.join(":");
+  }
+
+  // ---- Cast (kept simple, one starter box) ----
+  const castStack = document.getElementById("castStack");
+  function addCastBox(name=""){
+    const box = document.createElement("div");
+    box.className = "cast-box";
+    box.innerHTML = `
+      <div class="del-btn">−</div>
+      <div class="cast-label">CHARACTER</div>
+      <input class="cast-input" placeholder="Character name" value="${name}">
+      <div class="cast-image-box"><div class="placeholder"><span class="plus">+</span>Insert character image</div></div>
+      <div class="outfits-label">Variations (optional) — not just outfits, this can be a bag, hairstyle, or anything else that changes. Each one is numbered. In your script, write "Ella (variation 5): ..." to use that variation for that line.</div>
+      <div class="outfits-row"></div>
+      <div class="voice-row"><button class="voice-btn cast-record-btn">● Record snippet</button><button class="voice-btn cast-extract-btn">Extract from file</button></div>
+      <input type="file" class="cast-voice-file-input" accept="audio/*,video/*" style="display:none;">
+      <div class="voice-status">No voice sample added</div>
+    `;
+
+    // Wire up the outfits row: each chip is an upload slot with its own small
+    // label (e.g. "party dress") so the script can reference it, e.g.
+    // "Ella (party dress): I'm so excited!"
+    const outfitsRow = box.querySelector(".outfits-row");
+
+    function renumberOutfits(){
+      const chips = outfitsRow.querySelectorAll(".outfit-chip");
+      chips.forEach((chip, i) => {
+        let badge = chip.querySelector(".outfit-num");
+        if(!badge){
+          badge = document.createElement("span");
+          badge.className = "outfit-num";
+          chip.appendChild(badge);
+        }
+        badge.textContent = i + 1;
+      });
+    }
+
+    function addOutfitChip(){
+      const chip = document.createElement("div");
+      chip.className = "outfit-chip";
+      chip.innerHTML = `<span class="outfit-num"></span><span class="plus">+</span><span class="outfit-del">×</span><input type="file" accept="image/*" style="display:none;">`;
+      const input = chip.querySelector("input");
+      chip.addEventListener("click", () => { if(!chip.classList.contains("filled")) input.click(); });
+      input.addEventListener("change", e => {
+        const file = e.target.files[0];
+        if(!file) return;
+        const reader = new FileReader();
+        reader.onload = ev => {
+          const num = [...outfitsRow.querySelectorAll(".outfit-chip")].indexOf(chip) + 1;
+          chip.innerHTML = `<span class="outfit-num">${num}</span><img src="${ev.target.result}"><span class="outfit-del">×</span><input class="tag-input" placeholder="label (optional)">`;
+          chip.classList.add("filled");
+          chip.querySelector(".outfit-del").addEventListener("click", (ev2) => {
+            ev2.stopPropagation();
+            chip.remove();
+            renumberOutfits();
+          });
+        };
+        reader.readAsDataURL(file);
+      });
+      outfitsRow.insertBefore(chip, outfitsRow.lastChild);
+      renumberOutfits();
+    }
+    const addChipBtn = document.createElement("div");
+    addChipBtn.className = "outfit-add";
+    addChipBtn.textContent = "+";
+    addChipBtn.addEventListener("click", addOutfitChip);
+    outfitsRow.appendChild(addChipBtn);
+
+    box.querySelector(".del-btn").addEventListener("click", () => { box.remove(); renumberCast(); });
+
+    // Wire up voice sample: record snippet (MediaRecorder) or extract from file
+    const voiceStatus = box.querySelector(".voice-status");
+    const recordBtn = box.querySelector(".cast-record-btn");
+    const extractBtn = box.querySelector(".cast-extract-btn");
+    const voiceFileInput = box.querySelector(".cast-voice-file-input");
+
+    extractBtn.addEventListener("click", () => voiceFileInput.click());
+    voiceFileInput.addEventListener("change", e => {
+      const file = e.target.files[0];
+      if(!file) return;
+      voiceStatus.textContent = `Voice sample — ${file.name}`;
+    });
+
+    let castMediaRecorder = null;
+    let castRecording = false;
+    recordBtn.addEventListener("click", async () => {
+      if(!castRecording){
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          castMediaRecorder = new MediaRecorder(stream);
+          const chunks = [];
+          castMediaRecorder.ondataavailable = e => chunks.push(e.data);
+          castMediaRecorder.onstop = () => {
+            stream.getTracks().forEach(tr => tr.stop());
+            voiceStatus.textContent = `Voice sample — recorded snippet (${chunks.length ? Math.round(chunks.reduce((a,c)=>a+c.size,0)/1024) : 0} KB)`;
+          };
+          castMediaRecorder.start();
+          castRecording = true;
+          recordBtn.textContent = "■ Stop";
+        } catch(err){
+          voiceStatus.textContent = "Mic access denied — try Extract from file instead.";
+        }
+      } else {
+        castMediaRecorder.stop();
+        castRecording = false;
+        recordBtn.textContent = "● Record snippet";
+      }
+    });
+
+    castStack.appendChild(box);
+    renumberCast();
+  }
+  function renumberCast(){ castStack.querySelectorAll(".cast-box").forEach((b,i)=> b.querySelector(".cast-label").textContent = "CHARACTER "+(i+1)); }
+  const castAddBtn = document.createElement("button");
+  castAddBtn.className = "add-box-btn"; castAddBtn.textContent = "+ Add another character";
+  castAddBtn.addEventListener("click", () => addCastBox());
+  addCastBox("Ella"); addCastBox("John");
+  castStack.appendChild(castAddBtn);
+
+  // ---- Music (kept simple, one starter box) ----
+  const musicStack = document.getElementById("musicStack");
+  function addMusicBox(){
+    const box = document.createElement("div");
+    box.className = "music-box";
+    box.innerHTML = `
+      <div class="del-btn">−</div>
+      <div class="music-index">A</div>
+      <div class="music-info">
+        <div class="music-name">Audio — not set</div>
+        <div class="music-sub">Volume auto-managed by script pacing</div>
+        <div class="voice-row" style="margin-top:8px;">
+          <button class="voice-btn music-record-btn">● Record</button>
+          <button class="voice-btn music-extract-btn">Extract from file</button>
+        </div>
+        <input type="file" class="music-file-input" accept="audio/*,video/*" style="display:none;">
+      </div>
+    `;
+    box.querySelector(".del-btn").addEventListener("click", () => { box.remove(); renumberMusic(); });
+
+    const nameEl = box.querySelector(".music-name");
+    const recordBtn = box.querySelector(".music-record-btn");
+    const extractBtn = box.querySelector(".music-extract-btn");
+    const fileInput = box.querySelector(".music-file-input");
+
+    // Extract from file (audio or video — matches spec: "extract from system/phone file")
+    extractBtn.addEventListener("click", () => fileInput.click());
+    fileInput.addEventListener("change", e => {
+      const file = e.target.files[0];
+      if(!file) return;
+      nameEl.textContent = `Audio — ${file.name}`;
+    });
+
+    // Record live via MediaRecorder
+    let mediaRecorder = null;
+    let recording = false;
+    recordBtn.addEventListener("click", async () => {
+      if(!recording){
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          mediaRecorder = new MediaRecorder(stream);
+          const chunks = [];
+          mediaRecorder.ondataavailable = e => chunks.push(e.data);
+          mediaRecorder.onstop = () => {
+            stream.getTracks().forEach(tr => tr.stop());
+            nameEl.textContent = `Audio — recorded clip (${chunks.length ? Math.round(chunks.reduce((a,c)=>a+c.size,0)/1024) : 0} KB)`;
+          };
+          mediaRecorder.start();
+          recording = true;
+          recordBtn.textContent = "■ Stop";
+        } catch(err){
+          nameEl.textContent = "Mic access denied — try Extract from file instead.";
+        }
+      } else {
+        mediaRecorder.stop();
+        recording = false;
+        recordBtn.textContent = "● Record";
+      }
+    });
+
+    musicStack.appendChild(box);
+    renumberMusic();
+  }
+  function renumberMusic(){ musicStack.querySelectorAll(".music-box").forEach((b,i)=> b.querySelector(".music-index").textContent = "A"+(i+1)); }
+  const musicAddBtn = document.createElement("button");
+  musicAddBtn.className = "add-box-btn"; musicAddBtn.textContent = "+ Add another audio source";
+  musicAddBtn.addEventListener("click", () => addMusicBox());
+  addMusicBox();
+  musicStack.appendChild(musicAddBtn);
+
+  // ---- Ratio ----
+  document.querySelectorAll(".ratio-chip").forEach(chip => {
+    chip.addEventListener("click", () => {
+      document.querySelectorAll(".ratio-chip").forEach(c=>c.classList.remove("active"));
+      chip.classList.add("active"); selectedRatio = chip.dataset.ratio;
+    });
+  });
+
+  // ---- Trial banner + Generate button + sidebar plan box, all driven by one refresh() ----
+  function refreshTrialBannerAndGenerateBtn(){
+    const banner = document.getElementById("trialBanner");
+    const trialSub = document.getElementById("trialSub");
+    const trialCount = document.getElementById("trialCount");
+    const genBtn = document.getElementById("generateBtn");
+    const genSub = document.getElementById("generateSub");
+
+    if(isOnTrial()){
+      // Trial banner visible under Style — shows exactly how many trials remain
+      banner.style.display = "flex";
+      trialSub.textContent = "30-second video";
+      trialCount.textContent = trialsRemaining + "x LEFT";
+      genBtn.textContent = "GENERATE (TRIAL)";
+      genSub.textContent = "After your 2 trial videos, Generate will take you to Subscription Plans.";
+    } else {
+      // Trials used up (or already subscribed) — banner disappears entirely,
+      // Style section is immediately followed by Script, nothing in between.
+      banner.style.display = "none";
+      if(subscription){
+        genBtn.textContent = "GENERATE";
+        genSub.textContent = "Finished videos land in your Gallery.";
+      } else {
+        genBtn.textContent = "GENERATE";
+        genSub.textContent = "No active subscription? You'll be sent to Subscription Plans first.";
+      }
+    }
+  }
+
+  function refreshSidebarPlanBox(){
+    const box = document.getElementById("planBox");
+    if(subscription){
+      const t = TIERS[subscription.tier];
+      const remaining = t.generations - subscription.generationsUsed;
+      const pct = Math.round((subscription.generationsUsed/t.generations)*100);
+      box.innerHTML = `
+        <div class="plan-name">Current Plan</div>
+        <div class="plan-tier">${t.label} · $${t.price}/mo</div>
+        <div class="plan-bar-track"><div class="plan-bar-fill" style="width:${pct}%"></div></div>
+        <div class="plan-remaining">${remaining} of ${t.generations} generations left</div>
+        <button class="upgrade-btn" onclick="goToPage('plans')">Subscription Plans</button>
+      `;
+    } else if(trialsRemaining > 0){
+      box.innerHTML = `
+        <div class="plan-name">Current Plan</div>
+        <div class="plan-tier">Trial account</div>
+        <div class="plan-bar-track"><div class="plan-bar-fill" style="width:${(2-trialsRemaining)*50}%"></div></div>
+        <div class="plan-remaining">${trialsRemaining} of 2 trial videos left</div>
+        <button class="upgrade-btn" onclick="goToPage('plans')">Subscription Plans</button>
+      `;
+    } else {
+      box.innerHTML = `
+        <div class="plan-name">Current Plan</div>
+        <div class="plan-tier">No active plan</div>
+        <div class="plan-bar-track"><div class="plan-bar-fill" style="width:0%"></div></div>
+        <div class="plan-remaining">Trials used — subscribe to keep generating</div>
+        <button class="upgrade-btn" onclick="goToPage('plans')">Subscription Plans</button>
+      `;
+    }
+  }
+
+  document.getElementById("generateBtn").addEventListener("click", () => {
+    if(isOnTrial()){
+      const words = countWords(scriptBox.value);
+      if(words > WORDS_PER_30_SEC){
+        showBanner(`Your script is ~${words} words — too long for the 30-second trial. Please shorten it to about ${WORDS_PER_30_SEC} words or fewer.`, "warn");
+        return;
+      }
+      trialsRemaining--;
+      queueJob({ label: `Trial video (${2-trialsRemaining}/2 used)`, ratio: selectedRatio, watermark: true });
+      refreshAll();
+      goToPage("gallery");
+      return;
+    }
+    if(!subscription){
+      showBanner("Trials used up — redirecting you to Subscription Plans.", "warn");
+      goToPage("plans");
+      return;
+    }
+    const t = TIERS[subscription.tier];
+    if(subscription.generationsUsed >= t.generations){
+      showBanner("No generations left this cycle — redirecting you to Subscription Plans to re-subscribe.", "warn");
+      goToPage("plans");
+      return;
+    }
+    // Words-per-30-sec is used only as a stand-in here for real scene-count
+    // duration checking (see duration_validator.py for the real backend logic).
+    const estSeconds = (countWords(scriptBox.value) / WORDS_PER_30_SEC) * 30;
+    if(estSeconds > t.capSeconds){
+      showBanner(`Your script is too long for ${t.label}. It runs about ${formatTime(Math.round(estSeconds))}, but this plan supports up to ${formatTime(t.capSeconds)}. Shorten your script or upgrade.`, "warn");
+      return;
+    }
+    subscription.generationsUsed++;
+    queueJob({ label: t.label + " video", ratio: selectedRatio, watermark: false });
+    refreshAll();
+    goToPage("gallery");
+  });
+
+  // ---- Real job lifecycle: queued -> processing -> done, persisted to storage ----
+  // NOTE: the render "wait" here is a short simulated delay standing in for real
+  // GPU/XTTS/AudioGen/FFmpeg work — there is no real video model behind this mockup.
+  async function queueJob(meta){
+    try{
+      // Prepare data for backend
+      const formData = new FormData();
+      formData.append('user_id', currentUserId);
+      formData.append('script', scriptBox.value);
+      formData.append('style', meta.style || selectedStyle);
+      formData.append('aspect_ratio', selectedRatio);
+      formData.append('characters', JSON.stringify(castCards));
+      formData.append('music', JSON.stringify(backgroundMusic));
+
+      // Send to backend
+      const response = await fetch(API_BASE + '/generate', {
+        method: 'POST',
+        body: formData
+      });
+
+      if(!response.ok){
+        const error = await response.json();
+        showBanner(error.detail || "Generation failed", "error");
+        return;
+      }
+
+      const result = await response.json();
+      showBanner("Generation might take time. You can leave — it'll still be sent to your Gallery.", "good");
+
+      // Start polling for job completion
+      const jobId = result.job_id;
+      let pollCount = 0;
+      const pollInterval = setInterval(async () => {
+        pollCount++;
+        
+        // Poll backend for job status
+        const statusRes = await fetch(API_BASE + '/gallery/' + jobId);
+        if(statusRes.ok){
+          const jobData = await statusRes.json();
+          if(jobData.status === "done"){
+            clearInterval(pollInterval);
+            await loadJobs();
+            if(document.getElementById("page-gallery").classList.contains("active")) renderGallery();
+            refreshAll();
+          }
+        }
+
+        // Stop polling after 10 minutes
+        if(pollCount > 60) clearInterval(pollInterval);
+      }, 10000); // Poll every 10 seconds
+
+    } catch(e){
+      console.error("Generation error:", e);
+      showBanner("Failed to submit generation: " + e.message, "error");
+    }
+  }
+
+  // ---- Gallery ----
+  function renderGallery(){
+    const grid = document.getElementById("galleryGrid");
+    if(jobs.length===0){ grid.innerHTML = `<div class="empty-note">No videos yet.</div>`; return; }
+    grid.innerHTML = "";
+    jobs.forEach((j, idx) => {
+      const item = document.createElement("div");
+      const isProcessing = j.status === "processing";
+      item.className = "gallery-item" + (isProcessing ? " processing" : "");
+      item.innerHTML = isProcessing
+        ? `<span class="status">Processing…</span>`
+        : `<span class="status">Done</span><span class="play">▶</span>${j.watermark ? '<span class="wm-badge">WATERMARK</span>' : ''}`;
+      if(!isProcessing) item.addEventListener("click", () => openVideoModal(j));
+      grid.appendChild(item);
+    });
+  }
+
+  // Ratio -> aspect-ratio CSS value, so the expanded player matches
+  // whichever Frame the user picked when that specific video was made
+  // (not the sidebar's currently-selected ratio, which may have changed since).
+  const RATIO_CSS = { "16:9": "16/9", "1:1": "1/1", "9:16": "9/16" };
+
+  function openVideoModal(job){
+    const overlay = document.getElementById("videoModalOverlay");
+    const frame = document.getElementById("videoModalFrame");
+    const label = document.getElementById("videoModalLabel");
+    const wm = document.getElementById("videoModalWatermark");
+
+    frame.style.aspectRatio = RATIO_CSS[job.ratio] || "16/9";
+    // Size the box so it fills available space while respecting the ratio
+    frame.style.width = (job.ratio === "9:16") ? "min(92vw, 44vh)" : "min(92vw, 78vh)";
+    frame.style.height = "auto";
+
+    label.textContent = `${job.label} · ${job.ratio}`;
+    wm.classList.toggle("show", !!job.watermark);
+
+    overlay.classList.add("open");
+  }
+  document.getElementById("videoModalClose").addEventListener("click", () => {
+    document.getElementById("videoModalOverlay").classList.remove("open");
+  });
+  document.getElementById("videoModalOverlay").addEventListener("click", (e) => {
+    if(e.target.id === "videoModalOverlay") e.currentTarget.classList.remove("open");
+  });
+
+  // ---- Subscription Plans (strike price + discounted price, no promo label shown) ----
+  function renderPlans(){
+    const grid = document.getElementById("plansGrid");
+    grid.innerHTML = "";
+    Object.entries(TIERS).forEach(([key, t]) => {
+      const card = document.createElement("div");
+      card.className = "plan-card";
+      card.innerHTML = `
+        <h3>${t.label}</h3>
+        <div class="price-row"><span class="price-strike">$${t.strike}</span><span class="price-now">$${t.price}</span><span style="font-size:11px;color:var(--muted);">/mo</span></div>
+        <ul><li>${t.generations} generations / month</li><li>Up to ${formatTime(t.capSeconds)} per video</li><li>30-day billing cycle</li></ul>
+        <button>Subscribe</button>
+      `;
+      card.querySelector("button").addEventListener("click", () => {
+        subscription = { tier:key, generationsUsed:0 };
+        showBanner(`Subscribed to ${t.label} — ${t.generations} generations unlocked.`, "good");
+        goToPage("dashboard");
+        refreshAll();
+      });
+      grid.appendChild(card);
+    });
+  }
+
+  // ---- Nav ----
+  function goToPage(name){
+    document.querySelectorAll(".nav-item").forEach(n=>n.classList.toggle("active", n.dataset.page===name));
+    document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active", p.id==="page-"+name));
+    if(name==="plans") renderPlans();
+    if(name==="gallery") renderGallery();
+  }
+  document.querySelectorAll(".nav-item").forEach(item => item.addEventListener("click", ()=> goToPage(item.dataset.page)));
+
+  function refreshAll(){
+    refreshTrialBannerAndGenerateBtn();
+    refreshSidebarPlanBox();
+  }
+
+  // ---- Startup: load persisted jobs + shared admin content, resume any pending renders ----
+  async function initApp(){
+    await loadJobs();
+    refreshAll();
+    // If a job was left "processing" from a previous session (e.g. tab closed),
+    // resume it — real backend would just be polling actual job status here.
+    jobs.filter(j => j.status === "processing").forEach(job => {
+      setTimeout(async () => {
+        await loadJobs();
+        const target = jobs.find(j => j.id === job.id);
+        if(target && target.status === "processing"){
+          target.status = "done";
+          await saveJobs();
+          if(document.getElementById("page-gallery").classList.contains("active")) renderGallery();
+        }
+      }, 4000);
+    });
+    await applySharedAdminContent();
+  }
+
+  // ---- Shared content from Admin dashboard (logo, styles, ads) ----
+  async function applySharedAdminContent(){
+    try{
+      const res = await window.storage.get("content:logo", true);
+      if(res && res.value){
+        document.querySelectorAll(".topright-logo").forEach(el => {
+          el.innerHTML = `<img src="${res.value}" style="width:100%;height:100%;object-fit:cover;">`;
+        });
+      }
+    } catch(e){ /* no shared logo set yet — keep the dashed placeholder */ }
+  }
+
+  initApp();
+</script>
+
+</body>
+</html>
