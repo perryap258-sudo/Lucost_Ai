@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LUCOST AI — Admin</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&display=swap');
+  :root{
+    --void:#131110; --panel:#1A1714; --card:#211D18; --card-hi:#2A251F;
+    --line:#3B342A; --text:#E9E3D6; --muted:#948C7E;
+    --accent:#8A6440; --accent-hi:#B08653; --accent-dim:#4E3A24;
+    --danger:#B45C4A; --gray:#6B6459; --good:#7C9473;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{ background:var(--void); color:var(--text); font-family:'Inter',sans-serif; min-height:100vh; }
+
+  /* ---- Login gate ---- */
+  #loginGate{ min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px; }
+  .login-box{ width:100%; max-width:340px; background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:28px; }
+  .login-box h1{ font-family:'Space Grotesk'; font-size:18px; margin-bottom:4px; }
+  .login-box p{ font-size:12px; color:var(--muted); margin-bottom:20px; }
+  .login-box input{ width:100%; background:var(--card); border:1px solid var(--line); border-radius:9px; padding:11px 12px; color:var(--text); font-size:13px; margin-bottom:10px; }
+  .login-box input:focus{ outline:none; border-color:var(--accent-hi); }
+  .login-btn{ width:100%; padding:12px; border-radius:9px; border:none; background:var(--accent-hi); color:#1a1410; font-weight:700; font-size:13px; cursor:pointer; margin-top:6px; }
+  .login-note{ font-size:10.5px; color:var(--muted); margin-top:14px; text-align:center; }
+  .role-toggle{ display:flex; gap:8px; margin-bottom:16px; }
+  .role-btn{ flex:1; padding:8px; border-radius:8px; border:1px solid var(--line); background:var(--card); color:var(--muted); font-size:11.5px; font-weight:600; cursor:pointer; }
+  .role-btn.active{ border-color:var(--accent-hi); color:var(--text); background:var(--accent-dim); }
+
+  /* ---- App shell ---- */
+  #app{ display:none; }
+  .topbar{ display:flex; align-items:center; justify-content:space-between; padding:14px 20px; border-bottom:1px solid var(--line); background:var(--panel); position:sticky; top:0; z-index:5; }
+  .topbar-left{ display:flex; align-items:center; gap:10px; }
+  .brand{ font-family:'Space Grotesk'; font-weight:700; font-size:14px; }
+  .role-pill{ font-size:10px; font-weight:700; padding:3px 9px; border-radius:20px; background:var(--accent-dim); color:var(--accent-hi); text-transform:uppercase; letter-spacing:.04em; }
+  .logout{ font-size:12px; color:var(--muted); cursor:pointer; }
+
+  .tabs{ display:flex; gap:4px; padding:10px 16px; overflow-x:auto; border-bottom:1px solid var(--line); background:var(--void); }
+  .tab{ flex:0 0 auto; padding:8px 14px; border-radius:8px; font-size:12.5px; font-weight:600; color:var(--muted); cursor:pointer; white-space:nowrap; }
+  .tab.active{ background:var(--card); color:var(--text); }
+
+  .page{ display:none; padding:18px 16px 60px; max-width:520px; margin:0 auto; }
+  .page.active{ display:block; }
+  .section-label{ font-size:11px; letter-spacing:1.2px; text-transform:uppercase; color:var(--muted); font-weight:700; margin:20px 0 10px; }
+  .section-label:first-child{ margin-top:0; }
+
+  /* ---- Stat cards ---- */
+  .stat-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .stat-card{ background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px; }
+  .stat-card .val{ font-family:'Space Grotesk'; font-size:20px; font-weight:700; }
+  .stat-card .lbl{ font-size:11px; color:var(--muted); margin-top:2px; }
+  .stat-card.wide{ grid-column:1/-1; }
+
+  .period-toggle{ display:flex; gap:6px; margin-bottom:12px; }
+  .period-btn{ padding:6px 12px; border-radius:20px; border:1px solid var(--line); background:transparent; color:var(--muted); font-size:11px; font-weight:600; cursor:pointer; }
+  .period-btn.active{ background:var(--accent-dim); border-color:var(--accent-hi); color:var(--text); }
+
+  .tier-row{ display:flex; justify-content:space-between; align-items:center; padding:11px 0; border-bottom:1px solid var(--line); font-size:13px; }
+  .tier-row:last-child{ border-bottom:none; }
+  .tier-row .name{ font-weight:600; }
+  .tier-row .sub{ font-size:11px; color:var(--muted); }
+  .tier-row .amt{ font-family:'Space Grotesk'; font-weight:700; }
+
+  .alert-card{ background:rgba(180,92,74,0.12); border:1px solid var(--danger); border-radius:12px; padding:12px 14px; margin-bottom:14px; font-size:12.5px; }
+  .alert-card .t{ font-weight:700; color:#D89486; margin-bottom:2px; }
+
+  /* ---- Manager accounts ---- */
+  .mgr-card{ background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px 14px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; }
+  .mgr-name{ font-weight:600; font-size:13px; }
+  .mgr-email{ font-size:11px; color:var(--muted); }
+  .del-x{ color:var(--danger); font-size:18px; cursor:pointer; padding:4px 8px; }
+  .add-mgr-btn{ width:100%; padding:12px; border-radius:10px; border:1.5px dashed var(--line); background:transparent; color:var(--muted); font-size:12.5px; cursor:pointer; margin-top:6px; }
+
+  /* ---- Content upload slots ---- */
+  .upload-slot{ background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px; margin-bottom:10px; display:flex; gap:12px; align-items:center; }
+  .thumb{ width:56px; height:56px; border-radius:8px; background:var(--panel); border:1px dashed var(--line); flex:0 0 56px; display:flex; align-items:center; justify-content:center; font-size:18px; color:var(--muted); overflow:hidden; }
+  .thumb img,.thumb video{ width:100%; height:100%; object-fit:cover; }
+  .slot-info{ flex:1; min-width:0; }
+  .slot-title{ font-size:12.5px; font-weight:600; }
+  .slot-status{ font-size:11px; color:var(--muted); margin-top:2px; }
+  .slot-btn{ padding:7px 12px; border-radius:8px; border:1px solid var(--line); background:var(--panel); color:var(--text); font-size:11.5px; font-weight:600; cursor:pointer; }
+
+  .watermark-preview{ background:var(--card); border:1px solid var(--line); border-radius:12px; padding:18px; text-align:center; margin-bottom:12px; }
+  .watermark-preview .box{ width:100px; height:56px; margin:0 auto 10px; border-radius:8px; background:var(--panel); border:1px dashed var(--line); display:flex; align-items:center; justify-content:center; font-size:9px; color:var(--muted); position:relative; }
+  .watermark-preview .mark{ position:absolute; bottom:4px; right:4px; font-size:7px; color:var(--muted); background:rgba(0,0,0,.5); padding:1px 4px; border-radius:3px; }
+
+  .banner-note{ font-size:11px; color:var(--muted); background:var(--card); border:1px solid var(--line); border-radius:10px; padding:10px 12px; margin-bottom:14px; }
+</style>
+</head>
+<body>
+
+<div id="loginGate">
+  <div class="login-box">
+    <h1>LUCOST AI — Admin</h1>
+    <p>Private access. Not linked from the main app.</p>
+    <div class="role-toggle">
+      <button class="role-btn active" id="pickSuper" onclick="pickRole('super')">Super Admin</button>
+      <button class="role-btn" id="pickMgr" onclick="pickRole('manager')">Manager</button>
+    </div>
+    <input type="email" placeholder="Email" value="founder@lucost.ai">
+    <input type="password" placeholder="Password" value="••••••••••">
+    <input type="text" placeholder="2FA code" id="tfaField">
+    <button class="login-btn" onclick="login()">Sign in</button>
+    <div class="login-note">2FA applies to Super Admin only.</div>
+  </div>
+</div>
+
+<div id="app">
+  <div class="topbar">
+    <div class="topbar-left">
+      <span class="brand">LUCOST AI</span>
+      <span class="role-pill" id="rolePill">Super Admin</span>
+    </div>
+    <span class="logout" onclick="logout()">Sign out</span>
+  </div>
+
+  <div class="tabs" id="tabs"></div>
+
+  <!-- SUPER ADMIN: Overview -->
+  <div class="page" id="page-overview">
+    <div class="alert-card" id="overrunAlert">
+      <div class="t">⚠ Cost overrun flagged</div>
+      3 generations this week exceeded their locked per-tier cost baseline. <span style="text-decoration:underline;cursor:pointer;" onclick="goTab('costs')">Review →</span>
+    </div>
+
+    <div class="section-label">Accounts</div>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="val">4,812</div><div class="lbl">Total registered accounts</div></div>
+      <div class="stat-card"><div class="val">1,336</div><div class="lbl">Active subscribers</div></div>
+    </div>
+
+    <div class="section-label">Active subscribers by tier</div>
+    <div class="tier-row"><div><div class="name">Tier 1 — 5 min</div><div class="sub">$21/mo</div></div><div class="amt">712</div></div>
+    <div class="tier-row"><div><div class="name">Tier 2 — 15 min</div><div class="sub">$35/mo</div></div><div class="amt">418</div></div>
+    <div class="tier-row"><div><div class="name">Tier 3 — 30 min</div><div class="sub">$75/mo</div></div><div class="amt">206</div></div>
+
+    <div class="section-label">Generations used</div>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="val">248</div><div class="lbl">Today</div></div>
+      <div class="stat-card"><div class="val">1,690</div><div class="lbl">This week</div></div>
+      <div class="stat-card wide"><div class="val">7,215</div><div class="lbl">This month</div></div>
+    </div>
+
+    <div class="section-label">Churn</div>
+    <div class="stat-grid">
+      <div class="stat-card wide"><div class="val">3.1%</div><div class="lbl">Monthly churn rate</div></div>
+    </div>
+  </div>
+
+  <!-- SUPER ADMIN: Revenue -->
+  <div class="page" id="page-revenue">
+    <div class="section-label">Revenue by period</div>
+    <div class="period-toggle">
+      <button class="period-btn" onclick="setPeriod(this,'day')">Day</button>
+      <button class="period-btn active" onclick="setPeriod(this,'week')">Week</button>
+      <button class="period-btn" onclick="setPeriod(this,'month')">Month</button>
+      <button class="period-btn" onclick="setPeriod(this,'year')">Year</button>
+    </div>
+    <div class="stat-card wide" style="margin-bottom:20px;">
+      <div class="val" id="periodRevVal">$9,840</div>
+      <div class="lbl" id="periodRevLbl">Revenue — this week</div>
+    </div>
+
+    <div class="section-label">Revenue by tier (this month)</div>
+    <div class="tier-row"><div><div class="name">Tier 1</div><div class="sub">712 subs × $21</div></div><div class="amt">$14,952</div></div>
+    <div class="tier-row"><div><div class="name">Tier 2</div><div class="sub">418 subs × $35</div></div><div class="amt">$14,630</div></div>
+    <div class="tier-row"><div><div class="name">Tier 3</div><div class="sub">206 subs × $75</div></div><div class="amt">$15,450</div></div>
+    <div class="tier-row" style="border-top:1.5px solid var(--line); margin-top:6px; padding-top:12px;"><div class="name">Total revenue</div><div class="amt">$45,032</div></div>
+
+    <div class="section-label">Real profit (this month)</div>
+    <div class="banner-note">Revenue minus actual GPU cost. This is your real take-home, not the raw subscription total above.</div>
+    <div class="tier-row"><div><div class="name">Total GPU cost</div><div class="sub">7,215 generations</div></div><div class="amt" style="color:var(--danger);">−$8,940</div></div>
+    <div class="tier-row" style="border-top:1.5px solid var(--line); margin-top:6px; padding-top:12px;"><div class="name">Profit</div><div class="amt" style="color:var(--good);">$36,092</div></div>
+    <div class="tier-row"><div class="name">Profit margin</div><div class="amt" style="color:var(--good);">80.1%</div></div>
+  </div>
+
+  <!-- SUPER ADMIN: Costs -->
+  <div class="page" id="page-costs">
+    <div class="banner-note">GPU cost tracking against locked per-generation baselines ($0.46 / $1.39 / $2.79). Overruns are logged here, never shown to end users.</div>
+    <div class="section-label">Cost overrun log</div>
+    <div class="tier-row"><div><div class="name">Gen #48213 — Tier 3</div><div class="sub">Aug 11, 2026 · slow render</div></div><div class="amt" style="color:var(--danger);">$3.40</div></div>
+    <div class="tier-row"><div><div class="name">Gen #48190 — Tier 2</div><div class="sub">Aug 10, 2026 · retry x2</div></div><div class="amt" style="color:var(--danger);">$2.10</div></div>
+    <div class="tier-row"><div><div class="name">Gen #48177 — Tier 3</div><div class="sub">Aug 10, 2026 · slow render</div></div><div class="amt" style="color:var(--danger);">$3.65</div></div>
+
+    <div class="section-label">GPU fleet (live)</div>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="val">184</div><div class="lbl">Active GPUs right now</div></div>
+      <div class="stat-card"><div class="val">2,000</div><div class="lbl">Auto-scale ceiling</div></div>
+    </div>
+  </div>
+
+  <!-- SUPER ADMIN: Managers -->
+  <div class="page" id="page-managers">
+    <div class="section-label">Manager account</div>
+    <div id="mgrEmptyBox">
+      <div class="banner-note" style="margin-bottom:12px;">No manager assigned yet. Only one manager account is supported.</div>
+      <input type="email" placeholder="Manager email" id="newMgrEmail" style="width:100%; background:var(--card); border:1px solid var(--line); border-radius:9px; padding:11px 12px; color:var(--text); font-size:13px; margin-bottom:10px;">
+      <input type="password" placeholder="Set password" id="newMgrPass" style="width:100%; background:var(--card); border:1px solid var(--line); border-radius:9px; padding:11px 12px; color:var(--text); font-size:13px; margin-bottom:10px;">
+      <button class="add-mgr-btn" style="border-style:solid; color:var(--text); background:var(--accent-dim); border-color:var(--accent-hi);" onclick="createManager()">Create account</button>
+    </div>
+    <div id="mgrActiveBox" style="display:none;">
+      <div class="mgr-card">
+        <div><div class="mgr-name" id="mgrActiveEmail">—</div><div class="mgr-email">Content access only</div></div>
+        <div class="del-x" onclick="askRemoveManager()">×</div>
+      </div>
+    </div>
+    <div class="banner-note" style="margin-top:16px;">The manager can only upload/edit visual content — no revenue, user, or generation numbers are visible to them.</div>
+  </div>
+
+  <!-- Confirm remove modal -->
+  <div id="confirmModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:20; align-items:center; justify-content:center;">
+    <div style="background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:20px; max-width:300px; width:90%;">
+      <div style="font-weight:700; font-size:14px; margin-bottom:6px;">Remove manager account?</div>
+      <div style="font-size:12.5px; color:var(--muted); margin-bottom:16px;">This deletes their access immediately. You can assign a new manager afterward.</div>
+      <div style="display:flex; gap:8px;">
+        <button class="slot-btn" style="flex:1;" onclick="closeConfirm()">No</button>
+        <button class="slot-btn" style="flex:1; background:var(--danger); border-color:var(--danger); color:#fff;" onclick="confirmRemoveManager()">Yes, remove</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SHARED: Content (Super Admin + Manager both see this) -->
+  <div class="page" id="page-content">
+    <div class="section-label">App logo <span style="color:var(--muted); font-weight:400; text-transform:none;">— image upload</span></div>
+    <div class="upload-slot">
+      <div class="thumb">logo</div>
+      <div class="slot-info"><div class="slot-title">Current logo</div><div class="slot-status">Not set</div></div>
+      <input type="file" accept="image/*" style="display:none;" class="file-input" data-shared-key="content:logo" onchange="fileChosen(this)">
+      <button class="slot-btn" onclick="this.previousElementSibling.click()">Upload file</button>
+    </div>
+
+    <div class="section-label">Featured ad videos (10 slots) <span style="color:var(--muted); font-weight:400; text-transform:none;">— video upload</span></div>
+    <div class="upload-slot">
+      <div class="thumb">1</div>
+      <div class="slot-info"><div class="slot-title">Slot 1</div><div class="slot-status">Set · 14s</div></div>
+      <input type="file" accept="video/*" style="display:none;" class="file-input" onchange="fileChosen(this)">
+      <button class="slot-btn" onclick="this.previousElementSibling.click()">Upload file</button>
+    </div>
+    <div class="upload-slot">
+      <div class="thumb">2</div>
+      <div class="slot-info"><div class="slot-title">Slot 2</div><div class="slot-status">Empty</div></div>
+      <input type="file" accept="video/*" style="display:none;" class="file-input" onchange="fileChosen(this)">
+      <button class="slot-btn" onclick="this.previousElementSibling.click()">Upload file</button>
+    </div>
+    <div class="upload-slot">
+      <div class="thumb">3</div>
+      <div class="slot-info"><div class="slot-title">Slot 3</div><div class="slot-status">Empty</div></div>
+      <input type="file" accept="video/*" style="display:none;" class="file-input" onchange="fileChosen(this)">
+      <button class="slot-btn" onclick="this.previousElementSibling.click()">Upload file</button>
+    </div>
+    <div class="upload-slot">
+      <div class="thumb">4</div>
+      <div class="slot-info"><div class="slot-title">Slot 4</div><div class="slot-status">Empty</div></div>
+      <input type="file" accept="video/*" style="display:none;" class="file-input" onchange="fileChosen(this)">
+      <button class="slot-btn" onclick="this.previousElementSibling.click()">Upload file</button>
+    </div>
+    <div class="upload-slot">
+      <div class="thumb">5</div>
+      <div class="slot-info"><div class="slot-title">Slot 5</div><div class="slot-status">Empty</div></div>
+      <input type="file" accept="video/*" style="display:none;" class="file-input" onchange="fileChosen(this)">
+      <button class="slot-btn" onclick="this.previousElementSibling.click()">Upload file</button>
+    </div>
+    <div class="upload-slot">
+      <div class="thumb">6</div>
+      <div class="slot-info"><div class="slot-title">Slot 6</div><div class="slot-status">Empty</div></div>
+      <input type="file" accept="video/*" style="display:none;" class="file-input" onchange="fileChosen(this)">
+      <button class="slot-btn" onclick="this.previousElementSibling.click()">Upload file</button>
+    </div>
+    <div class="upload-slot">
+      <div class="thumb">7</div>
+      <div class="slot-info"><div class="slot-title">Slot 7</div><div class="slot-status">Empty</div></div>
+      <input type="file" accept="video/*" style="display:none;" class="file-input" onchange="fileChosen(this)">
+      <button class="slot-btn" onclick="this.previousElementSibling.click()">Upload file</button>
+    </div>
+    <div class="upload-slot">
+      <div class="thumb">8</div>
+      <div class="slot-info"><div class="slot-title">Slot 8</div><div class="slot-status">Empty</div></div>
+      <input type="file" accept="video/*" style="display:none;" class="file-input" onchange="fileChosen(this)">
+      <button class="slot-btn" onclick="this.previousElementSibling.click()">Upload file</button>
+    </div>
+    <div class="upload-slot">
+      <div class="thumb">9</div>
+      <div class="slot-info"><div class="slot-title">Slot 9</div><div class="slot-status">Empty</div></div>
+      <input type="file" accept="video/*" style="display:none;" class="file-input" onchange="fileChosen(this)">
+      <button class="slot-btn" onclick="this.previousElementSibling.click()">Upload file</button>
+    </div>
+    <div class="upload-slot">
+      <div class="thumb">10</div>
+      <div class="slot-info"><div class="slot-title">Slot 10</div><div class="slot-status">Empty</div></div>
+      <input type="file" accept="video/*" style="display:none;" class="file-input" onchange="fileChosen(this)">
+      <button class="slot-btn" onclick="this.previousElementSibling.click()">Upload file</button>
+    </div>
+
+    <div class="section-label">Style previews (7 styles) <span style="color:var(--muted); font-weight:400; text-transform:none;">— video upload</span></div>
+    <div class="upload-slot">
+      <div class="thumb">🎬</div>
+      <div class="slot-info"><div class="slot-title">Narration Anime</div><div class="slot-status">Set</div></div>
+      <input type="file" accept="video/*" style="display:none;" class="file-input" onchange="fileChosen(this)">
+      <button class="slot-btn" onclick="this.previousElementSibling.click()">Upload file</button>
+    </div>
+    <div class="upload-slot">
+      <div class="thumb">🎬</div>
+      <div class="slot-info"><div class="slot-title">Drama</div><div class="slot-status">Set</div></div>
+      <input type="file" accept="video/*" style="display:none;" class="file-input" onchange="fileChosen(this)">
+      <button class="slot-btn" onclick="this.previousElementSibling.click()">Upload file</button>
+    </div>
+    <div class="upload-slot">
+      <div class="thumb">🎬</div>
+      <div class="slot-info"><div class="slot-title">CGI Idol</div><div class="slot-status">Empty</div></div>
+      <input type="file" accept="video/*" style="display:none;" class="file-input" onchange="fileChosen(this)">
+      <button class="slot-btn" onclick="this.previousElementSibling.click()">Upload file</button>
+    </div>
+    <div class="upload-slot">
+      <div class="thumb">🌐</div>
+      <div class="slot-info"><div class="slot-title">Others</div><div class="slot-status">Empty · non-character content (cars, animals, houses, etc.)</div></div>
+      <input type="file" accept="video/*" style="display:none;" class="file-input" onchange="fileChosen(this)">
+      <button class="slot-btn" onclick="this.previousElementSibling.click()">Upload file</button>
+    </div>
+    <div class="upload-slot">
+      <div class="thumb">🎬</div>
+      <div class="slot-info"><div class="slot-title">Narration Drama</div><div class="slot-status">Empty</div></div>
+      <input type="file" accept="video/*" style="display:none;" class="file-input" onchange="fileChosen(this)">
+      <button class="slot-btn" onclick="this.previousElementSibling.click()">Upload file</button>
+    </div>
+    <div class="upload-slot">
+      <div class="thumb">🎬</div>
+      <div class="slot-info"><div class="slot-title">Drama Anime</div><div class="slot-status">Empty</div></div>
+      <input type="file" accept="video/*" style="display:none;" class="file-input" onchange="fileChosen(this)">
+      <button class="slot-btn" onclick="this.previousElementSibling.click()">Upload file</button>
+    </div>
+    <div class="upload-slot">
+      <div class="thumb">🎬</div>
+      <div class="slot-info"><div class="slot-title">Cinematic 3D</div><div class="slot-status">Empty</div></div>
+      <input type="file" accept="video/*" style="display:none;" class="file-input" onchange="fileChosen(this)">
+      <button class="slot-btn" onclick="this.previousElementSibling.click()">Upload file</button>
+    </div>
+
+    <div class="section-label">Landing page feature clips (6 slots) <span style="color:var(--muted); font-weight:400; text-transform:none;">— video upload</span></div>
+    <div class="upload-slot">
+      <div class="thumb">1</div>
+      <div class="slot-info"><div class="slot-title">Clip 1</div><div class="slot-status">Set</div></div>
+      <input type="file" accept="video/*" style="display:none;" class="file-input" onchange="fileChosen(this)">
+      <button class="slot-btn" onclick="this.previousElementSibling.click()">Upload file</button>
+    </div>
+    <div class="upload-slot">
+      <div class="thumb">2</div>
+      <div class="slot-info"><div class="slot-title">Clip 2</div><div class="slot-status">Empty</div></div>
+      <input type="file" accept="video/*" style="display:none;" class="file-input" onchange="fileChosen(this)">
+      <button class="slot-btn" onclick="this.previousElementSibling.click()">Upload file</button>
+    </div>
+    <div class="upload-slot">
+      <div class="thumb">3</div>
+      <div class="slot-info"><div class="slot-title">Clip 3</div><div class="slot-status">Empty</div></div>
+      <input type="file" accept="video/*" style="display:none;" class="file-input" onchange="fileChosen(this)">
+      <button class="slot-btn" onclick="this.previousElementSibling.click()">Upload file</button>
+    </div>
+    <div class="upload-slot">
+      <div class="thumb">4</div>
+      <div class="slot-info"><div class="slot-title">Clip 4</div><div class="slot-status">Empty</div></div>
+      <input type="file" accept="video/*" style="display:none;" class="file-input" onchange="fileChosen(this)">
+      <button class="slot-btn" onclick="this.previousElementSibling.click()">Upload file</button>
+    </div>
+    <div class="upload-slot">
+      <div class="thumb">5</div>
+      <div class="slot-info"><div class="slot-title">Clip 5</div><div class="slot-status">Empty</div></div>
+      <input type="file" accept="video/*" style="display:none;" class="file-input" onchange="fileChosen(this)">
+      <button class="slot-btn" onclick="this.previousElementSibling.click()">Upload file</button>
+    </div>
+    <div class="upload-slot">
+      <div class="thumb">6</div>
+      <div class="slot-info"><div class="slot-title">Clip 6</div><div class="slot-status">Empty</div></div>
+      <input type="file" accept="video/*" style="display:none;" class="file-input" onchange="fileChosen(this)">
+      <button class="slot-btn" onclick="this.previousElementSibling.click()">Upload file</button>
+    </div>
+    <div class="banner-note">These are the clips that continuously fly in on the landing page, larger size, never-stopping relay loop. Separate from Style previews — upload real footage here.</div>
+
+    <div class="section-label">Landing page background reels (5 slots) <span style="color:var(--muted); font-weight:400; text-transform:none;">— video upload</span></div>
+    <div class="upload-slot">
+      <div class="thumb">1</div>
+      <div class="slot-info"><div class="slot-title">Reel 1</div><div class="slot-status">Set</div></div>
+      <input type="file" accept="video/*" style="display:none;" class="file-input" onchange="fileChosen(this)">
+      <button class="slot-btn" onclick="this.previousElementSibling.click()">Upload file</button>
+    </div>
+    <div class="upload-slot">
+      <div class="thumb">2</div>
+      <div class="slot-info"><div class="slot-title">Reel 2</div><div class="slot-status">Empty</div></div>
+      <input type="file" accept="video/*" style="display:none;" class="file-input" onchange="fileChosen(this)">
+      <button class="slot-btn" onclick="this.previousElementSibling.click()">Upload file</button>
+    </div>
+    <div class="upload-slot">
+      <div class="thumb">3</div>
+      <div class="slot-info"><div class="slot-title">Reel 3</div><div class="slot-status">Empty</div></div>
+      <input type="file" accept="video/*" style="display:none;" class="file-input" onchange="fileChosen(this)">
+      <button class="slot-btn" onclick="this.previousElementSibling.click()">Upload file</button>
+    </div>
+    <div class="upload-slot">
+      <div class="thumb">4</div>
+      <div class="slot-info"><div class="slot-title">Reel 4</div><div class="slot-status">Empty</div></div>
+      <input type="file" accept="video/*" style="display:none;" class="file-input" onchange="fileChosen(this)">
+      <button class="slot-btn" onclick="this.previousElementSibling.click()">Upload file</button>
+    </div>
+    <div class="upload-slot">
+      <div class="thumb">5</div>
+      <div class="slot-info"><div class="slot-title">Reel 5</div><div class="slot-status">Empty</div></div>
+      <input type="file" accept="video/*" style="display:none;" class="file-input" onchange="fileChosen(this)">
+      <button class="slot-btn" onclick="this.previousElementSibling.click()">Upload file</button>
+    </div>
+    <div class="banner-note">These 5 reels crossfade behind the landing page hero text. Loop and blend timing is fixed in code — admin only supplies the clips.</div>
+
+    <div class="section-label">Social proof avatars (5 slots) <span style="color:var(--muted); font-weight:400; text-transform:none;">— image upload</span></div>
+    <div class="upload-slot">
+      <div class="thumb">👤</div>
+      <div class="slot-info"><div class="slot-title">Avatar 1</div><div class="slot-status">Empty</div></div>
+      <input type="file" accept="image/*" style="display:none;" class="file-input" onchange="fileChosen(this)">
+      <button class="slot-btn" onclick="this.previousElementSibling.click()">Upload file</button>
+    </div>
+    <div class="upload-slot">
+      <div class="thumb">👤</div>
+      <div class="slot-info"><div class="slot-title">Avatar 2</div><div class="slot-status">Empty</div></div>
+      <input type="file" accept="image/*" style="display:none;" class="file-input" onchange="fileChosen(this)">
+      <button class="slot-btn" onclick="this.previousElementSibling.click()">Upload file</button>
+    </div>
+    <div class="upload-slot">
+      <div class="thumb">👤</div>
+      <div class="slot-info"><div class="slot-title">Avatar 3</div><div class="slot-status">Empty</div></div>
+      <input type="file" accept="image/*" style="display:none;" class="file-input" onchange="fileChosen(this)">
+      <button class="slot-btn" onclick="this.previousElementSibling.click()">Upload file</button>
+    </div>
+    <div class="upload-slot">
+      <div class="thumb">👤</div>
+      <div class="slot-info"><div class="slot-title">Avatar 4</div><div class="slot-status">Empty</div></div>
+      <input type="file" accept="image/*" style="display:none;" class="file-input" onchange="fileChosen(this)">
+      <button class="slot-btn" onclick="this.previousElementSibling.click()">Upload file</button>
+    </div>
+    <div class="upload-slot">
+      <div class="thumb">👤</div>
+      <div class="slot-info"><div class="slot-title">Avatar 5</div><div class="slot-status">Empty</div></div>
+      <input type="file" accept="image/*" style="display:none;" class="file-input" onchange="fileChosen(this)">
+      <button class="slot-btn" onclick="this.previousElementSibling.click()">Upload file</button>
+    </div>
+    <div class="banner-note">Optional. Leave empty and the generic 👤 placeholder shows instead — never a real user's photo without consent.</div>
+
+    <div class="section-label">Free-tier watermark <span style="color:var(--muted); font-weight:400; text-transform:none;">— text, not a file</span></div>
+    <div class="watermark-preview">
+      <div class="box">clip preview<div class="mark">LUCOST AI</div></div>
+      <div class="slot-status">Bold "LUCOST AI" text, fixed upper-right, visible the entire duration. Applied automatically by the backend during FFmpeg assembly for every trial / free-tier generation — no file to upload, no admin action needed per video. Paid tiers never receive it.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ========================================
+  // LUCOST ADMIN DASHBOARD - Backend Connected
+  // ========================================
+  
+  const API_BASE = window.location.origin + '/api';
+  let currentAdminId = localStorage.getItem('admin_id') || 'admin_123';
+  let isSuper = localStorage.getItem('admin_role') === 'admin';
+  
+  // ---- Fetch admin data from backend ----
+  async function loadAdminData(){
+    try{
+      // Load overview
+      const overviewRes = await fetch(API_BASE + '/admin/overview');
+      const overview = await overviewRes.json();
+      document.querySelectorAll('[data-stat="users"]')[0].textContent = overview.total_users;
+      document.querySelectorAll('[data-stat="revenue"]')[0].textContent = '$' + overview.revenue_amount;
+      document.querySelectorAll('[data-stat="profit"]')[0].textContent = '$' + overview.profit;
+      
+      // Load GPU settings
+      await loadGPUSettings();
+      
+      // Load API key status
+      await loadAPIKeyStatus();
+      
+      // Load fraud logs
+      await loadFraudLogs();
+      
+    } catch(e){
+      console.log('Backend not connected, using offline mode');
+    }
+  }
+  
+  async function loadGPUSettings(){
+    try{
+      const res = await fetch(API_BASE + '/admin/settings/gpu');
+      const data = await res.json();
+      // Update GPU count displays for each tier
+    } catch(e){ console.error('Failed to load GPU settings', e); }
+  }
+  
+  async function saveGPUCount(tier, count){
+    try{
+      const res = await fetch(API_BASE + '/admin/settings/gpu?tier=' + tier + '&gpu_count=' + count, {
+        method: 'PUT'
+      });
+      if(res.ok){
+        showBanner('GPU count updated for ' + tier, 'good');
+      }
+    } catch(e){
+      console.error('Failed to save GPU count', e);
+    }
+  }
+  
+  async function loadAPIKeyStatus(){
+    try{
+      const res = await fetch(API_BASE + '/admin/settings/api-keys');
+      const data = await res.json();
+      // Display which services are set/enabled
+      console.log('API key status:', data.services);
+    } catch(e){ console.error('Failed to load API key status', e); }
+  }
+  
+  async function updateAPIKey(service, key){
+    try{
+      const res = await fetch(API_BASE + '/admin/settings/api-keys/' + service, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ api_key: key, is_enabled: true })
+      });
+      if(res.ok){
+        showBanner('API key updated for ' + service, 'good');
+      }
+    } catch(e){
+      console.error('Failed to update API key', e);
+    }
+  }
+  
+  async function loadFraudLogs(){
+    try{
+      const res = await fetch(API_BASE + '/admin/fraud-logs');
+      const data = await res.json();
+      // Display fraud logs in dashboard
+      console.log('Fraud logs:', data.logs);
+    } catch(e){ console.error('Failed to load fraud logs', e); }
+  }
+  
+  async function updatePricing(tier, priceUsd, strikeUsd){
+    try{
+      const res = await fetch(
+        API_BASE + '/admin/settings/pricing?tier=' + tier + '&price_usd=' + priceUsd + '&strike_price_usd=' + strikeUsd,
+        { method: 'PUT' }
+      );
+      if(res.ok){
+        showBanner('Pricing updated', 'good');
+      }
+    } catch(e){
+      console.error('Failed to update pricing', e);
+    }
+  }
+  
+  async function addWhitelist(email){
+    try{
+      const res = await fetch(API_BASE + '/admin/whitelist?email=' + email, {
+        method: 'POST'
+      });
+      if(res.ok){
+        showBanner('Email added to whitelist', 'good');
+      }
+    } catch(e){
+      console.error('Failed to add whitelist', e);
+    }
+  }
+  
+  async function removeWhitelist(email){
+    try{
+      const res = await fetch(API_BASE + '/admin/whitelist/' + email, {
+        method: 'DELETE'
+      });
+      if(res.ok){
+        showBanner('Email removed from whitelist', 'good');
+      }
+    } catch(e){
+      console.error('Failed to remove whitelist', e);
+    }
+  }
+  
+  function showBanner(msg, type){
+    console.log('[' + type + '] ' + msg);
+  }
+  
+  // Load data on startup
+  loadAdminData();
+  let role = 'super';
+  function pickRole(r){
+    role = r;
+    document.getElementById('pickSuper').classList.toggle('active', r==='super');
+    document.getElementById('pickMgr').classList.toggle('active', r==='manager');
+    document.getElementById('tfaField').style.display = r==='super' ? 'block' : 'none';
+  }
+
+  const TABS_SUPER = [
+    {id:'overview', label:'Overview'},
+    {id:'revenue', label:'Revenue'},
+    {id:'costs', label:'GPU / Costs'},
+    {id:'managers', label:'Managers'},
+    {id:'content', label:'Content'},
+  ];
+  const TABS_MGR = [
+    {id:'content', label:'Content'},
+  ];
+
+  function login(){
+    document.getElementById('loginGate').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    document.getElementById('rolePill').textContent = role === 'super' ? 'Super Admin' : 'Manager';
+    buildTabs();
+  }
+  function logout(){
+    document.getElementById('app').style.display = 'none';
+    document.getElementById('loginGate').style.display = 'flex';
+  }
+
+  function buildTabs(){
+    const tabsEl = document.getElementById('tabs');
+    const list = role === 'super' ? TABS_SUPER : TABS_MGR;
+    tabsEl.innerHTML = list.map((t,i) => `<div class="tab${i===0?' active':''}" data-id="${t.id}">${t.label}</div>`).join('');
+    tabsEl.querySelectorAll('.tab').forEach(tab => tab.addEventListener('click', () => goTab(tab.dataset.id)));
+    goTab(list[0].id);
+  }
+
+  function goTab(id){
+    document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.id === id));
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    const target = document.getElementById('page-' + id);
+    if(target) target.classList.add('active');
+  }
+
+  function setPeriod(btn, period){
+    document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const vals = { day: ['$1,720','Revenue — today'], week: ['$9,840','Revenue — this week'], month: ['$45,032','Revenue — this month'], year: ['$402,110','Revenue — this year'] };
+    document.getElementById('periodRevVal').textContent = vals[period][0];
+    document.getElementById('periodRevLbl').textContent = vals[period][1];
+  }
+
+  // ---- Manager account (single-slot) ----
+  function createManager(){
+    const email = document.getElementById('newMgrEmail').value.trim();
+    const pass = document.getElementById('newMgrPass').value;
+    if(!email || !pass){ alert('Enter an email and password first.'); return; }
+    document.getElementById('mgrActiveEmail').textContent = email;
+    document.getElementById('mgrEmptyBox').style.display = 'none';
+    document.getElementById('mgrActiveBox').style.display = 'block';
+  }
+  function askRemoveManager(){
+    document.getElementById('confirmModal').style.display = 'flex';
+  }
+  function closeConfirm(){
+    document.getElementById('confirmModal').style.display = 'none';
+  }
+  function confirmRemoveManager(){
+    document.getElementById('mgrActiveBox').style.display = 'none';
+    document.getElementById('mgrEmptyBox').style.display = 'block';
+    document.getElementById('newMgrEmail').value = '';
+    document.getElementById('newMgrPass').value = '';
+    closeConfirm();
+  }
+
+  // ---- Content file uploads (real device file picker + real preview) ----
+  function fileChosen(input){
+    const file = input.files[0];
+    if(!file) return;
+    const slot = input.closest('.upload-slot');
+    slot.querySelector('.slot-status').textContent = `Set · ${file.name}`;
+
+    const thumb = slot.querySelector('.thumb');
+    const url = URL.createObjectURL(file);
+    thumb.innerHTML = '';
+    if(file.type.startsWith('video/')){
+      const vid = document.createElement('video');
+      vid.src = url; vid.muted = true; vid.playsInline = true; vid.autoplay = true; vid.loop = true;
+      thumb.appendChild(vid);
+    } else if(file.type.startsWith('image/')){
+      const img = document.createElement('img');
+      img.src = url;
+      thumb.appendChild(img);
+    }
+
+    // If this slot is wired to shared storage (currently: logo), persist it for
+    // real so the main dashboard and landing page can actually read and display it.
+    const sharedKey = input.dataset.sharedKey;
+    if(sharedKey && file.type.startsWith('image/')){
+      const reader = new FileReader();
+      reader.onload = async () => {
+        try{
+          await window.storage.set(sharedKey, reader.result, true);
+          slot.querySelector('.slot-status').textContent = `Set · ${file.name} · live everywhere`;
+        } catch(e){
+          console.error('Failed to save shared content', e);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+</script>
+</body>
+</html>
