@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LUCOST AI — Landing v2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Caveat:wght@600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:#0E0C0B; --panel:#1A1714; --card:#211D18; --card-hi:#2A251F;
+    --line:#3B342A; --text:#EDE7DA; --muted:#9B9284;
+    --accent:#8A6440; --accent-hi:#C99A5E; --accent-dim:#4E3A24;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{ background:var(--void); font-family:'Inter',sans-serif; color:var(--text); min-height:100vh; display:flex; justify-content:center; }
+
+  .screen{
+    width:100%; max-width:420px; min-height:100vh; position:relative; overflow:hidden;
+    display:flex; flex-direction:column; align-items:center; padding:26px 26px 50px;
+  }
+
+  /* ---------- Rotating background video reels (admin-managed, 5 slots) ---------- */
+  .bg-reel{
+    position:absolute; inset:0; opacity:0; z-index:0;
+    animation: reelCycle 35s infinite;
+  }
+  .bg-reel::after{
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(180deg, rgba(14,12,11,0.42) 0%, rgba(14,12,11,0.5) 45%, rgba(14,12,11,0.58) 100%);
+  }
+  /* Each reel is visible for ~17s out of a 35s loop (5 across, staggered 7s apart):
+     5s ramp-in, 7s hold, 5s ramp-out — with the ramp-in of the next reel
+     overlapping the ramp-out of this one, so they genuinely blend for 5s
+     before the older one is gone. Loops forever. */
+  .bg-reel.r1{ background:radial-gradient(circle at 30% 20%, #3a2a1c, #14100c 70%); animation-delay:0s; }
+  .bg-reel.r2{ background:radial-gradient(circle at 70% 30%, #2c2418, #120f0c 70%); animation-delay:7s; }
+  .bg-reel.r3{ background:radial-gradient(circle at 50% 15%, #241d16, #100d0a 70%); animation-delay:14s; }
+  .bg-reel.r4{ background:radial-gradient(circle at 20% 35%, #33251a, #110e0b 70%); animation-delay:21s; }
+  .bg-reel.r5{ background:radial-gradient(circle at 80% 20%, #2a2015, #100d0a 70%); animation-delay:28s; }
+  @keyframes reelCycle{
+    0%{ opacity:1; }      /* hold starts (this is also where the previous reel's blend finishes) */
+    20%{ opacity:1; }     /* hold ends (7s of full visibility: 7/35 = 20%) */
+    34.3%{ opacity:0; }   /* ramp-out complete (5s fade: 5/35 = 14.3%) */
+    85.7%{ opacity:0; }   /* stays invisible until 5s before its next turn */
+    100%{ opacity:1; }    /* ramp-in complete, blending with the tail of whichever reel is still fading out — loops back to 0% */
+  }
+  .reel-tag{
+    position:absolute; top:10px; right:10px; font-size:8px; color:var(--muted);
+    opacity:0.35; letter-spacing:0.5px; z-index:1;
+  }
+
+  .content{ position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; width:100%; }
+
+  .topbar{ display:flex; flex-direction:column; align-items:center; gap:10px; margin-bottom:46px; }
+  .logo-slot{
+    width:96px; height:96px; border-radius:50%;
+    background:var(--panel);
+    border:1.5px dashed var(--line); display:flex; align-items:center; justify-content:center;
+    overflow:hidden; flex-shrink:0; flex-direction:column; gap:4px;
+  }
+  .logo-slot .plus{ font-size:22px; color:var(--accent-hi); line-height:1; }
+  .logo-slot .hint{ font-size:8px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; text-align:center; }
+  .logo-slot img{
+    width:100%; height:100%; object-fit:cover; border-radius:50%;
+  }
+  .logo{ font-family:'Bebas Neue',sans-serif; font-size:34px; letter-spacing:2px; font-weight:900; line-height:1; }
+  .logo span{ color:var(--accent-hi); }
+
+  .tagline{ font-family:'Caveat',cursive; font-size:22px; color:var(--accent-hi); text-align:center; margin-bottom:6px; transform:rotate(-1.5deg); }
+  .headline{ font-weight:800; font-size:37px; line-height:1.12; text-align:center; letter-spacing:-0.5px; margin-bottom:18px; text-shadow:0 4px 24px rgba(0,0,0,0.6); }
+  .headline .grad{ background:linear-gradient(90deg,var(--accent-hi),#E8C58A); -webkit-background-clip:text; background-clip:text; color:transparent; }
+
+  .sub{ font-size:14.5px; line-height:1.6; color:var(--muted); text-align:center; max-width:340px; margin-bottom:28px; }
+
+  .cta-btn{ width:100%; max-width:300px; padding:17px; border-radius:14px; border:none; background:linear-gradient(135deg,var(--accent-hi),var(--accent)); color:#191410; font-weight:800; font-size:15.5px; cursor:pointer; box-shadow:0 14px 34px rgba(0,0,0,0.5); margin-bottom:28px; }
+  .cta-sub{ font-size:11.5px; color:var(--muted); font-style:italic; margin-bottom:30px; }
+
+  .proof-row{ display:flex; align-items:center; gap:12px; background:rgba(26,23,20,0.75); backdrop-filter:blur(6px); border:1px solid var(--line); border-radius:40px; padding:9px 18px 9px 9px; margin-bottom:26px; }
+  .avatar-stack{ display:flex; }
+  .avatar-stack .av{ width:32px; height:32px; border-radius:50%; border:2px dashed var(--line); background:var(--panel); margin-left:-10px; display:flex; align-items:center; justify-content:center; font-size:14px; color:var(--muted); opacity:0.6; overflow:hidden; }
+  .avatar-stack .av:first-child{ margin-left:0; }
+  .stars{ color:var(--accent-hi); font-size:12px; letter-spacing:1px; }
+  .proof-note{ color:var(--muted); font-size:11.5px; }
+  .placeholder-tag{ font-size:8.5px; color:var(--muted); text-align:center; margin-bottom:36px; text-transform:uppercase; letter-spacing:0.5px; opacity:0.6; }
+
+  /* ---------- Dramatic flying-in feature clips ---------- */
+  .clip-stage{ position:relative; width:100%; max-width:360px; height:340px; margin-bottom:14px; }
+  .clip{
+    position:absolute; width:168px; height:236px; border-radius:16px;
+    background:linear-gradient(155deg,var(--card-hi),var(--card));
+    border:1px solid var(--line); box-shadow:0 22px 48px rgba(0,0,0,0.55);
+    display:flex; flex-direction:column; justify-content:flex-end; padding:12px;
+    opacity:0; animation-fill-mode:forwards; animation-iteration-count:1;
+  }
+  .clip .tag{ font-size:9.5px; font-weight:700; color:var(--accent-hi); text-transform:uppercase; letter-spacing:0.4px; background:rgba(0,0,0,0.5); padding:3px 7px; border-radius:6px; align-self:flex-start; }
+  .clip .play{ position:absolute; top:10px; right:10px; width:20px; height:20px; border-radius:50%; background:rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:center; color:var(--accent-hi); font-size:9px; }
+
+  /* Continuous relay: exactly one clip's "window" is open at a time across a
+     15s loop (3s each, 5 clips), then it wraps back to k1 forever — nothing
+     ever stays put, nothing ever stops. */
+  .clip{ left:50%; top:50%; margin-left:-84px; margin-top:-118px; }
+  .clip.k1{ animation:cycleCenter 15s linear infinite; animation-delay:0s; z-index:5; }
+  .clip.k2{ animation:cycleTL     15s linear infinite; animation-delay:3s; z-index:5; }
+  .clip.k3{ animation:cycleTR     15s linear infinite; animation-delay:6s; z-index:5; }
+  .clip.k4{ animation:cycleBL     15s linear infinite; animation-delay:9s; z-index:5; }
+  .clip.k5{ animation:cycleBR     15s linear infinite; animation-delay:12s; z-index:5; }
+
+  @keyframes cycleCenter{
+    0%{ opacity:0; transform:translateY(-50px) scale(0.8) rotate(0deg); }
+    6%{ opacity:1; transform:translateY(0) scale(1) rotate(0deg); }
+    14%{ opacity:1; transform:translateY(0) scale(1) rotate(0deg); }
+    20%{ opacity:0; transform:translateY(50px) scale(0.8) rotate(0deg); }
+    100%{ opacity:0; }
+  }
+  @keyframes cycleTL{
+    0%{ opacity:0; transform:translate(-280px,-210px) rotate(-35deg) scale(0.72); }
+    6%{ opacity:1; transform:translate(-70px,-38px) rotate(-9deg) scale(1); }
+    14%{ opacity:1; transform:translate(-70px,-38px) rotate(-9deg) scale(1); }
+    20%{ opacity:0; transform:translate(-320px,-240px) rotate(-40deg) scale(0.62); }
+    100%{ opacity:0; }
+  }
+  @keyframes cycleTR{
+    0%{ opacity:0; transform:translate(280px,-210px) rotate(35deg) scale(0.72); }
+    6%{ opacity:1; transform:translate(70px,-38px) rotate(9deg) scale(1); }
+    14%{ opacity:1; transform:translate(70px,-38px) rotate(9deg) scale(1); }
+    20%{ opacity:0; transform:translate(320px,-240px) rotate(40deg) scale(0.62); }
+    100%{ opacity:0; }
+  }
+  @keyframes cycleBL{
+    0%{ opacity:0; transform:translate(-320px,210px) rotate(28deg) scale(0.62); }
+    6%{ opacity:1; transform:translate(-58px,72px) rotate(-14deg) scale(0.96); }
+    14%{ opacity:1; transform:translate(-58px,72px) rotate(-14deg) scale(0.96); }
+    20%{ opacity:0; transform:translate(-340px,250px) rotate(30deg) scale(0.58); }
+    100%{ opacity:0; }
+  }
+  @keyframes cycleBR{
+    0%{ opacity:0; transform:translate(320px,210px) rotate(-28deg) scale(0.62); }
+    6%{ opacity:1; transform:translate(58px,72px) rotate(14deg) scale(0.96); }
+    14%{ opacity:1; transform:translate(58px,72px) rotate(14deg) scale(0.96); }
+    20%{ opacity:0; transform:translate(340px,250px) rotate(-30deg) scale(0.58); }
+    100%{ opacity:0; }
+  }
+
+  .trial-badge{
+    font-size:12px; text-align:center; color:var(--text); background:rgba(201,154,94,0.1);
+    border:1px solid rgba(201,154,94,0.35); border-radius:30px; padding:9px 16px;
+    margin-bottom:24px; max-width:300px; line-height:1.4;
+  }
+  .trial-badge b{ color:var(--accent-hi); }
+
+  .scroll-hint{ font-size:10px; color:var(--muted); text-align:center; letter-spacing:1px; text-transform:uppercase; opacity:0.7; }
+</style>
+</head>
+<body>
+
+<div class="screen">
+
+  <!-- Background reels: 5 rotating clips, fully admin/manager managed -->
+  <div class="bg-reel r1"></div><span class="reel-tag">reel 1/5</span>
+  <div class="bg-reel r2"></div>
+  <div class="bg-reel r3"></div>
+  <div class="bg-reel r4"></div>
+  <div class="bg-reel r5"></div>
+
+  <div class="content">
+    <div class="topbar">
+      <div class="logo-slot" id="landingLogoSlot"><span class="plus">+</span><span class="hint">Logo</span></div>
+      <div class="logo">LUCOST <span>AI</span></div>
+    </div>
+
+    <div class="tagline">✨ hey, storyteller — let's make something great ✨</div>
+    <div class="headline">
+      Write the script.<br>
+      Cast the faces.<br>
+      <span class="grad">Watch it become the content you want.</span>
+    </div>
+
+    <div class="sub">
+      Drop in your script, bring your characters to life with a face and a voice, then pick your vibe — Anime, Drama, or Cinematic 3D. We'll handle the rest: the scenes, the sound, the whole thing, scene by scene, just for you.
+    </div>
+
+    <button class="cta-btn">Create Your Account</button>
+
+    <div class="proof-row">
+      <div class="avatar-stack"><div class="av">👤</div><div class="av">👤</div><div class="av">👤</div><div class="av">👤</div><div class="av">👤</div></div>
+      <div>
+        <div class="stars">★★★★★</div>
+        <div class="proof-note">Loved by 800,000+ creators worldwide</div>
+      </div>
+    </div>
+
+    <div class="trial-badge">🎁 New here? Get <b>2 free trial viral videos</b> when you sign up</div>
+
+    <div class="clip-stage">
+      <div class="clip k1"><span class="play">▶</span><span class="tag">Clip 1</span></div>
+      <div class="clip k2"><span class="play">▶</span><span class="tag">Clip 2</span></div>
+      <div class="clip k3"><span class="play">▶</span><span class="tag">Clip 3</span></div>
+      <div class="clip k4"><span class="play">▶</span><span class="tag">Clip 4</span></div>
+      <div class="clip k5"><span class="play">▶</span><span class="tag">Clip 5</span></div>
+    </div>
+
+    <div class="scroll-hint">▾ scroll for more</div>
+  </div>
+</div>
+
+</body>
+<script>
+  // ---- Fetch from backend on load ----
+  const API_BASE = window.location.origin + '/api';
+  
+  async function loadContentFromBackend(){
+    try{
+      // Fetch logo
+      const logoRes = await fetch(API_BASE + '/content/logo');
+      const logoData = await logoRes.json();
+      if(logoData.items && logoData.items[0]){
+        document.getElementById('landingLogoSlot').innerHTML = `
+          <img src="${logoData.items[0].url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
+        `;
+      }
+      
+      // Fetch pricing tiers (dynamic)
+      const pricingRes = await fetch(API_BASE + '/admin/settings/pricing');
+      const pricingData = await pricingRes.json();
+      updatePricingDisplay(pricingData);
+      
+      // Fetch featured ads for carousel
+      const adsRes = await fetch(API_BASE + '/content/ads');
+      const adsData = await adsRes.json();
+      updateAdCarousel(adsData.items);
+      
+      // Fetch feature clips for flying animation
+      const clipsRes = await fetch(API_BASE + '/content/feature-clips');
+      const clipsData = await clipsRes.json();
+      updateFeatureClips(clipsData.items);
+      
+      // Fetch avatars
+      const avatarsRes = await fetch(API_BASE + '/content/avatars');
+      const avatarsData = await avatarsRes.json();
+      updateAvatarRow(avatarsData.items);
+      
+    } catch(e){
+      console.log('Backend not connected, using defaults');
+    }
+  }
+  
+  function updatePricingDisplay(data){
+    // Dynamic pricing from backend
+    // This would update the pricing tiers shown on landing
+  }
+  
+  function updateAdCarousel(ads){
+    // Update the 10-ad carousel with real ad URLs from backend
+  }
+  
+  function updateFeatureClips(clips){
+    // Update the flying clips animation with real video URLs
+  }
+  
+  function updateAvatarRow(avatars){
+    // Update the 5-avatar social proof row
+  }
+  
+  loadContentFromBackend();
+</script>
+</html>
