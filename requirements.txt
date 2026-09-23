@@ -15,7 +15,7 @@ alembic
 redis
 
 # Authentication & Security
-supabase==
+supabase
 pyJWT
 passlib[bcrypt]
 bcrypt
