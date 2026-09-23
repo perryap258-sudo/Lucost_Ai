@@ -10,7 +10,7 @@ import uuid
 import json
 import requests
 
-from models_db import (
+from .models_db import (
     User, Job, Subscription, AdminUser, APISettings, GPUSettings,
     PricingTier, Whitelist, FraudLog, ContentUpload, JobStatus,
     get_db
