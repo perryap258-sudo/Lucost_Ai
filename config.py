@@ -78,7 +78,7 @@ TIERS = {
         "price_usd": 35.00,
         "strike_price_usd": 50.00,
         "generations_per_month": 15,
-        "max_duration_seconds": 900,  # 15 minutes
+        "max_duration_seconds": 780,  # 13 minutes
         "max_duration_label": "15 min"
     },
     "tier_3": {
@@ -86,7 +86,7 @@ TIERS = {
         "price_usd": 75.00,
         "strike_price_usd": 95.00,
         "generations_per_month": 10,
-        "max_duration_seconds": 1800,  # 30 minutes
+        "max_duration_seconds": 1620,  # 27 minutes
         "max_duration_label": "30 min"
     }
 }
