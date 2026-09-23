@@ -15,7 +15,7 @@ from .models_db import (
     PricingTier, Whitelist, FraudLog, ContentUpload, JobStatus,
     get_db
 )
-from config import settings, TIERS, STYLES
+from .config import settings, TIERS, STYLES
 
 # ==========================================
 # AUTH ROUTER - User & Admin Authentication
