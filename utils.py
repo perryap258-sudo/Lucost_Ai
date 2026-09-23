@@ -3,7 +3,7 @@ Utility functions for encryption, validation, and common operations
 """
 
 from cryptography.fernet import Fernet
-from config import settings
+from .config import settings
 import base64
 import hashlib
 import re
