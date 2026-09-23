@@ -9,7 +9,7 @@ from datetime import datetime
 import enum
 
 # ---- Database setup ----
-from config import settings
+from .config import settings
 
 engine = create_engine(
     settings.DATABASE_URL,
