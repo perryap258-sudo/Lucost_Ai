@@ -47,10 +47,10 @@ app.add_middleware(
 
 # ---- Include routers ----
 app.include_router(auth_router, prefix="/api/auth", tags=["auth"])
-app.include_router(generate.router, prefix="/api/generate", tags=["generate"])
-app.include_router(gallery.router, prefix="/api/gallery", tags=["gallery"])
+app.include_router(generate_router, prefix="/api/generate", tags=["generate"])
+app.include_router(gallery_router, prefix="/api/gallery", tags=["gallery"])
 app.include_router(admin_router.router, prefix="/api/admin", tags=["admin"])
-app.include_router(webhooks.router, prefix="/api/webhooks", tags=["webhooks"])
+app.include_router(webhooks_router, prefix="/api/webhooks", tags=["webhooks"])
 
 # ---- Health check ----
 @app.get("/health")
