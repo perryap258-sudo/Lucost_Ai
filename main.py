@@ -74,7 +74,6 @@ async def serve_dashboard():
 @app.get("/admin", response_class=FileResponse)
 async def serve_admin():
     return FileResponse("admin.html")
-    }
 
 if __name__ == "__main__":
     import uvicorn
