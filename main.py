@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Import routers
-from routers import auth, generate, gallery, admin_router, webhooks
+from routers import auth_router, generate_router, gallery_router, admin_router, webhooks_router
 
 # ---- Lifespan manager ----
 @asynccontextmanager
