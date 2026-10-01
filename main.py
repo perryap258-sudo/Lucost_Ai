@@ -4,6 +4,7 @@ Complete production-ready video generation platform backend
 """
 
 from fastapi import FastAPI, HTTPException, Depends, status
+from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
@@ -61,13 +62,18 @@ async def health_check():
         "version": "1.0.0"
     }
 
-# ---- Root endpoint (serves frontend) ----
-@app.get("/")
-async def root():
-    return {
-        "message": "LUCOST AI Backend",
-        "docs": "/docs",
-        "frontend": "/landing"
+# ---- Serve Frontend Pages ----
+@app.get("/", response_class=FileResponse)
+async def serve_landing():
+    return FileResponse("landing.html")
+
+@app.get("/dashboard", response_class=FileResponse)
+async def serve_dashboard():
+    return FileResponse("dashboard.html")
+
+@app.get("/admin", response_class=FileResponse)
+async def serve_admin():
+    return FileResponse("admin.html")
     }
 
 if __name__ == "__main__":
