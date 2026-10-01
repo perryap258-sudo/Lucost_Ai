@@ -49,7 +49,7 @@ app.add_middleware(
 app.include_router(auth_router, prefix="/api/auth", tags=["auth"])
 app.include_router(generate_router, prefix="/api/generate", tags=["generate"])
 app.include_router(gallery_router, prefix="/api/gallery", tags=["gallery"])
-app.include_router(admin_router.router, prefix="/api/admin", tags=["admin"])
+app.include_router(admin_router, prefix="/api/admin", tags=["admin"])
 app.include_router(webhooks_router, prefix="/api/webhooks", tags=["webhooks"])
 
 # ---- Health check ----
