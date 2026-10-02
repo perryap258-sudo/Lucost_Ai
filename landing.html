@@ -9,16 +9,17 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Caveat:wght@600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
   :root {
-    --void: #0E0C0B; 
-    --panel: #1A1714; 
-    --card: #211D18; 
-    --card-hi: #2A251F;
-    --line: #3B342A; 
-    --text: #EDE7DA; 
-    --muted: #9B9284;
-    --accent: #8A6440; 
-    --accent-hi: #C99A5E; 
-    --accent-dim: #4E3A24;
+    /* LIGHT CREAM PALETTE */
+    --void: #FBF8F3;         /* Warm cream primary background */
+    --panel: #FFFFFF;        /* Crisp white container cards */
+    --card: #F3EDE2;         /* Soft cream card background */
+    --card-hi: #EFE6D8;      /* Slightly darker cream accent */
+    --line: #E2D7C5;         /* Subtle warm border line */
+    --text: #1C1917;         /* Deep charcoal text for high contrast */
+    --muted: #6B635B;        /* Muted brown-gray secondary text */
+    --accent: #B07D46;       /* Warm bronze accent */
+    --accent-hi: #8A5A2B;    /* Rich brown highlight */
+    --accent-dim: #D1A876;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -48,21 +49,24 @@
     padding: clamp(20px, 4vw, 50px) 24px 50px;
   }
 
-  /* ---------- Rotating background video reels ---------- */
+  /* ---------- Light Background Video Reels ---------- */
   .bg-reel {
     position: absolute; inset: 0; opacity: 0; z-index: 0;
     animation: reelCycle 35s infinite;
     pointer-events: none;
   }
+  
+  /* Adjusted translucent overlay to let video movement show clearly */
   .bg-reel::after {
     content: ''; position: absolute; inset: 0;
-    background: linear-gradient(180deg, rgba(14,12,11,0.42) 0%, rgba(14,12,11,0.5) 45%, rgba(14,12,11,0.58) 100%);
+    background: linear-gradient(180deg, rgba(251,248,243,0.3) 0%, rgba(251,248,243,0.45) 50%, rgba(251,248,243,0.65) 100%);
   }
-  .bg-reel.r1 { background: radial-gradient(circle at 30% 20%, #3a2a1c, #14100c 70%); animation-delay: 0s; }
-  .bg-reel.r2 { background: radial-gradient(circle at 70% 30%, #2c2418, #120f0c 70%); animation-delay: 7s; }
-  .bg-reel.r3 { background: radial-gradient(circle at 50% 15%, #241d16, #100d0a 70%); animation-delay: 14s; }
-  .bg-reel.r4 { background: radial-gradient(circle at 20% 35%, #33251a, #110e0b 70%); animation-delay: 21s; }
-  .bg-reel.r5 { background: radial-gradient(circle at 80% 20%, #2a2015, #100d0a 70%); animation-delay: 28s; }
+  
+  .bg-reel.r1 { background: radial-gradient(circle at 30% 20%, #E8D7C3, #FAF5ED 70%); animation-delay: 0s; }
+  .bg-reel.r2 { background: radial-gradient(circle at 70% 30%, #E2CFB9, #F8F3EA 70%); animation-delay: 7s; }
+  .bg-reel.r3 { background: radial-gradient(circle at 50% 15%, #EADBCA, #FAF6EE 70%); animation-delay: 14s; }
+  .bg-reel.r4 { background: radial-gradient(circle at 20% 35%, #E5D5C1, #F9F4EB 70%); animation-delay: 21s; }
+  .bg-reel.r5 { background: radial-gradient(circle at 80% 20%, #DFCCB3, #F8F3E9 70%); animation-delay: 28s; }
 
   @keyframes reelCycle {
     0% { opacity: 1; }
@@ -74,7 +78,7 @@
 
   .reel-tag {
     position: absolute; top: 10px; right: 10px; font-size: 8px; color: var(--muted);
-    opacity: 0.35; letter-spacing: 0.5px; z-index: 1; pointer-events: none;
+    opacity: 0.5; letter-spacing: 0.5px; z-index: 1; pointer-events: none;
   }
 
   .content { 
@@ -93,17 +97,18 @@
     background: var(--panel);
     border: 1.5px dashed var(--line); display: flex; align-items: center; justify-content: center;
     overflow: hidden; flex-shrink: 0; flex-direction: column; gap: 4px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
   }
   .logo-slot .plus { font-size: 22px; color: var(--accent-hi); line-height: 1; }
   .logo-slot .hint { font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; text-align: center; }
   .logo-slot img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
 
-  .logo { font-family: 'Bebas Neue', sans-serif; font-size: clamp(34px, 5vw, 48px); letter-spacing: 2px; font-weight: 900; line-height: 1; }
+  .logo { font-family: 'Bebas Neue', sans-serif; font-size: clamp(34px, 5vw, 48px); letter-spacing: 2px; font-weight: 900; line-height: 1; color: var(--text); }
   .logo span { color: var(--accent-hi); }
 
   .tagline { font-family: 'Caveat', cursive; font-size: clamp(22px, 3.5vw, 28px); color: var(--accent-hi); text-align: center; margin-bottom: 8px; transform: rotate(-1.5deg); }
   
-  /* TYPOGRAPHY & GRADIENTS */
+  /* TYPOGRAPHY & GRADIENTS FOR LIGHT BG */
   .headline { 
     font-weight: 800; 
     font-size: clamp(32px, 5.5vw, 56px); 
@@ -111,16 +116,16 @@
     text-align: center; 
     letter-spacing: -0.5px; 
     margin-bottom: 18px; 
-    text-shadow: 0 4px 24px rgba(0,0,0,0.6); 
+    color: var(--text);
     max-width: 950px;
   }
 
   .headline .grad { 
-    background: linear-gradient(180deg, #FFFFFF 0%, #E8C58A 60%, #C99A5E 100%) !important; 
+    background: linear-gradient(180deg, #2D241E 0%, #8A5A2B 60%, #B07D46 100%) !important; 
     -webkit-background-clip: text !important; 
     background-clip: text !important; 
     -webkit-text-fill-color: transparent !important; 
-    color: #E8C58A;
+    color: #8A5A2B;
   }
 
   .sub { 
@@ -132,7 +137,7 @@
     margin-bottom: 28px; 
   }
 
-  /* CTA BUTTONS */
+  /* SINGLE SIGN IN CTA BUTTON */
   .btn-group {
     display: flex;
     flex-direction: column;
@@ -149,52 +154,39 @@
     padding: 16px; 
     border-radius: 14px; 
     border: none; 
-    background: linear-gradient(135deg, #C99A5E 0%, #8A6440 100%) !important; 
-    color: #191410 !important; 
+    background: linear-gradient(135deg, #2D241E 0%, #110E0C 100%) !important; 
+    color: #FBF8F3 !important; 
     font-weight: 800; 
     font-size: 16px; 
     cursor: pointer; 
-    box-shadow: 0 14px 34px rgba(0,0,0,0.5); 
+    box-shadow: 0 10px 25px rgba(45,36,30,0.25); 
     transition: transform 0.2s ease, filter 0.2s ease;
   }
 
-  .cta-btn-alt {
-    width: 100%;
-    padding: 14px;
-    border-radius: 14px;
-    border: 1px solid var(--line);
-    background: var(--panel) !important;
-    color: var(--text) !important;
-    font-weight: 600;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background 0.2s ease;
-  }
-
-  .cta-btn:hover, .cta-btn-alt:hover {
+  .cta-btn:hover {
     transform: translateY(-2px);
-    filter: brightness(1.1);
+    filter: brightness(1.15);
   }
 
-  .proof-row { display: flex; align-items: center; gap: 12px; background: rgba(26,23,20,0.75); backdrop-filter: blur(6px); border: 1px solid var(--line); border-radius: 40px; padding: 9px 18px 9px 9px; margin-bottom: 26px; }
+  .proof-row { display: flex; align-items: center; gap: 12px; background: rgba(255,255,255,0.85); backdrop-filter: blur(8px); border: 1px solid var(--line); border-radius: 40px; padding: 9px 18px 9px 9px; margin-bottom: 26px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
   .avatar-stack { display: flex; }
-  .avatar-stack .av { width: 32px; height: 32px; border-radius: 50%; border: 2px dashed var(--line); background: var(--panel); margin-left: -10px; display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--muted); opacity: 0.6; overflow: hidden; }
+  .avatar-stack .av { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--panel); background: var(--card); margin-left: -10px; display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--muted); opacity: 0.8; overflow: hidden; }
   .avatar-stack .av:first-child { margin-left: 0; }
-  .stars { color: var(--accent-hi); font-size: 12px; letter-spacing: 1px; }
-  .proof-note { color: var(--muted); font-size: 11.5px; }
+  .stars { color: #D97706; font-size: 12px; letter-spacing: 1px; }
+  .proof-note { color: var(--muted); font-size: 11.5px; font-weight: 500; }
 
   /* FEATURE CLIPS STAGE */
   .clip-stage { position: relative; width: 100%; max-width: 480px; height: 340px; margin-bottom: 14px; }
   .clip {
     position: absolute; width: 168px; height: 236px; border-radius: 16px;
-    background: linear-gradient(155deg, var(--card-hi), var(--card));
-    border: 1px solid var(--line); box-shadow: 0 22px 48px rgba(0,0,0,0.55);
+    background: linear-gradient(155deg, #FFFFFF, var(--card));
+    border: 1px solid var(--line); box-shadow: 0 16px 36px rgba(0,0,0,0.08);
     display: flex; flex-direction: column; justify-content: flex-end; padding: 12px;
     opacity: 0; animation-fill-mode: forwards; animation-iteration-count: 1;
     left: 50%; top: 50%; margin-left: -84px; margin-top: -118px;
   }
-  .clip .tag { font-size: 9.5px; font-weight: 700; color: var(--accent-hi); text-transform: uppercase; letter-spacing: 0.4px; background: rgba(0,0,0,0.5); padding: 3px 7px; border-radius: 6px; align-self: flex-start; }
-  .clip .play { position: absolute; top: 10px; right: 10px; width: 20px; height: 20px; border-radius: 50%; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; color: var(--accent-hi); font-size: 9px; }
+  .clip .tag { font-size: 9.5px; font-weight: 700; color: #FFFFFF; text-transform: uppercase; letter-spacing: 0.4px; background: rgba(28,25,23,0.7); padding: 3px 7px; border-radius: 6px; align-self: flex-start; }
+  .clip .play { position: absolute; top: 10px; right: 10px; width: 20px; height: 20px; border-radius: 50%; background: rgba(255,255,255,0.8); display: flex; align-items: center; justify-content: center; color: var(--accent-hi); font-size: 9px; }
 
   .clip.k1 { animation: cycleCenter 15s linear infinite; animation-delay: 0s; z-index: 5; }
   .clip.k2 { animation: cycleTL     15s linear infinite; animation-delay: 3s; z-index: 5; }
@@ -239,20 +231,20 @@
   }
 
   .trial-badge {
-    font-size: 12px; text-align: center; color: var(--text); background: rgba(201,154,94,0.1);
-    border: 1px solid rgba(201,154,94,0.35); border-radius: 30px; padding: 9px 16px;
+    font-size: 12px; text-align: center; color: var(--text); background: rgba(138,90,43,0.08);
+    border: 1px solid rgba(138,90,43,0.25); border-radius: 30px; padding: 9px 16px;
     margin-bottom: 24px; max-width: 340px; line-height: 1.4;
   }
   .trial-badge b { color: var(--accent-hi); }
 
   .scroll-hint { font-size: 10px; color: var(--muted); text-align: center; letter-spacing: 1px; text-transform: uppercase; opacity: 0.7; }
 
-  /* EMAIL MODAL STYLES */
+  /* AUTH MODAL STYLES */
   .modal-overlay {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(14, 12, 11, 0.85);
+    background: rgba(28, 25, 23, 0.45);
     backdrop-filter: blur(8px);
     z-index: 100;
     align-items: center;
@@ -260,31 +252,18 @@
     padding: 20px;
   }
   .modal-card {
-    background: var(--panel);
+    background: #FFFFFF;
     border: 1px solid var(--line);
     border-radius: 20px;
     padding: 28px;
     width: 100%;
-    max-width: 380px;
+    max-width: 400px;
     display: flex;
     flex-direction: column;
     gap: 16px;
     position: relative;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.12);
   }
-  .modal-title { font-size: 20px; font-weight: 700; color: var(--text); text-align: center; }
-  .modal-input {
-    width: 100%;
-    padding: 12px 16px;
-    background: var(--card);
-    border: 1px solid var(--line);
-    border-radius: 10px;
-    color: var(--text);
-    font-family: inherit;
-    font-size: 14px;
-    outline: none;
-  }
-  .modal-input:focus { border-color: var(--accent-hi); }
   .modal-close {
     position: absolute;
     top: 16px;
@@ -295,12 +274,103 @@
     font-size: 18px;
     cursor: pointer;
   }
-  .auth-mode-toggle {
-    font-size: 12px;
-    color: var(--accent-hi);
+
+  /* DUAL TAB SWITCHER */
+  .auth-tabs {
+    display: flex;
+    background: var(--card);
+    border-radius: 10px;
+    padding: 4px;
+    border: 1px solid var(--line);
+    margin-top: 10px;
+  }
+  .auth-tab {
+    flex: 1;
+    padding: 8px;
     text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    border-radius: 8px;
     cursor: pointer;
-    margin-top: 4px;
+    transition: all 0.2s ease;
+  }
+  .auth-tab.active {
+    background: #FFFFFF;
+    color: var(--text);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  }
+
+  .social-btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: #FFFFFF;
+    color: var(--text);
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: background 0.2s ease;
+  }
+  .social-btn:hover { background: var(--card); }
+
+  .divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: var(--muted);
+    font-size: 11px;
+    margin: 4px 0;
+  }
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid var(--line);
+  }
+  .divider span { padding: 0 10px; }
+
+  .input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+
+  .modal-input {
+    width: 100%;
+    padding: 12px 40px 12px 14px;
+    background: var(--void);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 14px;
+    outline: none;
+  }
+  .modal-input:focus { border-color: var(--accent); }
+
+  .toggle-eye-btn {
+    position: absolute;
+    right: 12px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 0;
+  }
+
+  .error-msg {
+    color: #DC2626;
+    font-size: 12px;
+    display: none;
+    line-height: 1.3;
+    text-align: left;
   }
 </style>
 </head>
@@ -331,10 +401,9 @@
       Drop in your script, bring your characters to life with a face and a voice, then pick your vibe — Anime, Drama, or Cinematic 3D. We'll handle the rest: the scenes, the sound, the whole thing, scene by scene, just for you.
     </div>
 
-    <!-- BUTTON GROUP -->
+    <!-- SINGLE SIGN IN BUTTON -->
     <div class="btn-group">
-      <button class="cta-btn" id="ctaAuthBtn" type="button">SIGN IN</button>
-      <button class="cta-btn-alt" id="openEmailModalBtn" type="button">Continue with Email</button>
+      <button class="cta-btn" id="openAuthModalBtn" type="button">Sign In</button>
     </div>
 
     <div class="proof-row">
@@ -359,15 +428,44 @@
   </div>
 </div>
 
-<!-- EMAIL MODAL -->
-<div class="modal-overlay" id="emailModal">
+<!-- AUTH MODAL -->
+<div class="modal-overlay" id="authModal">
   <div class="modal-card">
-    <button class="modal-close" id="closeEmailModal">&times;</button>
-    <div class="modal-title" id="modalTitle">Sign In / Register</div>
-    <input type="email" id="emailInput" class="modal-input" placeholder="Your Email Address" required>
-    <input type="password" id="passwordInput" class="modal-input" placeholder="Your Password" required>
-    <button class="cta-btn" id="emailSubmitBtn">Continue with Email</button>
-    <div class="auth-mode-toggle" id="toggleAuthMode">New user? Click to Sign Up instead</div>
+    <button class="modal-close" id="closeAuthModal">&times;</button>
+    
+    <div class="auth-tabs">
+      <div class="auth-tab active" id="tabSignIn">Sign In</div>
+      <div class="auth-tab" id="tabSignUp">Create Account</div>
+    </div>
+
+    <button class="social-btn" id="googleAuthBtn" type="button">
+      <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.3 9 5 12 5z"/><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"/><path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3s.2-1.6.4-2.3L1.9 7.3C.7 9.7 0 12.3 0 15s.7 5.3 1.9 7.7l3.7-2.9z"/><path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.3-6.4-5.2L1.9 16C3.7 19.7 7.5 23 12 23z"/></svg>
+      Continue with Google
+    </button>
+
+    <div class="divider"><span>OR</span></div>
+
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      <input type="email" id="emailInput" class="modal-input" placeholder="Your Email Address" required>
+      
+      <div class="input-wrapper">
+        <input type="password" id="passwordInput" class="modal-input" placeholder="Your Password" required>
+        <button type="button" class="toggle-eye-btn" id="togglePasswordBtn">
+          <svg id="eyeOpen" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6B635B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+          <svg id="eyeClosed" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6B635B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+            <line x1="1" y1="1" x2="23" y2="23"></line>
+          </svg>
+        </button>
+      </div>
+
+      <small class="error-msg" id="authErrorMsg"></small>
+
+      <button class="cta-btn" id="emailSubmitBtn" style="margin-top: 6px;">Sign In</button>
+    </div>
   </div>
 </div>
 
@@ -376,7 +474,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 
 <script>
-  // 1. Live LUCOST AI Firebase Web SDK Configuration
+  // 1. Firebase Web SDK Configuration
   const firebaseConfig = {
     apiKey: "AIzaSyDwIAhR8bShkplR0Gkgihx2bWl0e6OloXU",
     authDomain: "lucost-ai.firebaseapp.com",
@@ -386,89 +484,46 @@
     appId: "1:925474631626:web:39ccdb149ba6a325bf2933"
   };
 
-  // Initialize Firebase
   if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
   }
   const auth = firebase.auth();
 
-  // 2. Google Sign-In Listener
-  document.getElementById('ctaAuthBtn').addEventListener('click', async () => {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    try {
-      const result = await auth.signInWithPopup(provider);
-      console.log("Authenticated user:", result.user.displayName);
-      window.location.href = '/dashboard';
-    } catch (error) {
-      console.error("Firebase Auth Error:", error.message);
-      alert("Sign in failed: " + error.message);
-    }
-  });
-
-  // 3. Email Authentication Logic & Modal
-  const modal = document.getElementById('emailModal');
-  const openModalBtn = document.getElementById('openEmailModalBtn');
-  const closeModalBtn = document.getElementById('closeEmailModal');
+  // 2. Modal & Tab Switching Elements
+  const modal = document.getElementById('authModal');
+  const openAuthModalBtn = document.getElementById('openAuthModalBtn');
+  const closeAuthModal = document.getElementById('closeAuthModal');
+  const tabSignIn = document.getElementById('tabSignIn');
+  const tabSignUp = document.getElementById('tabSignUp');
   const emailSubmitBtn = document.getElementById('emailSubmitBtn');
-  const toggleAuthMode = document.getElementById('toggleAuthMode');
+  const authErrorMsg = document.getElementById('authErrorMsg');
+
   let isSignUpMode = false;
 
-  openModalBtn.addEventListener('click', () => modal.style.display = 'flex');
-  closeModalBtn.addEventListener('click', () => modal.style.display = 'none');
-
-  toggleAuthMode.addEventListener('click', () => {
-    isSignUpMode = !isSignUpMode;
-    document.getElementById('modalTitle').innerText = isSignUpMode ? "Create Account" : "Sign In";
-    toggleAuthMode.innerText = isSignUpMode ? "Already have an account? Sign In" : "New user? Click to Sign Up instead";
+  openAuthModalBtn.addEventListener('click', () => {
+    modal.style.display = 'flex';
+    authErrorMsg.style.display = 'none';
   });
 
-  emailSubmitBtn.addEventListener('click', async () => {
-    const email = document.getElementById('emailInput').value.trim();
-    const password = document.getElementById('passwordInput').value.trim();
+  closeAuthModal.addEventListener('click', () => modal.style.display = 'none');
 
-    if (!email || !password) {
-      alert("Please enter both email and password.");
-      return;
-    }
-
-    try {
-      if (isSignUpMode) {
-        await auth.createUserWithEmailAndPassword(email, password);
-      } else {
-        await auth.signInWithEmailAndPassword(email, password);
-      }
-      window.location.href = '/dashboard';
-    } catch (error) {
-      console.error("Email Auth Error:", error.message);
-      alert("Authentication error: " + error.message);
-    }
+  tabSignIn.addEventListener('click', () => {
+    isSignUpMode = false;
+    tabSignIn.classList.add('active');
+    tabSignUp.classList.remove('active');
+    emailSubmitBtn.innerText = "Sign In";
+    authErrorMsg.style.display = 'none';
   });
 
-  // 4. Automatically redirect if user is already authenticated
-  auth.onAuthStateChanged((user) => {
-    if (user) {
-      window.location.href = '/dashboard';
-    }
+  tabSignUp.addEventListener('click', () => {
+    isSignUpMode = true;
+    tabSignUp.classList.add('active');
+    tabSignIn.classList.remove('active');
+    emailSubmitBtn.innerText = "Create Account";
+    authErrorMsg.style.display = 'none';
   });
 
-  // 5. Fetch dynamic content from backend on load
-  const API_BASE = window.location.origin + '/api';
-  
-  async function loadContentFromBackend(){
-    try{
-      const logoRes = await fetch(API_BASE + '/content/logo');
-      const logoData = await logoRes.json();
-      if(logoData.items && logoData.items[0]){
-        document.getElementById('landingLogoSlot').innerHTML = `
-          <img src="${logoData.items[0].url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
-        `;
-      }
-    } catch(e){
-      console.log('Backend standard defaults active');
-    }
-  }
-  
-  loadContentFromBackend();
-</script>
-</body>
-</html>
+  // 3. Eye Toggle Password Visibility
+  const togglePasswordBtn = document.getElementById('togglePasswordBtn');
+  const passwordInput = document.getElementById('passwordInput');
+  const eyeOpen = document.getE
