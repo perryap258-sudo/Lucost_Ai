@@ -5,392 +5,165 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LUCOST AI — Landing v2</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Caveat:wght@600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --void: #FBF8F3;         
-    --panel: #FFFFFF;        
-    --card: #F3EDE2;         
-    --card-hi: #EFE6D8;      
-    --line: #E2D7C5;         
-    --text: #1C1917;         
-    --muted: #6B635B;        
-    --accent: #B07D46;       
-    --accent-hi: #8A5A2B;    
-    --accent-dim: #D1A876;
+  :root{
+    /* Cream Theme Palette */
+    --void:#FAF6EE; 
+    --panel:rgba(255, 252, 245, 0.85); 
+    --card:rgba(247, 241, 230, 0.95); 
+    --card-hi:#FFFDF8;
+    --line:#E2D7C3; 
+    --text:#2C2218; 
+    --muted:#7A6E5D;
+    --accent:#8A6440; 
+    --accent-hi:#B57E3E; 
+    --accent-dim:#D1B896;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{ background:var(--void); font-family:'Inter',sans-serif; color:var(--text); min-height:100vh; display:flex; justify-content:center; }
+
+  .screen{
+    width:100%; max-width:420px; min-height:100vh; position:relative; overflow:hidden;
+    display:flex; flex-direction:column; align-items:center; padding:26px 26px 50px;
   }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body { 
-    background-color: var(--void) !important; 
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important; 
-    color: var(--text); 
-    min-height: 100vh; 
-    display: flex; 
-    justify-content: center; 
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    -webkit-text-size-adjust: 100%;
-  }
-
-  .screen {
-    width: 100%; 
-    max-width: 1200px; 
-    min-height: 100vh; 
-    position: relative; 
-    overflow-x: hidden;
-    display: flex; 
-    flex-direction: column; 
-    align-items: center; 
-    padding: clamp(20px, 4vw, 50px) 24px 50px;
-  }
-
-  .bg-reel {
-    position: absolute; inset: 0; opacity: 0; z-index: 0;
+  /* ---------- Rotating background video reels ---------- */
+  .bg-reel{
+    position:absolute; inset:0; opacity:0; z-index:0;
     animation: reelCycle 35s infinite;
-    pointer-events: none;
   }
+  .bg-reel::after{
+    content:''; position:absolute; inset:0;
+    /* Soft cream gradient overlay to keep background images visible while maintaining readability */
+    background:linear-gradient(180deg, rgba(250,246,238,0.55) 0%, rgba(250,246,238,0.65) 45%, rgba(250,246,238,0.75) 100%);
+  }
+
+  .bg-reel.r1{ background:radial-gradient(circle at 30% 20%, #e6d5c1, #c4a98b 70%); animation-delay:0s; }
+  .bg-reel.r2{ background:radial-gradient(circle at 70% 30%, #d8c2a7, #b09172 70%); animation-delay:7s; }
+  .bg-reel.r3{ background:radial-gradient(circle at 50% 15%, #ebdcc8, #be9e7d 70%); animation-delay:14s; }
+  .bg-reel.r4{ background:radial-gradient(circle at 20% 35%, #dec9b0, #b59574 70%); animation-delay:21s; }
+  .bg-reel.r5{ background:radial-gradient(circle at 80% 20%, #e3ceb6, #ba9b78 70%); animation-delay:28s; }
   
-  .bg-reel::after {
-    content: ''; position: absolute; inset: 0;
-    background: linear-gradient(180deg, rgba(251,248,243,0.3) 0%, rgba(251,248,243,0.45) 50%, rgba(251,248,243,0.65) 100%);
+  @keyframes reelCycle{
+    0%{ opacity:1; }
+    20%{ opacity:1; }
+    34.3%{ opacity:0; }
+    85.7%{ opacity:0; }
+    100%{ opacity:1; }
   }
-  
-  .bg-reel.r1 { background: radial-gradient(circle at 30% 20%, #E8D7C3, #FAF5ED 70%); animation-delay: 0s; }
-  .bg-reel.r2 { background: radial-gradient(circle at 70% 30%, #E2CFB9, #F8F3EA 70%); animation-delay: 7s; }
-  .bg-reel.r3 { background: radial-gradient(circle at 50% 15%, #EADBCA, #FAF6EE 70%); animation-delay: 14s; }
-  .bg-reel.r4 { background: radial-gradient(circle at 20% 35%, #E5D5C1, #F9F4EB 70%); animation-delay: 21s; }
-  .bg-reel.r5 { background: radial-gradient(circle at 80% 20%, #DFCCB3, #F8F3E9 70%); animation-delay: 28s; }
-
-  @keyframes reelCycle {
-    0% { opacity: 1; }
-    20% { opacity: 1; }
-    34.3% { opacity: 0; }
-    85.7% { opacity: 0; }
-    100% { opacity: 1; }
+  .reel-tag{
+    position:absolute; top:10px; right:10px; font-size:8px; color:var(--muted);
+    opacity:0.6; letter-spacing:0.5px; z-index:1;
   }
 
-  .content { 
-    position: relative; 
-    z-index: 2; 
-    display: flex; 
-    flex-direction: column; 
-    align-items: center; 
-    width: 100%; 
-    max-width: 900px;
-  }
+  .content{ position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; width:100%; }
 
-  .topbar { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 36px; }
-  .logo-slot {
-    width: 96px; height: 96px; border-radius: 50%;
-    background: var(--panel);
-    border: 1.5px dashed var(--line); display: flex; align-items: center; justify-content: center;
-    overflow: hidden; flex-shrink: 0; flex-direction: column; gap: 4px;
+  .topbar{ display:flex; flex-direction:column; align-items:center; gap:10px; margin-bottom:46px; }
+  .logo-slot{
+    width:96px; height:96px; border-radius:50%;
+    background:var(--panel);
+    border:1.5px dashed var(--line); display:flex; align-items:center; justify-content:center;
+    overflow:hidden; flex-shrink:0; flex-direction:column; gap:4px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.05);
   }
-  .logo-slot .plus { font-size: 22px; color: var(--accent-hi); line-height: 1; }
-  .logo-slot .hint { font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; text-align: center; }
+  .logo-slot .plus{ font-size:22px; color:var(--accent-hi); line-height:1; }
+  .logo-slot .hint{ font-size:8px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; text-align:center; }
+  .logo-slot img{
+    width:100%; height:100%; object-fit:cover; border-radius:50%;
+  }
+  .logo{ font-family:'Bebas Neue',sans-serif; font-size:34px; letter-spacing:2px; font-weight:900; line-height:1; }
+  .logo span{ color:var(--accent-hi); }
 
-  .logo { font-family: 'Bebas Neue', sans-serif; font-size: clamp(34px, 5vw, 48px); letter-spacing: 2px; font-weight: 900; line-height: 1; color: var(--text); }
-  .logo span { color: var(--accent-hi); }
+  .tagline{ font-family:'Caveat',cursive; font-size:22px; color:var(--accent-hi); text-align:center; margin-bottom:6px; transform:rotate(-1.5deg); }
+  .headline{ font-weight:800; font-size:37px; line-height:1.12; text-align:center; letter-spacing:-0.5px; margin-bottom:18px; text-shadow:0 2px 10px rgba(255,255,255,0.8); }
+  .headline .grad{ background:linear-gradient(90deg,var(--accent-hi),#8A5214); -webkit-background-clip:text; background-clip:text; color:transparent; }
 
-  .tagline { 
-    font-family: 'Caveat', cursive; 
-    font-size: clamp(24px, 4vw, 30px); 
-    color: var(--accent-hi); 
-    text-align: center; 
-    margin-bottom: 12px; 
-  }
-  
-  .headline { 
-    font-weight: 800; 
-    font-size: clamp(32px, 5.5vw, 56px); 
-    line-height: 1.12; 
-    text-align: center; 
-    letter-spacing: -0.5px; 
-    margin-bottom: 18px; 
-    color: var(--text);
-    max-width: 950px;
-  }
+  .sub{ font-size:14.5px; line-height:1.6; color:var(--muted); text-align:center; max-width:340px; margin-bottom:28px; }
 
-  .headline .grad { 
-    background: linear-gradient(180deg, #2D241E 0%, #8A5A2B 60%, #B07D46 100%) !important; 
-    -webkit-background-clip: text !important; 
-    background-clip: text !important; 
-    -webkit-text-fill-color: transparent !important; 
-    color: #8A5A2B;
-  }
+  .cta-btn{ width:100%; max-width:300px; padding:17px; border-radius:14px; border:none; background:linear-gradient(135deg,var(--accent-hi),var(--accent)); color:#FFFDF8; font-weight:800; font-size:15.5px; cursor:pointer; box-shadow:0 10px 25px rgba(138, 100, 64, 0.3); margin-bottom:10px; }
+  .cta-sub{ font-size:11.5px; color:var(--muted); font-style:italic; margin-bottom:30px; }
 
-  .sub { 
-    font-size: clamp(14.5px, 2vw, 17px); 
-    line-height: 1.6; 
-    color: var(--muted); 
-    text-align: center; 
-    max-width: 620px; 
-    margin-bottom: 28px; 
-  }
+  .proof-row{ display:flex; align-items:center; gap:12px; background:rgba(255, 253, 248, 0.85); backdrop-filter:blur(6px); border:1px solid var(--line); border-radius:40px; padding:9px 18px 9px 9px; margin-bottom:8px; box-shadow:0 4px 15px rgba(0,0,0,0.04); }
+  .avatar-stack{ display:flex; }
+  .avatar-stack .av{ width:32px; height:32px; border-radius:50%; border:2px dashed var(--line); background:var(--panel); margin-left:-10px; display:flex; align-items:center; justify-content:center; font-size:14px; color:var(--muted); opacity:0.8; overflow:hidden; }
+  .avatar-stack .av:first-child{ margin-left:0; }
+  .stars{ color:var(--accent-hi); font-size:12px; letter-spacing:1px; }
+  .proof-note{ color:var(--text); font-size:11.5px; font-weight: 500; }
+  .placeholder-tag{ font-size:8.5px; color:var(--muted); text-align:center; margin-bottom:36px; text-transform:uppercase; letter-spacing:0.5px; opacity:0.8; }
 
-  .btn-group {
-    position: relative;
-    z-index: 20;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-    width: 100%;
-    max-width: 320px;
-    margin-bottom: 28px;
+  /* ---------- Larger dramatic flying-in feature clips ---------- */
+  .clip-stage{ position:relative; width:100%; max-width:380px; height:420px; margin-bottom:14px; }
+  .clip{
+    position:absolute; width:220px; height:310px; border-radius:20px;
+    background:linear-gradient(155deg,var(--card-hi),var(--card));
+    border:1px solid var(--line); box-shadow:0 20px 40px rgba(70, 50, 30, 0.15);
+    display:flex; flex-direction:column; justify-content:flex-end; padding:16px;
+    opacity:0; animation-fill-mode:forwards; animation-iteration-count:1;
   }
+  .clip .tag{ font-size:11px; font-weight:700; color:#FFFDF8; text-transform:uppercase; letter-spacing:0.4px; background:rgba(44, 34, 24, 0.65); backdrop-filter:blur(4px); padding:5px 10px; border-radius:8px; align-self:flex-start; }
+  .clip .play{ position:absolute; top:14px; right:14px; width:28px; height:28px; border-radius:50%; background:rgba(44, 34, 24, 0.5); backdrop-filter:blur(4px); display:flex; align-items:center; justify-content:center; color:#FFFDF8; font-size:11px; }
 
-  .cta-btn { 
-    width: 100%; 
-    padding: 16px; 
-    border-radius: 14px; 
-    border: none; 
-    background: linear-gradient(135deg, #2D241E 0%, #110E0C 100%) !important; 
-    color: #FBF8F3 !important; 
-    font-weight: 800; 
-    font-size: 16px; 
-    cursor: pointer; 
-    box-shadow: 0 10px 25px rgba(45,36,30,0.25); 
-    transition: transform 0.2s ease, filter 0.2s ease;
-  }
+  /* Continuous relay adjustments for scaled-up sizes */
+  .clip{ left:50%; top:50%; margin-left:-110px; margin-top:-155px; }
+  .clip.k1{ animation:cycleCenter 15s linear infinite; animation-delay:0s; z-index:5; }
+  .clip.k2{ animation:cycleTL     15s linear infinite; animation-delay:3s; z-index:5; }
+  .clip.k3{ animation:cycleTR     15s linear infinite; animation-delay:6s; z-index:5; }
+  .clip.k4{ animation:cycleBL     15s linear infinite; animation-delay:9s; z-index:5; }
+  .clip.k5{ animation:cycleBR     15s linear infinite; animation-delay:12s; z-index:5; }
 
-  .cta-btn:hover {
-    transform: translateY(-2px);
-    filter: brightness(1.15);
+  @keyframes cycleCenter{
+    0%{ opacity:0; transform:translateY(-60px) scale(0.8) rotate(0deg); }
+    6%{ opacity:1; transform:translateY(0) scale(1) rotate(0deg); }
+    14%{ opacity:1; transform:translateY(0) scale(1) rotate(0deg); }
+    20%{ opacity:0; transform:translateY(60px) scale(0.8) rotate(0deg); }
+    100%{ opacity:0; }
   }
-
-  .proof-row { display: flex; align-items: center; gap: 12px; background: rgba(255,255,255,0.85); backdrop-filter: blur(8px); border: 1px solid var(--line); border-radius: 40px; padding: 9px 18px 9px 9px; margin-bottom: 26px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
-  .avatar-stack { display: flex; }
-  .avatar-stack .av { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--panel); background: var(--card); margin-left: -10px; display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--muted); opacity: 0.8; overflow: hidden; }
-  .avatar-stack .av:first-child { margin-left: 0; }
-  .stars { color: #D97706; font-size: 12px; letter-spacing: 1px; }
-  .proof-note { color: var(--muted); font-size: 11.5px; font-weight: 500; }
-
-  .clip-stage { 
-    position: relative; 
-    width: 100%; 
-    max-width: 760px; 
-    height: 520px; 
-    margin-bottom: 14px; 
-    z-index: 1;
-    pointer-events: none !important;
+  @keyframes cycleTL{
+    0%{ opacity:0; transform:translate(-280px,-210px) rotate(-35deg) scale(0.72); }
+    6%{ opacity:1; transform:translate(-40px,-20px) rotate(-6deg) scale(1); }
+    14%{ opacity:1; transform:translate(-40px,-20px) rotate(-6deg) scale(1); }
+    20%{ opacity:0; transform:translate(-320px,-240px) rotate(-40deg) scale(0.62); }
+    100%{ opacity:0; }
   }
-  .clip {
-    position: absolute; 
-    width: 280px; 
-    height: 390px; 
-    border-radius: 22px;
-    background: linear-gradient(155deg, #FFFFFF, var(--card));
-    border: 1px solid var(--line); 
-    box-shadow: 0 25px 50px rgba(0,0,0,0.12);
-    display: flex; 
-    flex-direction: column; 
-    justify-content: flex-end; 
-    padding: 20px;
-    opacity: 0; 
-    animation-fill-mode: forwards; 
-    animation-iteration-count: infinite;
-    left: 50%; 
-    top: 50%; 
-    margin-left: -140px; 
-    margin-top: -195px;
+  @keyframes cycleTR{
+    0%{ opacity:0; transform:translate(280px,-210px) rotate(35deg) scale(0.72); }
+    6%{ opacity:1; transform:translate(40px,-20px) rotate(6deg) scale(1); }
+    14%{ opacity:1; transform:translate(40px,-20px) rotate(6deg) scale(1); }
+    20%{ opacity:0; transform:translate(320px,-240px) rotate(40deg) scale(0.62); }
+    100%{ opacity:0; }
   }
-  .clip .tag { font-size: 12px; font-weight: 700; color: #FFFFFF; text-transform: uppercase; letter-spacing: 0.5px; background: rgba(28,25,23,0.8); padding: 5px 12px; border-radius: 8px; align-self: flex-start; }
-  .clip .play { position: absolute; top: 18px; right: 18px; width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.95); display: flex; align-items: center; justify-content: center; color: var(--accent-hi); font-size: 13px; box-shadow: 0 3px 10px rgba(0,0,0,0.12); }
-
-  .clip.k1 { animation: cycleCenter 15s linear infinite; animation-delay: 0s; }
-  .clip.k2 { animation: cycleTL     15s linear infinite; animation-delay: 3s; }
-  .clip.k3 { animation: cycleTR     15s linear infinite; animation-delay: 6s; }
-  .clip.k4 { animation: cycleBL     15s linear infinite; animation-delay: 9s; }
-  .clip.k5 { animation: cycleBR     15s linear infinite; animation-delay: 12s; }
-
-  @keyframes cycleCenter {
-    0% { opacity: 0; transform: translateY(-50px) scale(0.85); }
-    6% { opacity: 1; transform: translateY(0) scale(1); }
-    14% { opacity: 1; transform: translateY(0) scale(1); }
-    20% { opacity: 0; transform: translateY(50px) scale(0.85); }
-    100% { opacity: 0; }
+  @keyframes cycleBL{
+    0%{ opacity:0; transform:translate(-320px,210px) rotate(28deg) scale(0.62); }
+    6%{ opacity:1; transform:translate(-30px,30px) rotate(-8deg) scale(0.96); }
+    14%{ opacity:1; transform:translate(-30px,30px) rotate(-8deg) scale(0.96); }
+    20%{ opacity:0; transform:translate(-340px,250px) rotate(30deg) scale(0.58); }
+    100%{ opacity:0; }
   }
-  @keyframes cycleTL {
-    0% { opacity: 0; transform: translate(-320px,-220px) rotate(-30deg) scale(0.7); }
-    6% { opacity: 1; transform: translate(-100px,-50px) rotate(-6deg) scale(1); }
-    14% { opacity: 1; transform: translate(-100px,-50px) rotate(-6deg) scale(1); }
-    20% { opacity: 0; transform: translate(-350px,-250px) rotate(-35deg) scale(0.6); }
-    100% { opacity: 0; }
-  }
-  @keyframes cycleTR {
-    0% { opacity: 0; transform: translate(320px,-220px) rotate(30deg) scale(0.7); }
-    6% { opacity: 1; transform: translate(100px,-50px) rotate(6deg) scale(1); }
-    14% { opacity: 1; transform: translate(100px,-50px) rotate(6deg) scale(1); }
-    20% { opacity: 0; transform: translate(350px,-250px) rotate(35deg) scale(0.6); }
-    100% { opacity: 0; }
-  }
-  @keyframes cycleBL {
-    0% { opacity: 0; transform: translate(-350px,220px) rotate(25deg) scale(0.6); }
-    6% { opacity: 1; transform: translate(-80px,80px) rotate(-10deg) scale(0.98); }
-    14% { opacity: 1; transform: translate(-80px,80px) rotate(-10deg) scale(0.98); }
-    20% { opacity: 0; transform: translate(-370px,260px) rotate(28deg) scale(0.55); }
-    100% { opacity: 0; }
-  }
-  @keyframes cycleBR {
-    0% { opacity: 0; transform: translate(350px,220px) rotate(-25deg) scale(0.6); }
-    6% { opacity: 1; transform: translate(80px,80px) rotate(10deg) scale(0.98); }
-    14% { opacity: 1; transform: translate(80px,80px) rotate(10deg) scale(0.98); }
-    20% { opacity: 0; transform: translate(370px,260px) rotate(-28deg) scale(0.55); }
-    100% { opacity: 0; }
+  @keyframes cycleBR{
+    0%{ opacity:0; transform:translate(320px,210px) rotate(-28deg) scale(0.62); }
+    6%{ opacity:1; transform:translate(30px,30px) rotate(8deg) scale(0.96); }
+    14%{ opacity:1; transform:translate(30px,30px) rotate(8deg) scale(0.96); }
+    20%{ opacity:0; transform:translate(340px,250px) rotate(-30deg) scale(0.58); }
+    100%{ opacity:0; }
   }
 
-  .trial-badge {
-    font-size: 12px; text-align: center; color: var(--text); background: rgba(138,90,43,0.08);
-    border: 1px solid rgba(138,90,43,0.25); border-radius: 30px; padding: 9px 16px;
-    margin-bottom: 24px; max-width: 340px; line-height: 1.4;
+  .trial-badge{
+    font-size:12px; text-align:center; color:var(--text); background:rgba(255, 253, 248, 0.9);
+    border:1px solid rgba(181, 126, 62, 0.35); border-radius:30px; padding:9px 16px;
+    margin-bottom:24px; max-width:300px; line-height:1.4; box-shadow:0 4px 12px rgba(0,0,0,0.03);
   }
-  .trial-badge b { color: var(--accent-hi); }
+  .trial-badge b{ color:var(--accent-hi); }
 
-  /* AUTH MODAL */
-  .modal-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(28, 25, 23, 0.45);
-    backdrop-filter: blur(8px);
-    z-index: 1000;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-  }
-  .modal-card {
-    background: #FFFFFF;
-    border: 1px solid var(--line);
-    border-radius: 20px;
-    padding: 28px;
-    width: 100%;
-    max-width: 400px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    position: relative;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.12);
-  }
-  .modal-close {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    background: none;
-    border: none;
-    color: var(--muted);
-    font-size: 22px;
-    cursor: pointer;
-    line-height: 1;
-  }
-
-  .auth-tabs {
-    display: flex;
-    background: var(--card);
-    border-radius: 10px;
-    padding: 4px;
-    border: 1px solid var(--line);
-    margin-top: 10px;
-  }
-  .auth-tab {
-    flex: 1;
-    padding: 8px;
-    text-align: center;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--muted);
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-  .auth-tab.active {
-    background: #FFFFFF;
-    color: var(--text);
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-  }
-
-  .social-btn {
-    width: 100%;
-    padding: 12px;
-    border-radius: 10px;
-    border: 1px solid var(--line);
-    background: #FFFFFF;
-    color: var(--text);
-    font-weight: 600;
-    font-size: 14px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    transition: background 0.2s ease;
-  }
-  .social-btn:hover { background: var(--card); }
-
-  .divider {
-    display: flex;
-    align-items: center;
-    text-align: center;
-    color: var(--muted);
-    font-size: 11px;
-    margin: 4px 0;
-  }
-  .divider::before, .divider::after {
-    content: '';
-    flex: 1;
-    border-bottom: 1px solid var(--line);
-  }
-  .divider span { padding: 0 10px; }
-
-  .input-wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-    width: 100%;
-  }
-
-  .modal-input {
-    width: 100%;
-    padding: 12px 40px 12px 14px;
-    background: var(--void);
-    border: 1px solid var(--line);
-    border-radius: 10px;
-    color: var(--text);
-    font-family: inherit;
-    font-size: 14px;
-    outline: none;
-  }
-  .modal-input:focus { border-color: var(--accent); }
-
-  .toggle-eye-btn {
-    position: absolute;
-    right: 12px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    padding: 0;
-  }
-
-  .error-msg {
-    color: #DC2626;
-    font-size: 12px;
-    display: none;
-    line-height: 1.3;
-    text-align: left;
-    font-weight: 600;
-  }
+  .scroll-hint{ font-size:10px; color:var(--muted); text-align:center; letter-spacing:1px; text-transform:uppercase; opacity:0.8; }
 </style>
 </head>
 <body>
 
 <div class="screen">
-  <div class="bg-reel r1"></div>
+
+  <!-- Background reels: 5 rotating clips -->
+  <div class="bg-reel r1"></div><span class="reel-tag">reel 1/5</span>
   <div class="bg-reel r2"></div>
   <div class="bg-reel r3"></div>
   <div class="bg-reel r4"></div>
@@ -398,367 +171,45 @@
 
   <div class="content">
     <div class="topbar">
-      <div class="logo-slot" id="landingLogoSlot"><span class="plus">+</span><span class="hint">Logo</span></div>
+      <div class="logo-slot"><span class="plus">+</span><span class="hint">Logo</span></div>
       <div class="logo">LUCOST <span>AI</span></div>
     </div>
 
-    <div class="tagline">✨ Hey creator — ready to bring your ideas to life? ✨</div>
+    <div class="tagline">✨ hey, storyteller — let's make something great ✨</div>
     <div class="headline">
-      TURN YOUR SCRIPT INTO VIDEO.<br>
-      WITH LUCOST AI.<br>
-      <span class="grad">Watch it become the content you want.</span>
+      Write the script.<br>
+      Cast the faces.<br>
+      <span class="grad">Watch it become a film.</span>
     </div>
 
     <div class="sub">
       Drop in your script, bring your characters to life with a face and a voice, then pick your vibe — Anime, Drama, or Cinematic 3D. We'll handle the rest: the scenes, the sound, the whole thing, scene by scene, just for you.
     </div>
 
-    <div class="btn-group">
-      <button type="button" class="cta-btn" id="openAuthModalBtn" onclick="document.getElementById('authModal').style.display='flex';">Sign In / Get Started</button>
-    </div>
+    <button class="cta-btn">SIGN IN</button>
+    <div class="cta-sub">Free to sign up · plans start at $17/month to generate</div>
 
     <div class="proof-row">
-      <div class="avatar-stack"><div class="av">👤</div><div class="av">👤</div><div class="av">👤</div><div class="av">👤</div><div class="av">👤</div></div>
+      <div class="avatar-stack"><div class="av">👤</div><div class="av">👤</div><div class="av">👤</div><div class="av">👤</div></div>
       <div>
         <div class="stars">★★★★★</div>
         <div class="proof-note">Loved by 800,000+ creators worldwide</div>
       </div>
     </div>
 
-    <div class="trial-badge">🎁 New here? Get <b>2 free trial viral videos</b> when you sign up</div>
+    <div class="trial-badge">🎁 New here? Get <b>2 free 30-second trials</b> when you sign up</div>
 
     <div class="clip-stage">
-      <div class="clip k1"><span class="play">▶</span><span class="tag">Clip 1</span></div>
-      <div class="clip k2"><span class="play">▶</span><span class="tag">Clip 2</span></div>
-      <div class="clip k3"><span class="play">▶</span><span class="tag">Clip 3</span></div>
-      <div class="clip k4"><span class="play">▶</span><span class="tag">Clip 4</span></div>
-      <div class="clip k5"><span class="play">▶</span><span class="tag">Clip 5</span></div>
-    </div>
-  </div>
-</div>
-
-<!-- AUTH MODAL -->
-<div class="modal-overlay" id="authModal" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.75); display: none; align-items: center; justify-content: center; z-index: 9999;">
-  <div class="modal-card" style="background: #ffffff; width: 90%; max-width: 420px; padding: 30px; border-radius: 16px; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.3); color: #000000; margin: auto;">
-    <button type="button" class="modal-close" id="closeAuthModal">&times;</button>
-
-    <div class="auth-tabs">
-      <div class="auth-tab active" id="tabSignIn">Sign In</div>
-      <div class="auth-tab" id="tabSignUp">Create Account</div>
+      <div class="clip k1"><span class="play">▶</span><span class="tag">Cinematic 3D</span></div>
+      <div class="clip k2"><span class="play">▶</span><span class="tag">Narration Anime</span></div>
+      <div class="clip k3"><span class="play">▶</span><span class="tag">CGI Idol</span></div>
+      <div class="clip k4"><span class="play">▶</span><span class="tag">Drama</span></div>
+      <div class="clip k5"><span class="play">▶</span><span class="tag">Drama Anime</span></div>
     </div>
 
-    <button class="social-btn" id="googleAuthBtn" type="button">
-      <svg width="18" height="18" viewBox="0 0 24 24">
-        <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.5 9 5 12 5z"/>
-      </svg>
-      Continue with Google
-    </button>
-
-    <div class="divider"><span>OR</span></div>
-
-    <form id="authForm" style="display: flex; flex-direction: column; gap: 10px;">
-      <input type="email" id="emailInput" class="modal-input" placeholder="Your Email Address" required>
-
-      <div class="input-wrapper" style="position: relative;">
-        <input type="password" id="passwordInput" class="modal-input" placeholder="Your Password" required>
-        <button type="button" class="toggle-eye-btn" id="togglePasswordBtn">
-          <svg id="eyeOpen" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-            <circle cx="12" cy="12" r="3"></circle>
-          </svg>
-          <svg id="eyeClosed" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
-            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-            <line x1="1" y1="1" x2="23" y2="23"></line>
-          </svg>
-        </button>
-      </div>
-
-      <div id="authErrorMsg" style="color: #ff4d4d; font-size: 12px; margin-top: 4px;"></div>
-
-      <button type="submit" class="cta-btn" id="emailSubmitBtn" style="margin-top: 6px;">
-        Sign In
-      </button>
-    </form>
-  </div>
-</div>
-      <button type="submit" class="cta-btn" id="emailSubmitBtn" style="margin-top: 6px;">Sign In</button>
-    </form>
-  </div>
-</div>
-
-<!-- Firebase SDKs -->
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
-
-<script>
-  // 1. Initialize Firebase Config
-  const firebaseConfig = {
-    apiKey: "AIzaSyDWiAHR8bShkp1R0Gkgihx2bW10e6O1oXU",
-    authDomain: "lucost-ai.firebaseapp.com",
-    projectId: "lucost-ai",
-    storageBucket: "lucost-ai.firebasestorage.app",
-    messagingSenderId: "925474631626",
-    appId: "1:925474631626:web:39ccdb149ba6a325bf2933"
-  };
-
-  if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-  }
-  const auth = firebase.auth();
-
-  // 2. DOM Event Listeners
-  document.addEventListener('DOMContentLoaded', () => {
-    let isSignUpMode = false;
-
-    // Elements
-    const authModal = document.getElementById('authModal');
-    const openAuthModalBtn = document.getElementById('openAuthModalBtn');
-    const closeAuthModal = document.getElementById('closeAuthModal');
-    const tabSignIn = document.getElementById('tabSignIn');
-    const tabSignUp = document.getElementById('tabSignUp');
-    const googleAuthBtn = document.getElementById('googleAuthBtn');
-    const authForm = document.getElementById('authForm');
-    const emailInput = document.getElementById('emailInput');
-    const passwordInput = document.getElementById('passwordInput');
-    const emailSubmitBtn = document.getElementById('emailSubmitBtn');
-    const togglePasswordBtn = document.getElementById('togglePasswordBtn');
-    const eyeOpen = document.getElementById('eyeOpen');
-    const eyeClosed = document.getElementById('eyeClosed');
-    const authErrorMsg = document.getElementById('authErrorMsg');
-
-    function clearError() {
-      if (authErrorMsg) authErrorMsg.innerText = '';
-    }
-
-    // Open Modal
-    if (openAuthModalBtn) {
-      openAuthModalBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        if (authModal) authModal.style.display = 'flex';
-      });
-    }
-
-    // Close Modal ('X' Button & Backdrop)
-    if (closeAuthModal) {
-      closeAuthModal.addEventListener('click', () => {
-        if (authModal) authModal.style.display = 'none';
-      });
-    }
-
-    window.addEventListener('click', (e) => {
-      if (e.target === authModal) {
-        authModal.style.display = 'none';
-      }
-    });
-
-    // Tab Switching
-    if (tabSignIn && tabSignUp) {
-      tabSignIn.addEventListener('click', () => {
-        isSignUpMode = false;
-        tabSignIn.classList.add('active');
-        tabSignUp.classList.remove('active');
-        if (emailSubmitBtn) emailSubmitBtn.innerText = "Sign In";
-        clearError();
-      });
-
-      tabSignUp.addEventListener('click', () => {
-        isSignUpMode = true;
-        tabSignUp.classList.add('active');
-        tabSignIn.classList.remove('active');
-        if (emailSubmitBtn) emailSubmitBtn.innerText = "Create Account";
-        clearError();
-      });
-    }
-
-    // Eye Password Toggle
-    if (togglePasswordBtn && passwordInput) {
-      togglePasswordBtn.addEventListener('click', () => {
-        const isPassword = passwordInput.type === 'password';
-        passwordInput.type = isPassword ? 'text' : 'password';
-        if (eyeOpen) eyeOpen.style.display = isPassword ? 'none' : 'block';
-        if (eyeClosed) eyeClosed.style.display = isPassword ? 'block' : 'none';
-      });
-    }
-
-    // Email/Password Auth Handler
-    if (authForm) {
-      authForm.addEventListener('submit', async (e) => {
-        e.preventDefault(); // PREVENTS PAGE RELOAD TO LANDING.HTML
-        clearError();
-
-        const email = emailInput ? emailInput.value.trim() : '';
-        const password = passwordInput ? passwordInput.value : '';
-
-        try {
-          if (isSignUpMode) {
-            await auth.createUserWithEmailAndPassword(email, password);
-          } else {
-            await auth.signInWithEmailAndPassword(email, password);
-          }
-
-          // Direct redirect to dashboard.html
-          window.location.href = 'dashboard.html';
-
-        } catch (error) {
-          console.error("Auth Error:", error);
-          if (authErrorMsg) {
-            authErrorMsg.innerText = error.message;
-          } else {
-            alert(error.message);
-          }
-        }
-      });
-    }
-
-    // Google Sign-In Handler
-    if (googleAuthBtn) {
-      googleAuthBtn.addEventListener('click', async () => {
-        clearError();
-        const provider = new firebase.auth.GoogleAuthProvider();
-
-        try {
-          await auth.signInWithPopup(provider);
-
-          // Direct redirect to dashboard.html
-          window.location.href = 'dashboard.html';
-
-        } catch (error) {
-          console.error("Google Auth Error:", error);
-          if (authErrorMsg) {
-            authErrorMsg.innerText = error.message;
-          } else {
-            alert(error.message);
-          }
-        }
-      });
-    }
-  });
-</script>
-  let isSignUpMode = false;
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyDwIAhR8bShkplR0Gkgihx2bWl0e6OloXU",
-    authDomain: "lucost-ai.firebaseapp.com",
-    projectId: "lucost-ai",
-    storageBucket: "lucost-ai.firebasestorage.app",
-    messagingSenderId: "925474631626",
-    appId: "1:925474631626:web:39ccdb149ba6a325bf2933"
-  };
-
-  if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-  }
-  const auth = firebase.auth();
-
-  document.addEventListener('DOMContentLoaded', () => {
-    const openBtn = document.getElementById('openAuthModalBtn');
-    const closeBtn = document.getElementById('closeAuthModal');
-    const authModal = document.getElementById('authModal');
-    const tabSignIn = document.getElementById('tabSignIn');
-    const tabSignUp = document.getElementById('tabSignUp');
-    const submitBtn = document.getElementById('emailSubmitBtn');
-    const togglePasswordBtn = document.getElementById('togglePasswordBtn');
-    const passwordInput = document.getElementById('passwordInput');
-    const eyeOpen = document.getElementById('eyeOpen');
-    const eyeClosed = document.getElementById('eyeClosed');
-    const googleAuthBtn = document.getElementById('googleAuthBtn');
-    const authForm = document.getElementById('authForm');
-
-    // Open Modal
-    if (openBtn) {
-      openBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        openAuthModal();
-      });
-    }
-
-    // Close Modal
-    if (closeBtn) {
-      closeBtn.addEventListener('click', closeAuthModalFunc);
-    }
-
-    window.addEventListener('click', (e) => {
-      if (e.target === authModal) {
-        closeAuthModalFunc();
-      }
-    });
-
-    // Tab Switching
-    if (tabSignIn && tabSignUp) {
-      tabSignIn.addEventListener('click', () => {
-        isSignUpMode = false;
-        tabSignIn.classList.add('active');
-        tabSignUp.classList.remove('active');
-        if (submitBtn) submitBtn.innerText = "Sign In";
-        clearError();
-      });
-
-      tabSignUp.addEventListener('click', () => {
-        isSignUpMode = true;
-        tabSignUp.classList.add('active');
-        tabSignIn.classList.remove('active');
-        if (submitBtn) submitBtn.innerText = "Create Account";
-        clearError();
-      });
-    }
-
-    // Toggle Password Visibility
-    if (togglePasswordBtn && passwordInput) {
-      togglePasswordBtn.addEventListener('click', () => {
-        const isPassword = passwordInput.type === 'password';
-        passwordInput.type = isPassword ? 'text' : 'password';
-        eyeOpen.style.display = isPassword ? 'none' : 'block';
-        eyeClosed.style.display = isPassword ? 'block' : 'none';
-      });
-    }
-
-    // Submit Email/Password Form
-    if (authForm) {
-      authForm.addEventListener('submit', executeSignIn);
-    }
-
-    // Google Sign-In Button
-    if (googleAuthBtn) {
-      googleAuthBtn.addEventListener('click', executeGoogle);
-  }
-}); // Closing document.addEventListener('DOMContentLoaded')
-// Function for Email & Password Sign In / Sign Up
-async function executeSignIn(e) {
-  if (e) e.preventDefault(); // STOPS PAGE RELOAD
   
-  const emailInput = document.getElementById('emailInput');
-  const passwordInput = document.getElementById('passwordInput');
-  const email = emailInput ? emailInput.value.trim() : '';
-  const password = passwordInput ? passwordInput.value : '';
+  </div>
+</div>
 
-  try {
-    if (isSignUpMode) {
-      await auth.createUserWithEmailAndPassword(email, password);
-    } else {
-      await auth.signInWithEmailAndPassword(email, password);
-    }
-    
-    // Redirect to dashboard on success
-    window.location.href = '/dashboard';
-
-  } catch (error) {
-    console.error("Auth error:", error);
-    alert(error.message);
-  }
-}
-
-// Function for Google Sign-In
-async function executeGoogle() {
-  const provider = new firebase.auth.GoogleAuthProvider();
-
-  try {
-    await auth.signInWithPopup(provider);
-    
-    // Redirect to dashboard on success
-    window.location.href = '/dashboard';
-
-  } catch (error) {
-    console.error("Google Auth error:", error);
-    alert(error.message);
-  }
-}
+</body>
+</html>
