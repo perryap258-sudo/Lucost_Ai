@@ -438,8 +438,8 @@
 </div>
 
 <!-- AUTH MODAL -->
-<div class="modal-overlay" id="authModal">
-  <div class="modal-card">
+<div class="modal-overlay" id="authModal" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.75); display: none; align-items: center; justify-content: center; z-index: 9999;">
+  <div class="modal-card" style="background: #ffffff; width: 90%; max-width: 420px; padding: 30px; border-radius: 16px; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.3); color: #000000; margin: auto;">
     <button type="button" class="modal-close" id="closeAuthModal">&times;</button>
 
     <div class="auth-tabs">
@@ -491,6 +491,149 @@
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 
 <script>
+  // 1. Initialize Firebase Config
+  const firebaseConfig = {
+    apiKey: "AIzaSyDWiAHR8bShkp1R0Gkgihx2bW10e6O1oXU",
+    authDomain: "lucost-ai.firebaseapp.com",
+    projectId: "lucost-ai",
+    storageBucket: "lucost-ai.firebasestorage.app",
+    messagingSenderId: "925474631626",
+    appId: "1:925474631626:web:39ccdb149ba6a325bf2933"
+  };
+
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
+  const auth = firebase.auth();
+
+  // 2. DOM Event Listeners
+  document.addEventListener('DOMContentLoaded', () => {
+    let isSignUpMode = false;
+
+    // Elements
+    const authModal = document.getElementById('authModal');
+    const openAuthModalBtn = document.getElementById('openAuthModalBtn');
+    const closeAuthModal = document.getElementById('closeAuthModal');
+    const tabSignIn = document.getElementById('tabSignIn');
+    const tabSignUp = document.getElementById('tabSignUp');
+    const googleAuthBtn = document.getElementById('googleAuthBtn');
+    const authForm = document.getElementById('authForm');
+    const emailInput = document.getElementById('emailInput');
+    const passwordInput = document.getElementById('passwordInput');
+    const emailSubmitBtn = document.getElementById('emailSubmitBtn');
+    const togglePasswordBtn = document.getElementById('togglePasswordBtn');
+    const eyeOpen = document.getElementById('eyeOpen');
+    const eyeClosed = document.getElementById('eyeClosed');
+    const authErrorMsg = document.getElementById('authErrorMsg');
+
+    function clearError() {
+      if (authErrorMsg) authErrorMsg.innerText = '';
+    }
+
+    // Open Modal
+    if (openAuthModalBtn) {
+      openAuthModalBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (authModal) authModal.style.display = 'flex';
+      });
+    }
+
+    // Close Modal ('X' Button & Backdrop)
+    if (closeAuthModal) {
+      closeAuthModal.addEventListener('click', () => {
+        if (authModal) authModal.style.display = 'none';
+      });
+    }
+
+    window.addEventListener('click', (e) => {
+      if (e.target === authModal) {
+        authModal.style.display = 'none';
+      }
+    });
+
+    // Tab Switching
+    if (tabSignIn && tabSignUp) {
+      tabSignIn.addEventListener('click', () => {
+        isSignUpMode = false;
+        tabSignIn.classList.add('active');
+        tabSignUp.classList.remove('active');
+        if (emailSubmitBtn) emailSubmitBtn.innerText = "Sign In";
+        clearError();
+      });
+
+      tabSignUp.addEventListener('click', () => {
+        isSignUpMode = true;
+        tabSignUp.classList.add('active');
+        tabSignIn.classList.remove('active');
+        if (emailSubmitBtn) emailSubmitBtn.innerText = "Create Account";
+        clearError();
+      });
+    }
+
+    // Eye Password Toggle
+    if (togglePasswordBtn && passwordInput) {
+      togglePasswordBtn.addEventListener('click', () => {
+        const isPassword = passwordInput.type === 'password';
+        passwordInput.type = isPassword ? 'text' : 'password';
+        if (eyeOpen) eyeOpen.style.display = isPassword ? 'none' : 'block';
+        if (eyeClosed) eyeClosed.style.display = isPassword ? 'block' : 'none';
+      });
+    }
+
+    // Email/Password Auth Handler
+    if (authForm) {
+      authForm.addEventListener('submit', async (e) => {
+        e.preventDefault(); // PREVENTS PAGE RELOAD TO LANDING.HTML
+        clearError();
+
+        const email = emailInput ? emailInput.value.trim() : '';
+        const password = passwordInput ? passwordInput.value : '';
+
+        try {
+          if (isSignUpMode) {
+            await auth.createUserWithEmailAndPassword(email, password);
+          } else {
+            await auth.signInWithEmailAndPassword(email, password);
+          }
+
+          // Direct redirect to dashboard.html
+          window.location.href = 'dashboard.html';
+
+        } catch (error) {
+          console.error("Auth Error:", error);
+          if (authErrorMsg) {
+            authErrorMsg.innerText = error.message;
+          } else {
+            alert(error.message);
+          }
+        }
+      });
+    }
+
+    // Google Sign-In Handler
+    if (googleAuthBtn) {
+      googleAuthBtn.addEventListener('click', async () => {
+        clearError();
+        const provider = new firebase.auth.GoogleAuthProvider();
+
+        try {
+          await auth.signInWithPopup(provider);
+
+          // Direct redirect to dashboard.html
+          window.location.href = 'dashboard.html';
+
+        } catch (error) {
+          console.error("Google Auth Error:", error);
+          if (authErrorMsg) {
+            authErrorMsg.innerText = error.message;
+          } else {
+            alert(error.message);
+          }
+        }
+      });
+    }
+  });
+</script>
   let isSignUpMode = false;
 
   const firebaseConfig = {
