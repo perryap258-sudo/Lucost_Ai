@@ -13,12 +13,12 @@
     --void: #FBF8F3;         /* Warm cream primary background */
     --panel: #FFFFFF;        /* Crisp white container cards */
     --card: #F3EDE2;         /* Soft cream card background */
-    --card-hi: #EFE6D8;      /* Slightly darker cream accent */
-    --line: #E2D7C5;         /* Subtle warm border line */
+    --card-hi: #EFE6D8;      /* Accent cream */
+    --line: #E2D7C5;         /* Light warm border */
     --text: #1C1917;         /* Deep charcoal text for high contrast */
-    --muted: #6B635B;        /* Muted brown-gray secondary text */
-    --accent: #B07D46;       /* Warm bronze accent */
-    --accent-hi: #8A5A2B;    /* Rich brown highlight */
+    --muted: #6B635B;        /* Muted secondary text */
+    --accent: #B07D46;       
+    --accent-hi: #8A5A2B;    
     --accent-dim: #D1A876;
   }
 
@@ -56,7 +56,6 @@
     pointer-events: none;
   }
   
-  /* Adjusted translucent overlay to let video movement show clearly */
   .bg-reel::after {
     content: ''; position: absolute; inset: 0;
     background: linear-gradient(180deg, rgba(251,248,243,0.3) 0%, rgba(251,248,243,0.45) 50%, rgba(251,248,243,0.65) 100%);
@@ -74,11 +73,6 @@
     34.3% { opacity: 0; }
     85.7% { opacity: 0; }
     100% { opacity: 1; }
-  }
-
-  .reel-tag {
-    position: absolute; top: 10px; right: 10px; font-size: 8px; color: var(--muted);
-    opacity: 0.5; letter-spacing: 0.5px; z-index: 1; pointer-events: none;
   }
 
   .content { 
@@ -106,9 +100,17 @@
   .logo { font-family: 'Bebas Neue', sans-serif; font-size: clamp(34px, 5vw, 48px); letter-spacing: 2px; font-weight: 900; line-height: 1; color: var(--text); }
   .logo span { color: var(--accent-hi); }
 
-  .tagline { font-family: 'Caveat', cursive; font-size: clamp(22px, 3.5vw, 28px); color: var(--accent-hi); text-align: center; margin-bottom: 8px; transform: rotate(-1.5deg); }
+  /* STRAIGHT CALLIGRAPHY TAGLINE */
+  .tagline { 
+    font-family: 'Caveat', cursive; 
+    font-size: clamp(24px, 4vw, 30px); 
+    color: var(--accent-hi); 
+    text-align: center; 
+    margin-bottom: 12px; 
+    transform: rotate(0deg); 
+  }
   
-  /* TYPOGRAPHY & GRADIENTS FOR LIGHT BG */
+  /* TYPOGRAPHY & GRADIENTS */
   .headline { 
     font-weight: 800; 
     font-size: clamp(32px, 5.5vw, 56px); 
@@ -137,7 +139,7 @@
     margin-bottom: 28px; 
   }
 
-  /* SINGLE SIGN IN CTA BUTTON */
+  /* CTA BUTTON */
   .btn-group {
     display: flex;
     flex-direction: column;
@@ -175,18 +177,30 @@
   .stars { color: #D97706; font-size: 12px; letter-spacing: 1px; }
   .proof-note { color: var(--muted); font-size: 11.5px; font-weight: 500; }
 
-  /* FEATURE CLIPS STAGE */
-  .clip-stage { position: relative; width: 100%; max-width: 480px; height: 340px; margin-bottom: 14px; }
+  /* LARGER FEATURE CLIPS STAGE */
+  .clip-stage { position: relative; width: 100%; max-width: 640px; height: 440px; margin-bottom: 14px; }
   .clip {
-    position: absolute; width: 168px; height: 236px; border-radius: 16px;
+    position: absolute; 
+    width: 220px; 
+    height: 310px; 
+    border-radius: 18px;
     background: linear-gradient(155deg, #FFFFFF, var(--card));
-    border: 1px solid var(--line); box-shadow: 0 16px 36px rgba(0,0,0,0.08);
-    display: flex; flex-direction: column; justify-content: flex-end; padding: 12px;
-    opacity: 0; animation-fill-mode: forwards; animation-iteration-count: 1;
-    left: 50%; top: 50%; margin-left: -84px; margin-top: -118px;
+    border: 1px solid var(--line); 
+    box-shadow: 0 20px 45px rgba(0,0,0,0.1);
+    display: flex; 
+    flex-direction: column; 
+    justify-content: flex-end; 
+    padding: 16px;
+    opacity: 0; 
+    animation-fill-mode: forwards; 
+    animation-iteration-count: 1;
+    left: 50%; 
+    top: 50%; 
+    margin-left: -110px; 
+    margin-top: -155px;
   }
-  .clip .tag { font-size: 9.5px; font-weight: 700; color: #FFFFFF; text-transform: uppercase; letter-spacing: 0.4px; background: rgba(28,25,23,0.7); padding: 3px 7px; border-radius: 6px; align-self: flex-start; }
-  .clip .play { position: absolute; top: 10px; right: 10px; width: 20px; height: 20px; border-radius: 50%; background: rgba(255,255,255,0.8); display: flex; align-items: center; justify-content: center; color: var(--accent-hi); font-size: 9px; }
+  .clip .tag { font-size: 11px; font-weight: 700; color: #FFFFFF; text-transform: uppercase; letter-spacing: 0.4px; background: rgba(28,25,23,0.75); padding: 4px 9px; border-radius: 6px; align-self: flex-start; }
+  .clip .play { position: absolute; top: 14px; right: 14px; width: 26px; height: 26px; border-radius: 50%; background: rgba(255,255,255,0.9); display: flex; align-items: center; justify-content: center; color: var(--accent-hi); font-size: 11px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
 
   .clip.k1 { animation: cycleCenter 15s linear infinite; animation-delay: 0s; z-index: 5; }
   .clip.k2 { animation: cycleTL     15s linear infinite; animation-delay: 3s; z-index: 5; }
@@ -202,31 +216,31 @@
     100% { opacity: 0; }
   }
   @keyframes cycleTL {
-    0% { opacity: 0; transform: translate(-280px,-210px) rotate(-35deg) scale(0.72); }
-    6% { opacity: 1; transform: translate(-70px,-38px) rotate(-9deg) scale(1); }
-    14% { opacity: 1; transform: translate(-70px,-38px) rotate(-9deg) scale(1); }
-    20% { opacity: 0; transform: translate(-320px,-240px) rotate(-40deg) scale(0.62); }
+    0% { opacity: 0; transform: translate(-300px,-220px) rotate(-35deg) scale(0.72); }
+    6% { opacity: 1; transform: translate(-90px,-45px) rotate(-8deg) scale(1); }
+    14% { opacity: 1; transform: translate(-90px,-45px) rotate(-8deg) scale(1); }
+    20% { opacity: 0; transform: translate(-340px,-250px) rotate(-40deg) scale(0.62); }
     100% { opacity: 0; }
   }
   @keyframes cycleTR {
-    0% { opacity: 0; transform: translate(280px,-210px) rotate(35deg) scale(0.72); }
-    6% { opacity: 1; transform: translate(70px,-38px) rotate(9deg) scale(1); }
-    14% { opacity: 1; transform: translate(70px,-38px) rotate(9deg) scale(1); }
-    20% { opacity: 0; transform: translate(320px,-240px) rotate(40deg) scale(0.62); }
+    0% { opacity: 0; transform: translate(300px,-220px) rotate(35deg) scale(0.72); }
+    6% { opacity: 1; transform: translate(90px,-45px) rotate(8deg) scale(1); }
+    14% { opacity: 1; transform: translate(90px,-45px) rotate(8deg) scale(1); }
+    20% { opacity: 0; transform: translate(340px,-250px) rotate(40deg) scale(0.62); }
     100% { opacity: 0; }
   }
   @keyframes cycleBL {
-    0% { opacity: 0; transform: translate(-320px,210px) rotate(28deg) scale(0.62); }
-    6% { opacity: 1; transform: translate(-58px,72px) rotate(-14deg) scale(0.96); }
-    14% { opacity: 1; transform: translate(-58px,72px) rotate(-14deg) scale(0.96); }
-    20% { opacity: 0; transform: translate(-340px,250px) rotate(30deg) scale(0.58); }
+    0% { opacity: 0; transform: translate(-340px,220px) rotate(28deg) scale(0.62); }
+    6% { opacity: 1; transform: translate(-75px,80px) rotate(-12deg) scale(0.96); }
+    14% { opacity: 1; transform: translate(-75px,80px) rotate(-12deg) scale(0.96); }
+    20% { opacity: 0; transform: translate(-360px,260px) rotate(30deg) scale(0.58); }
     100% { opacity: 0; }
   }
   @keyframes cycleBR {
-    0% { opacity: 0; transform: translate(320px,210px) rotate(-28deg) scale(0.62); }
-    6% { opacity: 1; transform: translate(58px,72px) rotate(14deg) scale(0.96); }
-    14% { opacity: 1; transform: translate(58px,72px) rotate(14deg) scale(0.96); }
-    20% { opacity: 0; transform: translate(340px,250px) rotate(-30deg) scale(0.58); }
+    0% { opacity: 0; transform: translate(340px,220px) rotate(-28deg) scale(0.62); }
+    6% { opacity: 1; transform: translate(75px,80px) rotate(12deg) scale(0.96); }
+    14% { opacity: 1; transform: translate(75px,80px) rotate(12deg) scale(0.96); }
+    20% { opacity: 0; transform: translate(360px,260px) rotate(-30deg) scale(0.58); }
     100% { opacity: 0; }
   }
 
@@ -236,8 +250,6 @@
     margin-bottom: 24px; max-width: 340px; line-height: 1.4;
   }
   .trial-badge b { color: var(--accent-hi); }
-
-  .scroll-hint { font-size: 10px; color: var(--muted); text-align: center; letter-spacing: 1px; text-transform: uppercase; opacity: 0.7; }
 
   /* AUTH MODAL STYLES */
   .modal-overlay {
@@ -275,7 +287,6 @@
     cursor: pointer;
   }
 
-  /* DUAL TAB SWITCHER */
   .auth-tabs {
     display: flex;
     background: var(--card);
@@ -378,7 +389,7 @@
 
 <div class="screen">
 
-  <div class="bg-reel r1"></div><span class="reel-tag">reel 1/5</span>
+  <div class="bg-reel r1"></div>
   <div class="bg-reel r2"></div>
   <div class="bg-reel r3"></div>
   <div class="bg-reel r4"></div>
@@ -401,7 +412,7 @@
       Drop in your script, bring your characters to life with a face and a voice, then pick your vibe — Anime, Drama, or Cinematic 3D. We'll handle the rest: the scenes, the sound, the whole thing, scene by scene, just for you.
     </div>
 
-    <!-- SINGLE SIGN IN BUTTON -->
+    <!-- SINGLE SIGN IN CTA BUTTON -->
     <div class="btn-group">
       <button class="cta-btn" id="openAuthModalBtn" type="button">Sign In</button>
     </div>
@@ -423,8 +434,6 @@
       <div class="clip k4"><span class="play">▶</span><span class="tag">Clip 4</span></div>
       <div class="clip k5"><span class="play">▶</span><span class="tag">Clip 5</span></div>
     </div>
-
-    <div class="scroll-hint">▾ scroll for more</div>
   </div>
 </div>
 
@@ -489,7 +498,7 @@
   }
   const auth = firebase.auth();
 
-  // 2. Modal & Tab Switching Elements
+  // 2. DOM Elements
   const modal = document.getElementById('authModal');
   const openAuthModalBtn = document.getElementById('openAuthModalBtn');
   const closeAuthModal = document.getElementById('closeAuthModal');
@@ -500,13 +509,24 @@
 
   let isSignUpMode = false;
 
-  openAuthModalBtn.addEventListener('click', () => {
-    modal.style.display = 'flex';
-    authErrorMsg.style.display = 'none';
+  // 3. Open Modal Event Handler
+  if (openAuthModalBtn) {
+    openAuthModalBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      modal.style.display = 'flex';
+      authErrorMsg.style.display = 'none';
+    });
+  }
+
+  // Close Modal Handlers
+  if (closeAuthModal) {
+    closeAuthModal.addEventListener('click', () => modal.style.display = 'none');
+  }
+  window.addEventListener('click', (e) => { 
+    if (e.target === modal) modal.style.display = 'none'; 
   });
 
-  closeAuthModal.addEventListener('click', () => modal.style.display = 'none');
-
+  // 4. Tab Switchers (Sign In vs Create Account)
   tabSignIn.addEventListener('click', () => {
     isSignUpMode = false;
     tabSignIn.classList.add('active');
@@ -523,7 +543,11 @@
     authErrorMsg.style.display = 'none';
   });
 
-  // 3. Eye Toggle Password Visibility
+  // 5. Password Eye Toggle
   const togglePasswordBtn = document.getElementById('togglePasswordBtn');
   const passwordInput = document.getElementById('passwordInput');
-  const eyeOpen = document.getE
+  const eyeOpen = document.getElementById('eyeOpen');
+  const eyeClosed = document.getElementById('eyeClosed');
+
+  togglePasswordBtn.addEventListener('click', () => {
+    const isPassword =
