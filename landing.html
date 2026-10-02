@@ -272,7 +272,7 @@
 
     <div class="clip-stage">
       <div class="clip k1"><span class="play">▶</span><span class="tag">Clip 1</span></div>
-      <div class="clip k2"><span class="play">▶</span><span class="tag">Clip 2</span></div>
+      <div class="clip k2"><span class="play">▶</span><span class="tag">Clip 3</span></div>
       <div class="clip k3"><span class="play">▶</span><span class="tag">Clip 3</span></div>
       <div class="clip k4"><span class="play">▶</span><span class="tag">Clip 4</span></div>
       <div class="clip k5"><span class="play">▶</span><span class="tag">Clip 5</span></div>
@@ -287,26 +287,26 @@
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 
 <script>
-  // 1. Firebase Configuration (Paste your keys from Firebase Console here)
+  // 1. Live LUCOST AI Firebase Web SDK Configuration
   const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT_ID.appspot.com",
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-    appId: "YOUR_APP_ID"
+    apiKey: "AIzaSyDwIAhR8bShkplR0Gkgihx2bWl0e6OloXU",
+    authDomain: "lucost-ai.firebaseapp.com",
+    projectId: "lucost-ai",
+    storageBucket: "lucost-ai.firebasestorage.app",
+    messagingSenderId: "925474631626",
+    appId: "1:925474631626:web:39ccdb149ba6a325bf2933"
   };
 
+  // Initialize Firebase
   if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
   }
   const auth = firebase.auth();
 
-  // 2. Firebase Sign-In Trigger
+  // 2. Trigger Google Sign-In Popup on Button Click
   document.getElementById('ctaAuthBtn').addEventListener('click', async () => {
     const provider = new firebase.auth.GoogleAuthProvider();
     try {
-      // Firebase Google Auth Popup opens immediately
       const result = await auth.signInWithPopup(provider);
       console.log("Authenticated user:", result.user.displayName);
       
@@ -318,7 +318,14 @@
     }
   });
 
-  // 3. Fetch content from backend on load
+  // 3. Automatically redirect if user is already authenticated
+  auth.onAuthStateChanged((user) => {
+    if (user) {
+      window.location.href = '/dashboard';
+    }
+  });
+
+  // 4. Fetch dynamic content from backend on load
   const API_BASE = window.location.origin + '/api';
   
   async function loadContentFromBackend(){
