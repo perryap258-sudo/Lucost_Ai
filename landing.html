@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,14 +10,13 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Caveat:wght@600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
   :root {
-    /* LIGHT CREAM PALETTE */
-    --void: #FBF8F3;         /* Warm cream primary background */
-    --panel: #FFFFFF;        /* Crisp white container cards */
-    --card: #F3EDE2;         /* Soft cream card background */
-    --card-hi: #EFE6D8;      /* Accent cream */
-    --line: #E2D7C5;         /* Light warm border */
-    --text: #1C1917;         /* Deep charcoal text for high contrast */
-    --muted: #6B635B;        /* Muted secondary text */
+    --void: #FBF8F3;         
+    --panel: #FFFFFF;        
+    --card: #F3EDE2;         
+    --card-hi: #EFE6D8;      
+    --line: #E2D7C5;         
+    --text: #1C1917;         
+    --muted: #6B635B;        
     --accent: #B07D46;       
     --accent-hi: #8A5A2B;    
     --accent-dim: #D1A876;
@@ -36,7 +36,6 @@
     -webkit-text-size-adjust: 100%;
   }
 
-  /* FLUID RESPONSIVE CONTAINER */
   .screen {
     width: 100%; 
     max-width: 1200px; 
@@ -49,7 +48,6 @@
     padding: clamp(20px, 4vw, 50px) 24px 50px;
   }
 
-  /* ---------- Light Background Video Reels ---------- */
   .bg-reel {
     position: absolute; inset: 0; opacity: 0; z-index: 0;
     animation: reelCycle 35s infinite;
@@ -100,7 +98,6 @@
   .logo { font-family: 'Bebas Neue', sans-serif; font-size: clamp(34px, 5vw, 48px); letter-spacing: 2px; font-weight: 900; line-height: 1; color: var(--text); }
   .logo span { color: var(--accent-hi); }
 
-  /* STRAIGHT CALLIGRAPHY TAGLINE */
   .tagline { 
     font-family: 'Caveat', cursive; 
     font-size: clamp(24px, 4vw, 30px); 
@@ -110,7 +107,6 @@
     transform: rotate(0deg); 
   }
   
-  /* TYPOGRAPHY & GRADIENTS */
   .headline { 
     font-weight: 800; 
     font-size: clamp(32px, 5.5vw, 56px); 
@@ -139,7 +135,6 @@
     margin-bottom: 28px; 
   }
 
-  /* CTA BUTTON */
   .btn-group {
     display: flex;
     flex-direction: column;
@@ -177,7 +172,6 @@
   .stars { color: #D97706; font-size: 12px; letter-spacing: 1px; }
   .proof-note { color: var(--muted); font-size: 11.5px; font-weight: 500; }
 
-  /* EXPANDED BIGGER FEATURE CLIPS STAGE */
   .clip-stage { 
     position: relative; 
     width: 100%; 
@@ -257,7 +251,6 @@
   }
   .trial-badge b { color: var(--accent-hi); }
 
-  /* AUTH MODAL STYLES */
   .modal-overlay {
     display: none;
     position: fixed;
@@ -419,7 +412,6 @@
       Drop in your script, bring your characters to life with a face and a voice, then pick your vibe — Anime, Drama, or Cinematic 3D. We'll handle the rest: the scenes, the sound, the whole thing, scene by scene, just for you.
     </div>
 
-    <!-- MAIN LANDING BUTTON -->
     <div class="btn-group">
       <button type="button" class="cta-btn" id="openAuthModalBtn" onclick="openAuthModal(event)">Sign In</button>
     </div>
@@ -434,7 +426,6 @@
 
     <div class="trial-badge">🎁 New here? Get <b>2 free trial viral videos</b> when you sign up</div>
 
-    <!-- LARGER CLIPS STAGE -->
     <div class="clip-stage">
       <div class="clip k1"><span class="play">▶</span><span class="tag">Clip 1</span></div>
       <div class="clip k2"><span class="play">▶</span><span class="tag">Clip 2</span></div>
@@ -481,7 +472,6 @@
 
       <small class="error-msg" id="authErrorMsg"></small>
 
-      <!-- SUBMIT BUTTON WITH DIRECT GLOBAL ONCLICK -->
       <button type="button" class="cta-btn" id="emailSubmitBtn" onclick="executeSignIn(event)" style="margin-top: 6px;">Sign In</button>
     </div>
   </div>
@@ -492,10 +482,8 @@
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 
 <script>
-  // Global Mode Toggle Variable
   let isSignUpMode = false;
 
-  // 1. Firebase Initialization
   const firebaseConfig = {
     apiKey: "AIzaSyDwIAhR8bShkplR0Gkgihx2bWl0e6OloXU",
     authDomain: "lucost-ai.firebaseapp.com",
@@ -510,7 +498,6 @@
   }
   const auth = firebase.auth();
 
-  // 2. Direct Global Handlers for Modal Opening & Closing
   function openAuthModal(e) {
     if (e) e.preventDefault();
     const modal = document.getElementById('authModal');
@@ -524,7 +511,6 @@
     if (modal) modal.style.display = 'none';
   }
 
-  // 3. Direct Global Auth Submit Function (Guaranteed to Run on Tap)
   async function executeSignIn(e) {
     if (e) e.preventDefault();
     
@@ -558,4 +544,25 @@
 
     try {
       if (isSignUpMode) {
-        await auth.createUserWithEmailAndPassword(em
+        await auth.createUserWithEmailAndPassword(email, password);
+      } else {
+        await auth.signInWithEmailAndPassword(email, password);
+      }
+      
+      console.log("--> Auth successful! Redirecting to /dashboard");
+      window.location.href = '/dashboard';
+
+    } catch (error) {
+      console.error("--> Firebase Auth Error:", error);
+      
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerText = isSignUpMode ? "Create Account" : "Sign In";
+      }
+
+      let userMsg = error.message;
+      if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found') {
+        userMsg = "Account doesn't exist or credentials are wrong. Click 'Create Account' above.";
+      } else if (error.code === 'auth/wrong-password') {
+        userMsg = "Incorrect password. Please try again.";
+      } el
