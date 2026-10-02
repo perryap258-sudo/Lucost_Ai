@@ -177,30 +177,36 @@
   .stars { color: #D97706; font-size: 12px; letter-spacing: 1px; }
   .proof-note { color: var(--muted); font-size: 11.5px; font-weight: 500; }
 
-  /* LARGER FEATURE CLIPS STAGE */
-  .clip-stage { position: relative; width: 100%; max-width: 640px; height: 440px; margin-bottom: 14px; }
+  /* EXPANDED BIGGER FEATURE CLIPS STAGE */
+  .clip-stage { 
+    position: relative; 
+    width: 100%; 
+    max-width: 760px; 
+    height: 520px; 
+    margin-bottom: 14px; 
+  }
   .clip {
     position: absolute; 
-    width: 220px; 
-    height: 310px; 
-    border-radius: 18px;
+    width: 280px; 
+    height: 390px; 
+    border-radius: 22px;
     background: linear-gradient(155deg, #FFFFFF, var(--card));
     border: 1px solid var(--line); 
-    box-shadow: 0 20px 45px rgba(0,0,0,0.1);
+    box-shadow: 0 25px 50px rgba(0,0,0,0.12);
     display: flex; 
     flex-direction: column; 
     justify-content: flex-end; 
-    padding: 16px;
+    padding: 20px;
     opacity: 0; 
     animation-fill-mode: forwards; 
-    animation-iteration-count: 1;
+    animation-iteration-count: infinite;
     left: 50%; 
     top: 50%; 
-    margin-left: -110px; 
-    margin-top: -155px;
+    margin-left: -140px; 
+    margin-top: -195px;
   }
-  .clip .tag { font-size: 11px; font-weight: 700; color: #FFFFFF; text-transform: uppercase; letter-spacing: 0.4px; background: rgba(28,25,23,0.75); padding: 4px 9px; border-radius: 6px; align-self: flex-start; }
-  .clip .play { position: absolute; top: 14px; right: 14px; width: 26px; height: 26px; border-radius: 50%; background: rgba(255,255,255,0.9); display: flex; align-items: center; justify-content: center; color: var(--accent-hi); font-size: 11px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+  .clip .tag { font-size: 12px; font-weight: 700; color: #FFFFFF; text-transform: uppercase; letter-spacing: 0.5px; background: rgba(28,25,23,0.8); padding: 5px 12px; border-radius: 8px; align-self: flex-start; }
+  .clip .play { position: absolute; top: 18px; right: 18px; width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.95); display: flex; align-items: center; justify-content: center; color: var(--accent-hi); font-size: 13px; box-shadow: 0 3px 10px rgba(0,0,0,0.12); }
 
   .clip.k1 { animation: cycleCenter 15s linear infinite; animation-delay: 0s; z-index: 5; }
   .clip.k2 { animation: cycleTL     15s linear infinite; animation-delay: 3s; z-index: 5; }
@@ -209,38 +215,38 @@
   .clip.k5 { animation: cycleBR     15s linear infinite; animation-delay: 12s; z-index: 5; }
 
   @keyframes cycleCenter {
-    0% { opacity: 0; transform: translateY(-50px) scale(0.8) rotate(0deg); }
-    6% { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); }
-    14% { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); }
-    20% { opacity: 0; transform: translateY(50px) scale(0.8) rotate(0deg); }
+    0% { opacity: 0; transform: translateY(-50px) scale(0.85); }
+    6% { opacity: 1; transform: translateY(0) scale(1); }
+    14% { opacity: 1; transform: translateY(0) scale(1); }
+    20% { opacity: 0; transform: translateY(50px) scale(0.85); }
     100% { opacity: 0; }
   }
   @keyframes cycleTL {
-    0% { opacity: 0; transform: translate(-300px,-220px) rotate(-35deg) scale(0.72); }
-    6% { opacity: 1; transform: translate(-90px,-45px) rotate(-8deg) scale(1); }
-    14% { opacity: 1; transform: translate(-90px,-45px) rotate(-8deg) scale(1); }
-    20% { opacity: 0; transform: translate(-340px,-250px) rotate(-40deg) scale(0.62); }
+    0% { opacity: 0; transform: translate(-320px,-220px) rotate(-30deg) scale(0.7); }
+    6% { opacity: 1; transform: translate(-100px,-50px) rotate(-6deg) scale(1); }
+    14% { opacity: 1; transform: translate(-100px,-50px) rotate(-6deg) scale(1); }
+    20% { opacity: 0; transform: translate(-350px,-250px) rotate(-35deg) scale(0.6); }
     100% { opacity: 0; }
   }
   @keyframes cycleTR {
-    0% { opacity: 0; transform: translate(300px,-220px) rotate(35deg) scale(0.72); }
-    6% { opacity: 1; transform: translate(90px,-45px) rotate(8deg) scale(1); }
-    14% { opacity: 1; transform: translate(90px,-45px) rotate(8deg) scale(1); }
-    20% { opacity: 0; transform: translate(340px,-250px) rotate(40deg) scale(0.62); }
+    0% { opacity: 0; transform: translate(320px,-220px) rotate(30deg) scale(0.7); }
+    6% { opacity: 1; transform: translate(100px,-50px) rotate(6deg) scale(1); }
+    14% { opacity: 1; transform: translate(100px,-50px) rotate(6deg) scale(1); }
+    20% { opacity: 0; transform: translate(350px,-250px) rotate(35deg) scale(0.6); }
     100% { opacity: 0; }
   }
   @keyframes cycleBL {
-    0% { opacity: 0; transform: translate(-340px,220px) rotate(28deg) scale(0.62); }
-    6% { opacity: 1; transform: translate(-75px,80px) rotate(-12deg) scale(0.96); }
-    14% { opacity: 1; transform: translate(-75px,80px) rotate(-12deg) scale(0.96); }
-    20% { opacity: 0; transform: translate(-360px,260px) rotate(30deg) scale(0.58); }
+    0% { opacity: 0; transform: translate(-350px,220px) rotate(25deg) scale(0.6); }
+    6% { opacity: 1; transform: translate(-80px,80px) rotate(-10deg) scale(0.98); }
+    14% { opacity: 1; transform: translate(-80px,80px) rotate(-10deg) scale(0.98); }
+    20% { opacity: 0; transform: translate(-370px,260px) rotate(28deg) scale(0.55); }
     100% { opacity: 0; }
   }
   @keyframes cycleBR {
-    0% { opacity: 0; transform: translate(340px,220px) rotate(-28deg) scale(0.62); }
-    6% { opacity: 1; transform: translate(75px,80px) rotate(12deg) scale(0.96); }
-    14% { opacity: 1; transform: translate(75px,80px) rotate(12deg) scale(0.96); }
-    20% { opacity: 0; transform: translate(360px,260px) rotate(-30deg) scale(0.58); }
+    0% { opacity: 0; transform: translate(350px,220px) rotate(-25deg) scale(0.6); }
+    6% { opacity: 1; transform: translate(80px,80px) rotate(10deg) scale(0.98); }
+    14% { opacity: 1; transform: translate(80px,80px) rotate(10deg) scale(0.98); }
+    20% { opacity: 0; transform: translate(370px,260px) rotate(-28deg) scale(0.55); }
     100% { opacity: 0; }
   }
 
@@ -412,9 +418,9 @@
       Drop in your script, bring your characters to life with a face and a voice, then pick your vibe — Anime, Drama, or Cinematic 3D. We'll handle the rest: the scenes, the sound, the whole thing, scene by scene, just for you.
     </div>
 
-    <!-- SINGLE SIGN IN CTA BUTTON -->
+    <!-- MAIN SIGN IN CTA BUTTON (Inlined onclick fallback for absolute reliability) -->
     <div class="btn-group">
-      <button class="cta-btn" id="openAuthModalBtn" type="button">Sign In</button>
+      <button class="cta-btn" id="openAuthModalBtn" onclick="openModalModal(event)">Sign In</button>
     </div>
 
     <div class="proof-row">
@@ -427,6 +433,7 @@
 
     <div class="trial-badge">🎁 New here? Get <b>2 free trial viral videos</b> when you sign up</div>
 
+    <!-- LARGER CLIPS STAGE CONTAINER -->
     <div class="clip-stage">
       <div class="clip k1"><span class="play">▶</span><span class="tag">Clip 1</span></div>
       <div class="clip k2"><span class="play">▶</span><span class="tag">Clip 2</span></div>
@@ -483,7 +490,16 @@
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 
 <script>
-  // 1. Firebase Web SDK Configuration
+  // 1. Global Function Helper to guarantee click works anywhere
+  function openModalModal(e) {
+    if(e) e.preventDefault();
+    const modalEl = document.getElementById('authModal');
+    const errEl = document.getElementById('authErrorMsg');
+    if(modalEl) modalEl.style.display = 'flex';
+    if(errEl) errEl.style.display = 'none';
+  }
+
+  // 2. Firebase Web SDK Configuration
   const firebaseConfig = {
     apiKey: "AIzaSyDwIAhR8bShkplR0Gkgihx2bWl0e6OloXU",
     authDomain: "lucost-ai.firebaseapp.com",
@@ -498,56 +514,43 @@
   }
   const auth = firebase.auth();
 
-  // 2. DOM Elements
-  const modal = document.getElementById('authModal');
-  const openAuthModalBtn = document.getElementById('openAuthModalBtn');
-  const closeAuthModal = document.getElementById('closeAuthModal');
-  const tabSignIn = document.getElementById('tabSignIn');
-  const tabSignUp = document.getElementById('tabSignUp');
-  const emailSubmitBtn = document.getElementById('emailSubmitBtn');
-  const authErrorMsg = document.getElementById('authErrorMsg');
+  document.addEventListener("DOMContentLoaded", () => {
+    // 3. DOM Elements
+    const modal = document.getElementById('authModal');
+    const openBtn = document.getElementById('openAuthModalBtn');
+    const closeBtn = document.getElementById('closeAuthModal');
+    const tabSignIn = document.getElementById('tabSignIn');
+    const tabSignUp = document.getElementById('tabSignUp');
+    const emailSubmitBtn = document.getElementById('emailSubmitBtn');
+    const authErrorMsg = document.getElementById('authErrorMsg');
 
-  let isSignUpMode = false;
+    let isSignUpMode = false;
 
-  // 3. Open Modal Event Handler
-  if (openAuthModalBtn) {
-    openAuthModalBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      modal.style.display = 'flex';
-      authErrorMsg.style.display = 'none';
-    });
-  }
+    // Direct event assignment
+    if (openBtn) {
+      openBtn.onclick = openModalModal;
+    }
 
-  // Close Modal Handlers
-  if (closeAuthModal) {
-    closeAuthModal.addEventListener('click', () => modal.style.display = 'none');
-  }
-  window.addEventListener('click', (e) => { 
-    if (e.target === modal) modal.style.display = 'none'; 
-  });
+    if (closeBtn) {
+      closeBtn.onclick = () => { modal.style.display = 'none'; };
+    }
 
-  // 4. Tab Switchers (Sign In vs Create Account)
-  tabSignIn.addEventListener('click', () => {
-    isSignUpMode = false;
-    tabSignIn.classList.add('active');
-    tabSignUp.classList.remove('active');
-    emailSubmitBtn.innerText = "Sign In";
-    authErrorMsg.style.display = 'none';
-  });
+    window.onclick = (e) => { 
+      if (e.target === modal) modal.style.display = 'none'; 
+    };
 
-  tabSignUp.addEventListener('click', () => {
-    isSignUpMode = true;
-    tabSignUp.classList.add('active');
-    tabSignIn.classList.remove('active');
-    emailSubmitBtn.innerText = "Create Account";
-    authErrorMsg.style.display = 'none';
-  });
+    // 4. Tab Switchers (Sign In vs Create Account)
+    if (tabSignIn && tabSignUp) {
+      tabSignIn.addEventListener('click', () => {
+        isSignUpMode = false;
+        tabSignIn.classList.add('active');
+        tabSignUp.classList.remove('active');
+        emailSubmitBtn.innerText = "Sign In";
+        authErrorMsg.style.display = 'none';
+      });
 
-  // 5. Password Eye Toggle
-  const togglePasswordBtn = document.getElementById('togglePasswordBtn');
-  const passwordInput = document.getElementById('passwordInput');
-  const eyeOpen = document.getElementById('eyeOpen');
-  const eyeClosed = document.getElementById('eyeClosed');
-
-  togglePasswordBtn.addEventListener('click', () => {
-    const isPassword =
+      tabSignUp.addEventListener('click', () => {
+        isSignUpMode = true;
+        tabSignUp.classList.add('active');
+        tabSignIn.classList.remove('active');
+        emailSubmitBtn.innerText = "Create Account";
