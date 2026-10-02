@@ -92,7 +92,6 @@
   }
   .logo-slot .plus { font-size: 22px; color: var(--accent-hi); line-height: 1; }
   .logo-slot .hint { font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; text-align: center; }
-  .logo-slot img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
 
   .logo { font-family: 'Bebas Neue', sans-serif; font-size: clamp(34px, 5vw, 48px); letter-spacing: 2px; font-weight: 900; line-height: 1; color: var(--text); }
   .logo span { color: var(--accent-hi); }
@@ -103,7 +102,6 @@
     color: var(--accent-hi); 
     text-align: center; 
     margin-bottom: 12px; 
-    transform: rotate(0deg); 
   }
   
   .headline { 
@@ -135,6 +133,8 @@
   }
 
   .btn-group {
+    position: relative;
+    z-index: 20;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -142,7 +142,6 @@
     width: 100%;
     max-width: 320px;
     margin-bottom: 28px;
-    z-index: 10;
   }
 
   .cta-btn { 
@@ -177,6 +176,7 @@
     max-width: 760px; 
     height: 520px; 
     margin-bottom: 14px; 
+    z-index: 1;
   }
   .clip {
     position: absolute; 
@@ -201,11 +201,11 @@
   .clip .tag { font-size: 12px; font-weight: 700; color: #FFFFFF; text-transform: uppercase; letter-spacing: 0.5px; background: rgba(28,25,23,0.8); padding: 5px 12px; border-radius: 8px; align-self: flex-start; }
   .clip .play { position: absolute; top: 18px; right: 18px; width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.95); display: flex; align-items: center; justify-content: center; color: var(--accent-hi); font-size: 13px; box-shadow: 0 3px 10px rgba(0,0,0,0.12); }
 
-  .clip.k1 { animation: cycleCenter 15s linear infinite; animation-delay: 0s; z-index: 5; }
-  .clip.k2 { animation: cycleTL     15s linear infinite; animation-delay: 3s; z-index: 5; }
-  .clip.k3 { animation: cycleTR     15s linear infinite; animation-delay: 6s; z-index: 5; }
-  .clip.k4 { animation: cycleBL     15s linear infinite; animation-delay: 9s; z-index: 5; }
-  .clip.k5 { animation: cycleBR     15s linear infinite; animation-delay: 12s; z-index: 5; }
+  .clip.k1 { animation: cycleCenter 15s linear infinite; animation-delay: 0s; }
+  .clip.k2 { animation: cycleTL     15s linear infinite; animation-delay: 3s; }
+  .clip.k3 { animation: cycleTR     15s linear infinite; animation-delay: 6s; }
+  .clip.k4 { animation: cycleBL     15s linear infinite; animation-delay: 9s; }
+  .clip.k5 { animation: cycleBR     15s linear infinite; animation-delay: 12s; }
 
   @keyframes cycleCenter {
     0% { opacity: 0; transform: translateY(-50px) scale(0.85); }
@@ -250,13 +250,14 @@
   }
   .trial-badge b { color: var(--accent-hi); }
 
+  /* AUTH MODAL */
   .modal-overlay {
     display: none;
     position: fixed;
     inset: 0;
     background: rgba(28, 25, 23, 0.45);
     backdrop-filter: blur(8px);
-    z-index: 100;
+    z-index: 1000;
     align-items: center;
     justify-content: center;
     padding: 20px;
@@ -281,8 +282,9 @@
     background: none;
     border: none;
     color: var(--muted);
-    font-size: 18px;
+    font-size: 22px;
     cursor: pointer;
+    line-height: 1;
   }
 
   .auth-tabs {
@@ -387,7 +389,6 @@
 <body>
 
 <div class="screen">
-
   <div class="bg-reel r1"></div>
   <div class="bg-reel r2"></div>
   <div class="bg-reel r3"></div>
@@ -412,7 +413,7 @@
     </div>
 
     <div class="btn-group">
-      <button type="button" class="cta-btn" id="openAuthModalBtn" onclick="openAuthModal(event)">Sign In</button>
+      <button type="button" class="cta-btn" id="openAuthModalBtn">Sign In / Get Started</button>
     </div>
 
     <div class="proof-row">
@@ -438,21 +439,21 @@
 <!-- AUTH MODAL -->
 <div class="modal-overlay" id="authModal">
   <div class="modal-card">
-    <button type="button" class="modal-close" id="closeAuthModal" onclick="closeAuthModalFunc()">&times;</button>
+    <button type="button" class="modal-close" id="closeAuthModal">&times;</button>
     
     <div class="auth-tabs">
       <div class="auth-tab active" id="tabSignIn">Sign In</div>
       <div class="auth-tab" id="tabSignUp">Create Account</div>
     </div>
 
-    <button class="social-btn" id="googleAuthBtn" type="button" onclick="executeGoogleSignIn()">
+    <button class="social-btn" id="googleAuthBtn" type="button">
       <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.3 9 5 12 5z"/><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"/><path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3s.2-1.6.4-2.3L1.9 7.3C.7 9.7 0 12.3 0 15s.7 5.3 1.9 7.7l3.7-2.9z"/><path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.3-6.4-5.2L1.9 16C3.7 19.7 7.5 23 12 23z"/></svg>
       Continue with Google
     </button>
 
     <div class="divider"><span>OR</span></div>
 
-    <div style="display: flex; flex-direction: column; gap: 10px;">
+    <form id="authForm" style="display: flex; flex-direction: column; gap: 10px;">
       <input type="email" id="emailInput" class="modal-input" placeholder="Your Email Address" required>
       
       <div class="input-wrapper">
@@ -471,8 +472,8 @@
 
       <small class="error-msg" id="authErrorMsg"></small>
 
-      <button type="button" class="cta-btn" id="emailSubmitBtn" onclick="executeSignIn(event)" style="margin-top: 6px;">Sign In</button>
-    </div>
+      <button type="submit" class="cta-btn" id="emailSubmitBtn" style="margin-top: 6px;">Sign In</button>
+    </form>
   </div>
 </div>
 
@@ -497,67 +498,73 @@
   }
   const auth = firebase.auth();
 
-  // Tab switching logic (Sign In vs Create Account)
-  const tabSignIn = document.getElementById('tabSignIn');
-  const tabSignUp = document.getElementById('tabSignUp');
-  const submitBtn = document.getElementById('emailSubmitBtn');
-
-  if (tabSignIn && tabSignUp) {
-    tabSignIn.addEventListener('click', () => {
-      isSignUpMode = false;
-      tabSignIn.classList.add('active');
-      tabSignUp.classList.remove('active');
-      if (submitBtn) submitBtn.innerText = "Sign In";
-      clearError();
-    });
-
-    tabSignUp.addEventListener('click', () => {
-      isSignUpMode = true;
-      tabSignUp.classList.add('active');
-      tabSignIn.classList.remove('active');
-      if (submitBtn) submitBtn.innerText = "Create Account";
-      clearError();
-    });
-  }
-
-  // Password visibility toggle
-  const togglePasswordBtn = document.getElementById('togglePasswordBtn');
-  const passwordInput = document.getElementById('passwordInput');
-  const eyeOpen = document.getElementById('eyeOpen');
-  const eyeClosed = document.getElementById('eyeClosed');
-
-  if (togglePasswordBtn && passwordInput) {
-    togglePasswordBtn.addEventListener('click', () => {
-      const isPassword = passwordInput.type === 'password';
-      passwordInput.type = isPassword ? 'text' : 'password';
-      eyeOpen.style.display = isPassword ? 'none' : 'block';
-      eyeClosed.style.display = isPassword ? 'block' : 'none';
-    });
-  }
-
-  function clearError() {
-    const authErrorMsg = document.getElementById('authErrorMsg');
-    if (authErrorMsg) authErrorMsg.style.display = 'none';
-  }
-
-  function openAuthModal(e) {
-    if (e) e.preventDefault();
-    const modal = document.getElementById('authModal');
-    clearError();
-    if (modal) modal.style.display = 'flex';
-  }
-
-  function closeAuthModalFunc() {
-    const modal = document.getElementById('authModal');
-    if (modal) modal.style.display = 'none';
-  }
-
-  // Email / Password Auth Execution
-  async function executeSignIn(e) {
-    if (e) e.preventDefault();
-
-    const emailInput = document.getElementById('emailInput');
+  document.addEventListener('DOMContentLoaded', () => {
+    const openBtn = document.getElementById('openAuthModalBtn');
+    const closeBtn = document.getElementById('closeAuthModal');
+    const authModal = document.getElementById('authModal');
+    const tabSignIn = document.getElementById('tabSignIn');
+    const tabSignUp = document.getElementById('tabSignUp');
+    const submitBtn = document.getElementById('emailSubmitBtn');
+    const togglePasswordBtn = document.getElementById('togglePasswordBtn');
     const passwordInput = document.getElementById('passwordInput');
-    const authErrorMsg = document.getElementById('authErrorMsg');
+    const eyeOpen = document.getElementById('eyeOpen');
+    const eyeClosed = document.getElementById('eyeClosed');
+    const googleAuthBtn = document.getElementById('googleAuthBtn');
+    const authForm = document.getElementById('authForm');
 
-    const email = emailInput ? emailInput.value.tri
+    // Open Modal
+    if (openBtn) {
+      openBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        openAuthModal();
+      });
+    }
+
+    // Close Modal
+    if (closeBtn) {
+      closeBtn.addEventListener('click', closeAuthModalFunc);
+    }
+
+    window.addEventListener('click', (e) => {
+      if (e.target === authModal) {
+        closeAuthModalFunc();
+      }
+    });
+
+    // Tab Switching
+    if (tabSignIn && tabSignUp) {
+      tabSignIn.addEventListener('click', () => {
+        isSignUpMode = false;
+        tabSignIn.classList.add('active');
+        tabSignUp.classList.remove('active');
+        if (submitBtn) submitBtn.innerText = "Sign In";
+        clearError();
+      });
+
+      tabSignUp.addEventListener('click', () => {
+        isSignUpMode = true;
+        tabSignUp.classList.add('active');
+        tabSignIn.classList.remove('active');
+        if (submitBtn) submitBtn.innerText = "Create Account";
+        clearError();
+      });
+    }
+
+    // Toggle Password Visibility
+    if (togglePasswordBtn && passwordInput) {
+      togglePasswordBtn.addEventListener('click', () => {
+        const isPassword = passwordInput.type === 'password';
+        passwordInput.type = isPassword ? 'text' : 'password';
+        eyeOpen.style.display = isPassword ? 'none' : 'block';
+        eyeClosed.style.display = isPassword ? 'block' : 'none';
+      });
+    }
+
+    // Submit Email/Password Form
+    if (authForm) {
+      authForm.addEventListener('submit', executeSignIn);
+    }
+
+    // Google Sign-In Button
+    if (googleAuthBtn) {
+      googleAuthBtn.addEventListener('click', executeGoogle
