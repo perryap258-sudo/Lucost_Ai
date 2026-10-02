@@ -404,8 +404,8 @@
 
     <div class="tagline">✨ Hey creator — ready to bring your ideas to life? ✨</div>
     <div class="headline">
-      Write the script.<br>
-      Cast the faces.<br>
+      TURN YOUR SCRIPT INTO VIDEO.<br>
+      WITH LUCOST AI.<br>
       <span class="grad">Watch it become the content you want.</span>
     </div>
 
@@ -441,14 +441,16 @@
 <div class="modal-overlay" id="authModal">
   <div class="modal-card">
     <button type="button" class="modal-close" id="closeAuthModal">&times;</button>
-    
+
     <div class="auth-tabs">
       <div class="auth-tab active" id="tabSignIn">Sign In</div>
       <div class="auth-tab" id="tabSignUp">Create Account</div>
     </div>
 
     <button class="social-btn" id="googleAuthBtn" type="button">
-      <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.3 9 5 12 5z"/><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"/><path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3s.2-1.6.4-2.3L1.9 7.3C.7 9.7 0 12.3 0 15s.7 5.3 1.9 7.7l3.7-2.9z"/><path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.3-6.4-5.2L1.9 16C3.7 19.7 7.5 23 12 23z"/></svg>
+      <svg width="18" height="18" viewBox="0 0 24 24">
+        <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.5 9 5 12 5z"/>
+      </svg>
       Continue with Google
     </button>
 
@@ -456,23 +458,29 @@
 
     <form id="authForm" style="display: flex; flex-direction: column; gap: 10px;">
       <input type="email" id="emailInput" class="modal-input" placeholder="Your Email Address" required>
-      
-      <div class="input-wrapper">
+
+      <div class="input-wrapper" style="position: relative;">
         <input type="password" id="passwordInput" class="modal-input" placeholder="Your Password" required>
         <button type="button" class="toggle-eye-btn" id="togglePasswordBtn">
-          <svg id="eyeOpen" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6B635B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg id="eyeOpen" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
             <circle cx="12" cy="12" r="3"></circle>
           </svg>
-          <svg id="eyeClosed" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6B635B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+          <svg id="eyeClosed" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
             <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
             <line x1="1" y1="1" x2="23" y2="23"></line>
           </svg>
         </button>
       </div>
 
-      <small class="error-msg" id="authErrorMsg"></small>
+      <div id="authErrorMsg" style="color: #ff4d4d; font-size: 12px; margin-top: 4px;"></div>
 
+      <button type="submit" class="cta-btn" id="emailSubmitBtn" style="margin-top: 6px;">
+        Sign In
+      </button>
+    </form>
+  </div>
+</div>
       <button type="submit" class="cta-btn" id="emailSubmitBtn" style="margin-top: 6px;">Sign In</button>
     </form>
   </div>
@@ -568,4 +576,46 @@
 
     // Google Sign-In Button
     if (googleAuthBtn) {
-      googleAuthBtn.addEventListener('click', executeGoogle
+      googleAuthBtn.addEventListener('click', executeGoogle);
+  }
+}); // Closing document.addEventListener('DOMContentLoaded')
+// Function for Email & Password Sign In / Sign Up
+async function executeSignIn(e) {
+  if (e) e.preventDefault(); // STOPS PAGE RELOAD
+  
+  const emailInput = document.getElementById('emailInput');
+  const passwordInput = document.getElementById('passwordInput');
+  const email = emailInput ? emailInput.value.trim() : '';
+  const password = passwordInput ? passwordInput.value : '';
+
+  try {
+    if (isSignUpMode) {
+      await auth.createUserWithEmailAndPassword(email, password);
+    } else {
+      await auth.signInWithEmailAndPassword(email, password);
+    }
+    
+    // Redirect to dashboard on success
+    window.location.href = '/dashboard';
+
+  } catch (error) {
+    console.error("Auth error:", error);
+    alert(error.message);
+  }
+}
+
+// Function for Google Sign-In
+async function executeGoogle() {
+  const provider = new firebase.auth.GoogleAuthProvider();
+
+  try {
+    await auth.signInWithPopup(provider);
+    
+    // Redirect to dashboard on success
+    window.location.href = '/dashboard';
+
+  } catch (error) {
+    console.error("Google Auth error:", error);
+    alert(error.message);
+  }
+}
