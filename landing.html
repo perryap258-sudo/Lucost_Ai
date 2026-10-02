@@ -177,6 +177,7 @@
     height: 520px; 
     margin-bottom: 14px; 
     z-index: 1;
+    pointer-events: none !important;
   }
   .clip {
     position: absolute; 
@@ -413,7 +414,7 @@
     </div>
 
     <div class="btn-group">
-      <button type="button" class="cta-btn" id="openAuthModalBtn">Sign In / Get Started</button>
+      <button type="button" class="cta-btn" id="openAuthModalBtn" onclick="document.getElementById('authModal').style.display='flex';">Sign In / Get Started</button>
     </div>
 
     <div class="proof-row">
