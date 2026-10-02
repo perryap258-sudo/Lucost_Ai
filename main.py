@@ -33,27 +33,38 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# ---- CORS middleware ----
+# ---- CORS Middleware Configuration ----
+# Dynamically pull production origins alongside local defaults
+allowed_origins = [
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+    "http://localhost:3000",
+]
+
+env_frontend = os.getenv("FRONTEND_URL")
+render_url = os.getenv("RENDER_EXTERNAL_URL")
+
+if env_frontend:
+    allowed_origins.append(env_frontend.rstrip("/"))
+if render_url:
+    allowed_origins.append(render_url.rstrip("/"))
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:8000",
-        "http://localhost:3000",
-        os.getenv("FRONTEND_URL", "http://localhost:8000")
-    ],
+    allow_origins=allowed_origins if os.getenv("ENV") != "development" else ["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# ---- Include routers ----
+# ---- Include API Routers ----
 app.include_router(auth_router, prefix="/api/auth", tags=["auth"])
 app.include_router(generate_router, prefix="/api/generate", tags=["generate"])
 app.include_router(gallery_router, prefix="/api/gallery", tags=["gallery"])
 app.include_router(admin_router, prefix="/api/admin", tags=["admin"])
 app.include_router(webhooks_router, prefix="/api/webhooks", tags=["webhooks"])
 
-# ---- Health check ----
+# ---- Health Check Endpoint ----
 @app.get("/health")
 async def health_check():
     return {
@@ -65,15 +76,25 @@ async def health_check():
 # ---- Serve Frontend Pages ----
 @app.get("/", response_class=FileResponse)
 async def serve_landing():
-    return FileResponse("landing.html")
+    if os.path.exists("landing.html"):
+        return FileResponse("landing.html")
+    raise HTTPException(status_code=404, detail="landing.html not found")
 
 @app.get("/dashboard", response_class=FileResponse)
 async def serve_dashboard():
-    return FileResponse("dashboard.html")
+    if os.path.exists("dashboard.html"):
+        return FileResponse("dashboard.html")
+    raise HTTPException(status_code=404, detail="dashboard.html not found")
 
 @app.get("/admin", response_class=FileResponse)
 async def serve_admin():
-    return FileResponse("admin.html")
+    if os.path.exists("admin.html"):
+        return FileResponse("admin.html")
+    raise HTTPException(status_code=404, detail="admin.html not found")
+
+# ---- Mount Static Assets (Optional) ----
+if os.path.exists("static"):
+    app.mount("/static", StaticFiles(directory="static"), name="static")
 
 if __name__ == "__main__":
     import uvicorn
