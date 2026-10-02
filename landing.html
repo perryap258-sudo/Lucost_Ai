@@ -1,590 +1,563 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LUCOST AI - AI Video & Audio Generation Studio</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LUCOST AI — Landing v2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Caveat:wght@600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --void: #FBF8F3;         
+    --panel: #FFFFFF;        
+    --card: #F3EDE2;         
+    --card-hi: #EFE6D8;      
+    --line: #E2D7C5;         
+    --text: #1C1917;         
+    --muted: #6B635B;        
+    --accent: #B07D46;       
+    --accent-hi: #8A5A2B;    
+    --accent-dim: #D1A876;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body { 
+    background-color: var(--void) !important; 
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important; 
+    color: var(--text); 
+    min-height: 100vh; 
+    display: flex; 
+    justify-content: center; 
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  .screen {
+    width: 100%; 
+    max-width: 1200px; 
+    min-height: 100vh; 
+    position: relative; 
+    overflow-x: hidden;
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    padding: clamp(20px, 4vw, 50px) 24px 50px;
+  }
+
+  .bg-reel {
+    position: absolute; inset: 0; opacity: 0; z-index: 0;
+    animation: reelCycle 35s infinite;
+    pointer-events: none;
+  }
   
-  <style>
-    :root {
-      --void: #050508;
-      --surface: #0e0e14;
-      --card: #14141f;
-      --border: rgba(255, 255, 255, 0.08);
-      --border-bright: rgba(99, 102, 241, 0.3);
-      --primary: #6366f1;
-      --primary-hover: #4f46e5;
-      --accent: #a855f7;
-      --text: #f8fafc;
-      --text-muted: #94a3b8;
-      --glow: rgba(99, 102, 241, 0.25);
-    }
+  .bg-reel::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(251,248,243,0.3) 0%, rgba(251,248,243,0.45) 50%, rgba(251,248,243,0.65) 100%);
+  }
+  
+  .bg-reel.r1 { background: radial-gradient(circle at 30% 20%, #E8D7C3, #FAF5ED 70%); animation-delay: 0s; }
+  .bg-reel.r2 { background: radial-gradient(circle at 70% 30%, #E2CFB9, #F8F3EA 70%); animation-delay: 7s; }
+  .bg-reel.r3 { background: radial-gradient(circle at 50% 15%, #EADBCA, #FAF6EE 70%); animation-delay: 14s; }
+  .bg-reel.r4 { background: radial-gradient(circle at 20% 35%, #E5D5C1, #F9F4EB 70%); animation-delay: 21s; }
+  .bg-reel.r5 { background: radial-gradient(circle at 80% 20%, #DFCCB3, #F8F3E9 70%); animation-delay: 28s; }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    }
+  @keyframes reelCycle {
+    0% { opacity: 1; }
+    20% { opacity: 1; }
+    34.3% { opacity: 0; }
+    85.7% { opacity: 0; }
+    100% { opacity: 1; }
+  }
 
-    body {
-      background-color: var(--void) !important;
-      color: var(--text) !important;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 2rem 1rem;
-      overflow-x: hidden;
-      -webkit-font-smoothing: antialiased;
-    }
+  .content { 
+    position: relative; 
+    z-index: 2; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    width: 100%; 
+    max-width: 900px;
+  }
 
-    /* Outer Device / Canvas Frame */
-    .screen {
-      width: 100%;
-      max-width: 1100px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 80px rgba(99, 102, 241, 0.1);
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-    }
+  .topbar { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 36px; }
+  .logo-slot {
+    width: 96px; height: 96px; border-radius: 50%;
+    background: var(--panel);
+    border: 1.5px dashed var(--line); display: flex; align-items: center; justify-content: center;
+    overflow: hidden; flex-shrink: 0; flex-direction: column; gap: 4px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  }
+  .logo-slot .plus { font-size: 22px; color: var(--accent-hi); line-height: 1; }
+  .logo-slot .hint { font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; text-align: center; }
+  .logo-slot img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
 
-    /* Navbar */
-    .navbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1.25rem 2rem;
-      border-bottom: 1px solid var(--border);
-      background: rgba(14, 14, 20, 0.8);
-      backdrop-filter: blur(12px);
-    }
+  .logo { font-family: 'Bebas Neue', sans-serif; font-size: clamp(34px, 5vw, 48px); letter-spacing: 2px; font-weight: 900; line-height: 1; color: var(--text); }
+  .logo span { color: var(--accent-hi); }
 
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      font-weight: 800;
-      font-size: 1.25rem;
-      letter-spacing: -0.02em;
-    }
+  .tagline { 
+    font-family: 'Caveat', cursive; 
+    font-size: clamp(24px, 4vw, 30px); 
+    color: var(--accent-hi); 
+    text-align: center; 
+    margin-bottom: 12px; 
+    transform: rotate(0deg); 
+  }
+  
+  .headline { 
+    font-weight: 800; 
+    font-size: clamp(32px, 5.5vw, 56px); 
+    line-height: 1.12; 
+    text-align: center; 
+    letter-spacing: -0.5px; 
+    margin-bottom: 18px; 
+    color: var(--text);
+    max-width: 950px;
+  }
 
-    .brand-logo {
-      width: 32px;
-      height: 32px;
-      background: linear-gradient(135deg, var(--primary), var(--accent));
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-    }
+  .headline .grad { 
+    background: linear-gradient(180deg, #2D241E 0%, #8A5A2B 60%, #B07D46 100%) !important; 
+    -webkit-background-clip: text !important; 
+    background-clip: text !important; 
+    -webkit-text-fill-color: transparent !important; 
+    color: #8A5A2B;
+  }
 
-    .nav-actions {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
+  .sub { 
+    font-size: clamp(14.5px, 2vw, 17px); 
+    line-height: 1.6; 
+    color: var(--muted); 
+    text-align: center; 
+    max-width: 620px; 
+    margin-bottom: 28px; 
+  }
 
-    .btn {
-      padding: 0.6rem 1.2rem;
-      border-radius: 8px;
-      font-size: 0.875rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      border: 1px solid transparent;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
+  .btn-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    max-width: 320px;
+    margin-bottom: 28px;
+    z-index: 10;
+  }
 
-    .btn-secondary {
-      background: transparent;
-      color: var(--text);
-      border-color: var(--border);
-    }
+  .cta-btn { 
+    width: 100%; 
+    padding: 16px; 
+    border-radius: 14px; 
+    border: none; 
+    background: linear-gradient(135deg, #2D241E 0%, #110E0C 100%) !important; 
+    color: #FBF8F3 !important; 
+    font-weight: 800; 
+    font-size: 16px; 
+    cursor: pointer; 
+    box-shadow: 0 10px 25px rgba(45,36,30,0.25); 
+    transition: transform 0.2s ease, filter 0.2s ease;
+  }
 
-    .btn-secondary:hover {
-      background: rgba(255, 255, 255, 0.05);
-      border-color: rgba(255, 255, 255, 0.2);
-    }
+  .cta-btn:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.15);
+  }
 
-    .btn-primary {
-      background: linear-gradient(135deg, var(--primary), var(--accent));
-      color: #fff;
-      box-shadow: 0 4px 14px var(--glow);
-    }
+  .proof-row { display: flex; align-items: center; gap: 12px; background: rgba(255,255,255,0.85); backdrop-filter: blur(8px); border: 1px solid var(--line); border-radius: 40px; padding: 9px 18px 9px 9px; margin-bottom: 26px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+  .avatar-stack { display: flex; }
+  .avatar-stack .av { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--panel); background: var(--card); margin-left: -10px; display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--muted); opacity: 0.8; overflow: hidden; }
+  .avatar-stack .av:first-child { margin-left: 0; }
+  .stars { color: #D97706; font-size: 12px; letter-spacing: 1px; }
+  .proof-note { color: var(--muted); font-size: 11.5px; font-weight: 500; }
 
-    .btn-primary:hover {
-      opacity: 0.95;
-      transform: translateY(-1px);
-    }
+  .clip-stage { 
+    position: relative; 
+    width: 100%; 
+    max-width: 760px; 
+    height: 520px; 
+    margin-bottom: 14px; 
+  }
+  .clip {
+    position: absolute; 
+    width: 280px; 
+    height: 390px; 
+    border-radius: 22px;
+    background: linear-gradient(155deg, #FFFFFF, var(--card));
+    border: 1px solid var(--line); 
+    box-shadow: 0 25px 50px rgba(0,0,0,0.12);
+    display: flex; 
+    flex-direction: column; 
+    justify-content: flex-end; 
+    padding: 20px;
+    opacity: 0; 
+    animation-fill-mode: forwards; 
+    animation-iteration-count: infinite;
+    left: 50%; 
+    top: 50%; 
+    margin-left: -140px; 
+    margin-top: -195px;
+  }
+  .clip .tag { font-size: 12px; font-weight: 700; color: #FFFFFF; text-transform: uppercase; letter-spacing: 0.5px; background: rgba(28,25,23,0.8); padding: 5px 12px; border-radius: 8px; align-self: flex-start; }
+  .clip .play { position: absolute; top: 18px; right: 18px; width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.95); display: flex; align-items: center; justify-content: center; color: var(--accent-hi); font-size: 13px; box-shadow: 0 3px 10px rgba(0,0,0,0.12); }
 
-    /* Hero Section */
-    .hero {
-      padding: 4rem 2rem 3rem;
-      text-align: center;
-      max-width: 800px;
-      margin: 0 auto;
-    }
+  .clip.k1 { animation: cycleCenter 15s linear infinite; animation-delay: 0s; z-index: 5; }
+  .clip.k2 { animation: cycleTL     15s linear infinite; animation-delay: 3s; z-index: 5; }
+  .clip.k3 { animation: cycleTR     15s linear infinite; animation-delay: 6s; z-index: 5; }
+  .clip.k4 { animation: cycleBL     15s linear infinite; animation-delay: 9s; z-index: 5; }
+  .clip.k5 { animation: cycleBR     15s linear infinite; animation-delay: 12s; z-index: 5; }
 
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.35rem 0.85rem;
-      border-radius: 9999px;
-      background: rgba(99, 102, 241, 0.1);
-      border: 1px solid var(--border-bright);
-      color: #818cf8;
-      font-size: 0.8rem;
-      font-weight: 600;
-      margin-bottom: 1.5rem;
-    }
+  @keyframes cycleCenter {
+    0% { opacity: 0; transform: translateY(-50px) scale(0.85); }
+    6% { opacity: 1; transform: translateY(0) scale(1); }
+    14% { opacity: 1; transform: translateY(0) scale(1); }
+    20% { opacity: 0; transform: translateY(50px) scale(0.85); }
+    100% { opacity: 0; }
+  }
+  @keyframes cycleTL {
+    0% { opacity: 0; transform: translate(-320px,-220px) rotate(-30deg) scale(0.7); }
+    6% { opacity: 1; transform: translate(-100px,-50px) rotate(-6deg) scale(1); }
+    14% { opacity: 1; transform: translate(-100px,-50px) rotate(-6deg) scale(1); }
+    20% { opacity: 0; transform: translate(-350px,-250px) rotate(-35deg) scale(0.6); }
+    100% { opacity: 0; }
+  }
+  @keyframes cycleTR {
+    0% { opacity: 0; transform: translate(320px,-220px) rotate(30deg) scale(0.7); }
+    6% { opacity: 1; transform: translate(100px,-50px) rotate(6deg) scale(1); }
+    14% { opacity: 1; transform: translate(100px,-50px) rotate(6deg) scale(1); }
+    20% { opacity: 0; transform: translate(350px,-250px) rotate(35deg) scale(0.6); }
+    100% { opacity: 0; }
+  }
+  @keyframes cycleBL {
+    0% { opacity: 0; transform: translate(-350px,220px) rotate(25deg) scale(0.6); }
+    6% { opacity: 1; transform: translate(-80px,80px) rotate(-10deg) scale(0.98); }
+    14% { opacity: 1; transform: translate(-80px,80px) rotate(-10deg) scale(0.98); }
+    20% { opacity: 0; transform: translate(-370px,260px) rotate(28deg) scale(0.55); }
+    100% { opacity: 0; }
+  }
+  @keyframes cycleBR {
+    0% { opacity: 0; transform: translate(350px,220px) rotate(-25deg) scale(0.6); }
+    6% { opacity: 1; transform: translate(80px,80px) rotate(10deg) scale(0.98); }
+    14% { opacity: 1; transform: translate(80px,80px) rotate(10deg) scale(0.98); }
+    20% { opacity: 0; transform: translate(370px,260px) rotate(-28deg) scale(0.55); }
+    100% { opacity: 0; }
+  }
 
-    .hero-title {
-      font-size: 3rem;
-      font-weight: 800;
-      line-height: 1.15;
-      letter-spacing: -0.03em;
-      margin-bottom: 1.25rem;
-      background: linear-gradient(180deg, #ffffff 0%, #94a3b8 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
+  .trial-badge {
+    font-size: 12px; text-align: center; color: var(--text); background: rgba(138,90,43,0.08);
+    border: 1px solid rgba(138,90,43,0.25); border-radius: 30px; padding: 9px 16px;
+    margin-bottom: 24px; max-width: 340px; line-height: 1.4;
+  }
+  .trial-badge b { color: var(--accent-hi); }
 
-    .hero-subtitle {
-      font-size: 1.125rem;
-      color: var(--text-muted);
-      line-height: 1.6;
-      margin-bottom: 2rem;
-    }
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(28, 25, 23, 0.45);
+    backdrop-filter: blur(8px);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-card {
+    background: #FFFFFF;
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 28px;
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    position: relative;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+  }
+  .modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 18px;
+    cursor: pointer;
+  }
 
-    .hero-cta {
-      display: flex;
-      justify-content: center;
-      gap: 1rem;
-    }
+  .auth-tabs {
+    display: flex;
+    background: var(--card);
+    border-radius: 10px;
+    padding: 4px;
+    border: 1px solid var(--line);
+    margin-top: 10px;
+  }
+  .auth-tab {
+    flex: 1;
+    padding: 8px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .auth-tab.active {
+    background: #FFFFFF;
+    color: var(--text);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  }
 
-    /* Feature Grid */
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.5rem;
-      padding: 2rem;
-      border-top: 1px solid var(--border);
-      background: rgba(20, 20, 31, 0.4);
-    }
+  .social-btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: #FFFFFF;
+    color: var(--text);
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: background 0.2s ease;
+  }
+  .social-btn:hover { background: var(--card); }
 
-    .feature-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 1.75rem;
-      transition: all 0.2s ease;
-    }
+  .divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: var(--muted);
+    font-size: 11px;
+    margin: 4px 0;
+  }
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid var(--line);
+  }
+  .divider span { padding: 0 10px; }
 
-    .feature-card:hover {
-      border-color: var(--border-bright);
-      transform: translateY(-2px);
-    }
+  .input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
 
-    .feature-icon {
-      width: 42px;
-      height: 42px;
-      background: rgba(99, 102, 241, 0.1);
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--primary);
-      margin-bottom: 1rem;
-    }
+  .modal-input {
+    width: 100%;
+    padding: 12px 40px 12px 14px;
+    background: var(--void);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 14px;
+    outline: none;
+  }
+  .modal-input:focus { border-color: var(--accent); }
 
-    .feature-title {
-      font-size: 1.1rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-    }
+  .toggle-eye-btn {
+    position: absolute;
+    right: 12px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 0;
+  }
 
-    .feature-desc {
-      font-size: 0.875rem;
-      color: var(--text-muted);
-      line-height: 1.5;
-    }
-
-    /* Modal Overlay */
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(5, 5, 8, 0.85);
-      backdrop-filter: blur(8px);
-      z-index: 9999;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 1rem;
-    }
-
-    .modal-content {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      width: 100%;
-      max-width: 420px;
-      padding: 2.25rem;
-      position: relative;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.8);
-    }
-
-    .close-btn {
-      position: absolute;
-      top: 1.25rem;
-      right: 1.25rem;
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      font-size: 1.5rem;
-      cursor: pointer;
-      line-height: 1;
-    }
-
-    .close-btn:hover {
-      color: var(--text);
-    }
-
-    .modal-title {
-      font-size: 1.5rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-      text-align: center;
-    }
-
-    .modal-sub {
-      font-size: 0.875rem;
-      color: var(--text-muted);
-      text-align: center;
-      margin-bottom: 1.5rem;
-    }
-
-    .form-group {
-      margin-bottom: 1.25rem;
-    }
-
-    .form-group label {
-      display: block;
-      font-size: 0.8rem;
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-      color: var(--text-muted);
-    }
-
-    .form-group input {
-      width: 100%;
-      padding: 0.75rem 1rem;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      background: var(--surface);
-      color: var(--text);
-      font-size: 0.95rem;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-
-    .form-group input:focus {
-      border-color: var(--primary);
-    }
-
-    .auth-error {
-      display: none;
-      color: #f87171;
-      background: rgba(248, 113, 113, 0.1);
-      border: 1px solid rgba(248, 113, 113, 0.2);
-      padding: 0.75rem;
-      border-radius: 8px;
-      font-size: 0.85rem;
-      margin-bottom: 1.25rem;
-      text-align: center;
-    }
-
-    .submit-btn {
-      width: 100%;
-      padding: 0.8rem;
-      background: linear-gradient(135deg, var(--primary), var(--accent));
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      font-weight: 600;
-      font-size: 0.95rem;
-      cursor: pointer;
-      transition: opacity 0.2s;
-    }
-
-    .submit-btn:hover {
-      opacity: 0.95;
-    }
-
-    .toggle-text {
-      margin-top: 1.25rem;
-      text-align: center;
-      font-size: 0.85rem;
-      color: var(--text-muted);
-    }
-
-    .toggle-link {
-      color: var(--primary);
-      text-decoration: none;
-      font-weight: 600;
-      margin-left: 0.3rem;
-    }
-
-    .toggle-link:hover {
-      text-decoration: underline;
-    }
-
-    @media (max-width: 640px) {
-      .hero-title {
-        font-size: 2.25rem;
-      }
-      .navbar {
-        padding: 1rem;
-      }
-      .hero {
-        padding: 2.5rem 1rem;
-      }
-    }
-  </style>
+  .error-msg {
+    color: #DC2626;
+    font-size: 12px;
+    display: none;
+    line-height: 1.3;
+    text-align: left;
+    font-weight: 600;
+  }
+</style>
 </head>
 <body>
 
-  <div class="screen">
-    <!-- Navbar -->
-    <nav class="navbar">
-      <div class="brand">
-        <div class="brand-logo">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+<div class="screen">
+
+  <div class="bg-reel r1"></div>
+  <div class="bg-reel r2"></div>
+  <div class="bg-reel r3"></div>
+  <div class="bg-reel r4"></div>
+  <div class="bg-reel r5"></div>
+
+  <div class="content">
+    <div class="topbar">
+      <div class="logo-slot" id="landingLogoSlot"><span class="plus">+</span><span class="hint">Logo</span></div>
+      <div class="logo">LUCOST <span>AI</span></div>
+    </div>
+
+    <div class="tagline">✨ Hey creator — ready to bring your ideas to life? ✨</div>
+    <div class="headline">
+      Write the script.<br>
+      Cast the faces.<br>
+      <span class="grad">Watch it become the content you want.</span>
+    </div>
+
+    <div class="sub">
+      Drop in your script, bring your characters to life with a face and a voice, then pick your vibe — Anime, Drama, or Cinematic 3D. We'll handle the rest: the scenes, the sound, the whole thing, scene by scene, just for you.
+    </div>
+
+    <div class="btn-group">
+      <button type="button" class="cta-btn" id="openAuthModalBtn" onclick="openAuthModal(event)">Sign In</button>
+    </div>
+
+    <div class="proof-row">
+      <div class="avatar-stack"><div class="av">👤</div><div class="av">👤</div><div class="av">👤</div><div class="av">👤</div><div class="av">👤</div></div>
+      <div>
+        <div class="stars">★★★★★</div>
+        <div class="proof-note">Loved by 800,000+ creators worldwide</div>
+      </div>
+    </div>
+
+    <div class="trial-badge">🎁 New here? Get <b>2 free trial viral videos</b> when you sign up</div>
+
+    <div class="clip-stage">
+      <div class="clip k1"><span class="play">▶</span><span class="tag">Clip 1</span></div>
+      <div class="clip k2"><span class="play">▶</span><span class="tag">Clip 2</span></div>
+      <div class="clip k3"><span class="play">▶</span><span class="tag">Clip 3</span></div>
+      <div class="clip k4"><span class="play">▶</span><span class="tag">Clip 4</span></div>
+      <div class="clip k5"><span class="play">▶</span><span class="tag">Clip 5</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- AUTH MODAL -->
+<div class="modal-overlay" id="authModal">
+  <div class="modal-card">
+    <button type="button" class="modal-close" id="closeAuthModal" onclick="closeAuthModalFunc()">&times;</button>
+    
+    <div class="auth-tabs">
+      <div class="auth-tab active" id="tabSignIn">Sign In</div>
+      <div class="auth-tab" id="tabSignUp">Create Account</div>
+    </div>
+
+    <button class="social-btn" id="googleAuthBtn" type="button" onclick="executeGoogleSignIn()">
+      <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.3 9 5 12 5z"/><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"/><path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3s.2-1.6.4-2.3L1.9 7.3C.7 9.7 0 12.3 0 15s.7 5.3 1.9 7.7l3.7-2.9z"/><path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.3-6.4-5.2L1.9 16C3.7 19.7 7.5 23 12 23z"/></svg>
+      Continue with Google
+    </button>
+
+    <div class="divider"><span>OR</span></div>
+
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      <input type="email" id="emailInput" class="modal-input" placeholder="Your Email Address" required>
+      
+      <div class="input-wrapper">
+        <input type="password" id="passwordInput" class="modal-input" placeholder="Your Password" required>
+        <button type="button" class="toggle-eye-btn" id="togglePasswordBtn">
+          <svg id="eyeOpen" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6B635B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
           </svg>
-        </div>
-        LUCOST AI
-      </div>
-      <div class="nav-actions">
-        <button class="btn btn-secondary id-sign-in-btn">Sign In</button>
-        <button class="btn btn-primary id-get-started-btn">Get Started</button>
-      </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section class="hero">
-      <div class="badge">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-        Next-Gen Studio v2.0
-      </div>
-      <h1 class="hero-title">Transform Scripts into High-Impact Video Content</h1>
-      <p class="hero-subtitle">Generate realistic voiceovers, dynamic sound design, and custom video characters directly from your browser with cloud-accelerated rendering.</p>
-      <div class="hero-cta">
-        <button class="btn btn-primary id-get-started-btn" style="padding: 0.8rem 1.8rem; font-size: 1rem;">Start Creating Free</button>
-      </div>
-    </section>
-
-    <!-- Features Section -->
-    <div class="features-grid">
-      <div class="feature-card">
-        <div class="feature-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
-        </div>
-        <h3 class="feature-title">AI Voice Synthesis</h3>
-        <p class="feature-desc">Generate multi-character dialogs with emotional expression and precise timing using high-fidelity voice engines.</p>
+          <svg id="eyeClosed" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6B635B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+            <line x1="1" y1="1" x2="23" y2="23"></line>
+          </svg>
+        </button>
       </div>
 
-      <div class="feature-card">
-        <div class="feature-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg>
-        </div>
-        <h3 class="feature-title">Script-to-Video Engine</h3>
-        <p class="feature-desc">Convert narrative text into formatted, production-ready video tracks with synced sound effects and visual themes.</p>
-      </div>
+      <small class="error-msg" id="authErrorMsg"></small>
 
-      <div class="feature-card">
-        <div class="feature-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-        </div>
-        <h3 class="feature-title">Cloud Rendering</h3>
-        <p class="feature-desc">Export high-definition video projects rapidly with GPU-backed processing pipelines built for scale.</p>
-      </div>
+      <button type="button" class="cta-btn" id="emailSubmitBtn" onclick="executeSignIn(event)" style="margin-top: 6px;">Sign In</button>
     </div>
   </div>
+</div>
 
-  <!-- AUTH MODAL -->
-  <div class="modal-overlay" id="authModal" style="display: none;">
-    <div class="modal-content">
-      <button type="button" class="close-btn" id="closeAuthModal">&times;</button>
-      <h2 class="modal-title" id="modalTitle">Sign In</h2>
-      <p class="modal-sub" id="modalSub">Welcome back! Access your studio workspace.</p>
-      
-      <div class="auth-error" id="authErrorMsg"></div>
-      
-      <form id="authForm" onsubmit="executeSignIn(event)">
-        <div class="form-group">
-          <label for="emailInput">Email Address</label>
-          <input type="email" id="emailInput" placeholder="name@domain.com" required>
-        </div>
-        <div class="form-group">
-          <label for="passwordInput">Password</label>
-          <input type="password" id="passwordInput" placeholder="••••••••" required>
-        </div>
-        <button type="submit" class="submit-btn" id="emailSubmitBtn">Sign In</button>
-      </form>
-      
-      <div class="toggle-text">
-        <span id="toggleAuthText">Don't have an account?</span>
-        <a href="#" class="toggle-link" id="toggleAuthBtn">Create one</a>
-      </div>
-    </div>
-  </div>
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<script>
+  let isSignUpMode = false;
 
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyDwIAhR8bShkplR0Gkgihx2bWl0e6OloXU",
-      authDomain: "lucost-ai.firebaseapp.com",
-      projectId: "lucost-ai",
-      storageBucket: "lucost-ai.firebasestorage.app",
-      messagingSenderId: "925474631626",
-      appId: "1:925474631626:web:39ccdb149ba6a325bf2933"
-    };
+  const firebaseConfig = {
+    apiKey: "AIzaSyDwIAhR8bShkplR0Gkgihx2bWl0e6OloXU",
+    authDomain: "lucost-ai.firebaseapp.com",
+    projectId: "lucost-ai",
+    storageBucket: "lucost-ai.firebasestorage.app",
+    messagingSenderId: "925474631626",
+    appId: "1:925474631626:web:39ccdb149ba6a325bf2933"
+  };
 
-    if (!firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig);
-    }
-    const auth = firebase.auth();
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
+  const auth = firebase.auth();
 
-    window.isSignUpMode = false;
+  // Tab switching logic (Sign In vs Create Account)
+  const tabSignIn = document.getElementById('tabSignIn');
+  const tabSignUp = document.getElementById('tabSignUp');
+  const submitBtn = document.getElementById('emailSubmitBtn');
 
-    window.openAuthModal = function(e) {
-      if (e) e.preventDefault();
-      const modal = document.getElementById('authModal');
-      const err = document.getElementById('authErrorMsg');
-      if (modal) modal.style.display = 'flex';
-      if (err) err.style.display = 'none';
-    };
-
-    window.closeAuthModalFunc = function() {
-      const modal = document.getElementById('authModal');
-      if (modal) modal.style.display = 'none';
-    };
-
-    window.executeSignIn = async function(e) {
-      if (e) e.preventDefault();
-      
-      const emailInput = document.getElementById('emailInput');
-      const passwordInput = document.getElementById('passwordInput');
-      const authErrorMsg = document.getElementById('authErrorMsg');
-      const submitBtn = document.getElementById('emailSubmitBtn');
-
-      const email = emailInput ? emailInput.value.trim() : '';
-      const password = passwordInput ? passwordInput.value.trim() : '';
-
-      if (authErrorMsg) authErrorMsg.style.display = 'none';
-
-      if (!email || !password) {
-        if (authErrorMsg) {
-          authErrorMsg.innerText = "Please fill in all fields.";
-          authErrorMsg.style.display = 'block';
-        }
-        return;
-      }
-
-      if (submitBtn) {
-        submitBtn.innerText = "Processing...";
-        submitBtn.disabled = true;
-      }
-
-      try {
-        if (window.isSignUpMode) {
-          await auth.createUserWithEmailAndPassword(email, password);
-        } else {
-          await auth.signInWithEmailAndPassword(email, password);
-        }
-        window.location.href = '/dashboard';
-      } catch (error) {
-        if (submitBtn) {
-          submitBtn.disabled = false;
-          submitBtn.innerText = window.isSignUpMode ? "Create Account" : "Sign In";
-        }
-        if (authErrorMsg) {
-          authErrorMsg.innerText = error.message;
-          authErrorMsg.style.display = 'block';
-        }
-      }
-    };
-
-    document.addEventListener("DOMContentLoaded", () => {
-      const modal = document.getElementById('authModal');
-      const closeBtn = document.getElementById('closeAuthModal');
-      const toggleBtn = document.getElementById('toggleAuthBtn');
-      const toggleText = document.getElementById('toggleAuthText');
-      const modalTitle = document.getElementById('modalTitle');
-      const modalSub = document.getElementById('modalSub');
-      const submitBtn = document.getElementById('emailSubmitBtn');
-
-      // Bind all triggers
-      const triggers = document.querySelectorAll('.id-sign-in-btn, .id-get-started-btn, button, a');
-      triggers.forEach(btn => {
-        const txt = btn.innerText ? btn.innerText.toLowerCase().trim() : '';
-        if (txt.includes('sign in') || txt.includes('get started') || btn.classList.contains('id-sign-in-btn')) {
-          btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            window.openAuthModal(e);
-          });
-        }
-      });
-
-      if (closeBtn) {
-        closeBtn.addEventListener('click', () => window.closeAuthModalFunc());
-      }
-
-      if (modal) {
-        modal.addEventListener('click', (e) => {
-          if (e.target === modal) window.closeAuthModalFunc();
-        });
-      }
-
-      if (toggleBtn) {
-        toggleBtn.addEventListener('click', (e) => {
-          e.preventDefault();
-          window.isSignUpMode = !window.isSignUpMode;
-          if (window.isSignUpMode) {
-            modalTitle.innerText = "Create Account";
-            modalSub.innerText = "Get started with your free studio account.";
-            submitBtn.innerText = "Create Account";
-            toggleText.innerText = "Already have an account?";
-            toggleBtn.innerText = "Sign In";
-          } else {
-            modalTitle.innerText = "Sign In";
-            modalSub.innerText = "Welcome back! Access your studio workspace.";
-            submitBtn.innerText = "Sign In";
-            toggleText.innerText = "Don't have an account?";
-            toggleBtn.innerText = "Create one";
-          }
-        });
-      }
+  if (tabSignIn && tabSignUp) {
+    tabSignIn.addEventListener('click', () => {
+      isSignUpMode = false;
+      tabSignIn.classList.add('active');
+      tabSignUp.classList.remove('active');
+      if (submitBtn) submitBtn.innerText = "Sign In";
+      clearError();
     });
-  </script>
-</body>
-</html>
+
+    tabSignUp.addEventListener('click', () => {
+      isSignUpMode = true;
+      tabSignUp.classList.add('active');
+      tabSignIn.classList.remove('active');
+      if (submitBtn) submitBtn.innerText = "Create Account";
+      clearError();
+    });
+  }
+
+  // Password visibility toggle
+  const togglePasswordBtn = document.getElementById('togglePasswordBtn');
+  const passwordInput = document.getElementById('passwordInput');
+  const eyeOpen = document.getElementById('eyeOpen');
+  const eyeClosed = document.getElementById('eyeClosed');
+
+  if (togglePasswordBtn && passwordInput) {
+    togglePasswordBtn.addEventListener('click', () => {
+      const isPassword = passwordInput.type === 'password';
+      passwordInput.type = isPassword ? 'text' : 'password';
+      eyeOpen.style.display = isPassword ? 'none' : 'block';
+      eyeClosed.style.display = isPassword ? 'block' : 'none';
+    });
+  }
+
+  function clearError() {
+    const authErrorMsg = document.getElementById('authErrorMsg');
+    if (authErrorMsg) authErrorMsg.style.display = 'none';
+  }
+
+  function openAuthModal(e) {
+    if (e) e.preventDefault();
+    const modal = document.getElementById('authModal');
+    clearError();
+    if (modal) modal.style.display = 'flex';
+  }
+
+  function closeAuthModalFunc() {
+    const modal = document.getElementById('authModal');
+    if (modal) modal.style.display = 'none';
+  }
+
+  // Email / Password Auth Execution
+  async function executeSignIn(e) {
+    if (e) e.preventDefault();
+
+    const emailInput = document.getElementById('emailInput');
+    const passwordInput = document.getElementById('passwordInput');
+    const authErrorMsg = document.getElementById('authErrorMsg');
+
+    const email = emailInput ? emailInput.value.tri
