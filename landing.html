@@ -5,151 +5,234 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LUCOST AI — Landing v2</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Caveat:wght@600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --void:#0E0C0B; --panel:#1A1714; --card:#211D18; --card-hi:#2A251F;
-    --line:#3B342A; --text:#EDE7DA; --muted:#9B9284;
-    --accent:#8A6440; --accent-hi:#C99A5E; --accent-dim:#4E3A24;
+  :root {
+    --void: #0E0C0B; 
+    --panel: #1A1714; 
+    --card: #211D18; 
+    --card-hi: #2A251F;
+    --line: #3B342A; 
+    --text: #EDE7DA; 
+    --muted: #9B9284;
+    --accent: #8A6440; 
+    --accent-hi: #C99A5E; 
+    --accent-dim: #4E3A24;
   }
-  *{box-sizing:border-box; margin:0; padding:0;}
-  body{ background:var(--void); font-family:'Inter',sans-serif; color:var(--text); min-height:100vh; display:flex; justify-content:center; }
 
-  .screen{
-    width:100%; max-width:420px; min-height:100vh; position:relative; overflow:hidden;
-    display:flex; flex-direction:column; align-items:center; padding:26px 26px 50px;
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body { 
+    background-color: var(--void) !important; 
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important; 
+    color: var(--text); 
+    min-height: 100vh; 
+    display: flex; 
+    justify-content: center; 
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-text-size-adjust: 100%;
   }
 
-  /* ---------- Rotating background video reels (admin-managed, 5 slots) ---------- */
-  .bg-reel{
-    position:absolute; inset:0; opacity:0; z-index:0;
+  /* FLUID RESPONSIVE CONTAINER (Laptops spread, Phones fit) */
+  .screen {
+    width: 100%; 
+    max-width: 1200px; 
+    min-height: 100vh; 
+    position: relative; 
+    overflow-x: hidden;
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    padding: clamp(20px, 4vw, 50px) 24px 50px;
+  }
+
+  /* ---------- Rotating background video reels ---------- */
+  .bg-reel {
+    position: absolute; inset: 0; opacity: 0; z-index: 0;
     animation: reelCycle 35s infinite;
+    pointer-events: none;
   }
-  .bg-reel::after{
-    content:''; position:absolute; inset:0;
-    background:linear-gradient(180deg, rgba(14,12,11,0.42) 0%, rgba(14,12,11,0.5) 45%, rgba(14,12,11,0.58) 100%);
+  .bg-reel::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(14,12,11,0.42) 0%, rgba(14,12,11,0.5) 45%, rgba(14,12,11,0.58) 100%);
   }
-  /* Each reel is visible for ~17s out of a 35s loop (5 across, staggered 7s apart):
-     5s ramp-in, 7s hold, 5s ramp-out — with the ramp-in of the next reel
-     overlapping the ramp-out of this one, so they genuinely blend for 5s
-     before the older one is gone. Loops forever. */
-  .bg-reel.r1{ background:radial-gradient(circle at 30% 20%, #3a2a1c, #14100c 70%); animation-delay:0s; }
-  .bg-reel.r2{ background:radial-gradient(circle at 70% 30%, #2c2418, #120f0c 70%); animation-delay:7s; }
-  .bg-reel.r3{ background:radial-gradient(circle at 50% 15%, #241d16, #100d0a 70%); animation-delay:14s; }
-  .bg-reel.r4{ background:radial-gradient(circle at 20% 35%, #33251a, #110e0b 70%); animation-delay:21s; }
-  .bg-reel.r5{ background:radial-gradient(circle at 80% 20%, #2a2015, #100d0a 70%); animation-delay:28s; }
-  @keyframes reelCycle{
-    0%{ opacity:1; }      /* hold starts (this is also where the previous reel's blend finishes) */
-    20%{ opacity:1; }     /* hold ends (7s of full visibility: 7/35 = 20%) */
-    34.3%{ opacity:0; }   /* ramp-out complete (5s fade: 5/35 = 14.3%) */
-    85.7%{ opacity:0; }   /* stays invisible until 5s before its next turn */
-    100%{ opacity:1; }    /* ramp-in complete, blending with the tail of whichever reel is still fading out — loops back to 0% */
-  }
-  .reel-tag{
-    position:absolute; top:10px; right:10px; font-size:8px; color:var(--muted);
-    opacity:0.35; letter-spacing:0.5px; z-index:1;
+  .bg-reel.r1 { background: radial-gradient(circle at 30% 20%, #3a2a1c, #14100c 70%); animation-delay: 0s; }
+  .bg-reel.r2 { background: radial-gradient(circle at 70% 30%, #2c2418, #120f0c 70%); animation-delay: 7s; }
+  .bg-reel.r3 { background: radial-gradient(circle at 50% 15%, #241d16, #100d0a 70%); animation-delay: 14s; }
+  .bg-reel.r4 { background: radial-gradient(circle at 20% 35%, #33251a, #110e0b 70%); animation-delay: 21s; }
+  .bg-reel.r5 { background: radial-gradient(circle at 80% 20%, #2a2015, #100d0a 70%); animation-delay: 28s; }
+
+  @keyframes reelCycle {
+    0% { opacity: 1; }
+    20% { opacity: 1; }
+    34.3% { opacity: 0; }
+    85.7% { opacity: 0; }
+    100% { opacity: 1; }
   }
 
-  .content{ position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; width:100%; }
-
-  .topbar{ display:flex; flex-direction:column; align-items:center; gap:10px; margin-bottom:46px; }
-  .logo-slot{
-    width:96px; height:96px; border-radius:50%;
-    background:var(--panel);
-    border:1.5px dashed var(--line); display:flex; align-items:center; justify-content:center;
-    overflow:hidden; flex-shrink:0; flex-direction:column; gap:4px;
-  }
-  .logo-slot .plus{ font-size:22px; color:var(--accent-hi); line-height:1; }
-  .logo-slot .hint{ font-size:8px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; text-align:center; }
-  .logo-slot img{
-    width:100%; height:100%; object-fit:cover; border-radius:50%;
-  }
-  .logo{ font-family:'Bebas Neue',sans-serif; font-size:34px; letter-spacing:2px; font-weight:900; line-height:1; }
-  .logo span{ color:var(--accent-hi); }
-
-  .tagline{ font-family:'Caveat',cursive; font-size:22px; color:var(--accent-hi); text-align:center; margin-bottom:6px; transform:rotate(-1.5deg); }
-  .headline{ font-weight:800; font-size:37px; line-height:1.12; text-align:center; letter-spacing:-0.5px; margin-bottom:18px; text-shadow:0 4px 24px rgba(0,0,0,0.6); }
-  .headline .grad{ background:linear-gradient(90deg,var(--accent-hi),#E8C58A); -webkit-background-clip:text; background-clip:text; color:transparent; }
-
-  .sub{ font-size:14.5px; line-height:1.6; color:var(--muted); text-align:center; max-width:340px; margin-bottom:28px; }
-
-  .cta-btn{ width:100%; max-width:300px; padding:17px; border-radius:14px; border:none; background:linear-gradient(135deg,var(--accent-hi),var(--accent)); color:#191410; font-weight:800; font-size:15.5px; cursor:pointer; box-shadow:0 14px 34px rgba(0,0,0,0.5); margin-bottom:28px; }
-  .cta-sub{ font-size:11.5px; color:var(--muted); font-style:italic; margin-bottom:30px; }
-
-  .proof-row{ display:flex; align-items:center; gap:12px; background:rgba(26,23,20,0.75); backdrop-filter:blur(6px); border:1px solid var(--line); border-radius:40px; padding:9px 18px 9px 9px; margin-bottom:26px; }
-  .avatar-stack{ display:flex; }
-  .avatar-stack .av{ width:32px; height:32px; border-radius:50%; border:2px dashed var(--line); background:var(--panel); margin-left:-10px; display:flex; align-items:center; justify-content:center; font-size:14px; color:var(--muted); opacity:0.6; overflow:hidden; }
-  .avatar-stack .av:first-child{ margin-left:0; }
-  .stars{ color:var(--accent-hi); font-size:12px; letter-spacing:1px; }
-  .proof-note{ color:var(--muted); font-size:11.5px; }
-  .placeholder-tag{ font-size:8.5px; color:var(--muted); text-align:center; margin-bottom:36px; text-transform:uppercase; letter-spacing:0.5px; opacity:0.6; }
-
-  /* ---------- Dramatic flying-in feature clips ---------- */
-  .clip-stage{ position:relative; width:100%; max-width:360px; height:340px; margin-bottom:14px; }
-  .clip{
-    position:absolute; width:168px; height:236px; border-radius:16px;
-    background:linear-gradient(155deg,var(--card-hi),var(--card));
-    border:1px solid var(--line); box-shadow:0 22px 48px rgba(0,0,0,0.55);
-    display:flex; flex-direction:column; justify-content:flex-end; padding:12px;
-    opacity:0; animation-fill-mode:forwards; animation-iteration-count:1;
-  }
-  .clip .tag{ font-size:9.5px; font-weight:700; color:var(--accent-hi); text-transform:uppercase; letter-spacing:0.4px; background:rgba(0,0,0,0.5); padding:3px 7px; border-radius:6px; align-self:flex-start; }
-  .clip .play{ position:absolute; top:10px; right:10px; width:20px; height:20px; border-radius:50%; background:rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:center; color:var(--accent-hi); font-size:9px; }
-
-  /* Continuous relay: exactly one clip's "window" is open at a time across a
-     15s loop (3s each, 5 clips), then it wraps back to k1 forever — nothing
-     ever stays put, nothing ever stops. */
-  .clip{ left:50%; top:50%; margin-left:-84px; margin-top:-118px; }
-  .clip.k1{ animation:cycleCenter 15s linear infinite; animation-delay:0s; z-index:5; }
-  .clip.k2{ animation:cycleTL     15s linear infinite; animation-delay:3s; z-index:5; }
-  .clip.k3{ animation:cycleTR     15s linear infinite; animation-delay:6s; z-index:5; }
-  .clip.k4{ animation:cycleBL     15s linear infinite; animation-delay:9s; z-index:5; }
-  .clip.k5{ animation:cycleBR     15s linear infinite; animation-delay:12s; z-index:5; }
-
-  @keyframes cycleCenter{
-    0%{ opacity:0; transform:translateY(-50px) scale(0.8) rotate(0deg); }
-    6%{ opacity:1; transform:translateY(0) scale(1) rotate(0deg); }
-    14%{ opacity:1; transform:translateY(0) scale(1) rotate(0deg); }
-    20%{ opacity:0; transform:translateY(50px) scale(0.8) rotate(0deg); }
-    100%{ opacity:0; }
-  }
-  @keyframes cycleTL{
-    0%{ opacity:0; transform:translate(-280px,-210px) rotate(-35deg) scale(0.72); }
-    6%{ opacity:1; transform:translate(-70px,-38px) rotate(-9deg) scale(1); }
-    14%{ opacity:1; transform:translate(-70px,-38px) rotate(-9deg) scale(1); }
-    20%{ opacity:0; transform:translate(-320px,-240px) rotate(-40deg) scale(0.62); }
-    100%{ opacity:0; }
-  }
-  @keyframes cycleTR{
-    0%{ opacity:0; transform:translate(280px,-210px) rotate(35deg) scale(0.72); }
-    6%{ opacity:1; transform:translate(70px,-38px) rotate(9deg) scale(1); }
-    14%{ opacity:1; transform:translate(70px,-38px) rotate(9deg) scale(1); }
-    20%{ opacity:0; transform:translate(320px,-240px) rotate(40deg) scale(0.62); }
-    100%{ opacity:0; }
-  }
-  @keyframes cycleBL{
-    0%{ opacity:0; transform:translate(-320px,210px) rotate(28deg) scale(0.62); }
-    6%{ opacity:1; transform:translate(-58px,72px) rotate(-14deg) scale(0.96); }
-    14%{ opacity:1; transform:translate(-58px,72px) rotate(-14deg) scale(0.96); }
-    20%{ opacity:0; transform:translate(-340px,250px) rotate(30deg) scale(0.58); }
-    100%{ opacity:0; }
-  }
-  @keyframes cycleBR{
-    0%{ opacity:0; transform:translate(320px,210px) rotate(-28deg) scale(0.62); }
-    6%{ opacity:1; transform:translate(58px,72px) rotate(14deg) scale(0.96); }
-    14%{ opacity:1; transform:translate(58px,72px) rotate(14deg) scale(0.96); }
-    20%{ opacity:0; transform:translate(340px,250px) rotate(-30deg) scale(0.58); }
-    100%{ opacity:0; }
+  .reel-tag {
+    position: absolute; top: 10px; right: 10px; font-size: 8px; color: var(--muted);
+    opacity: 0.35; letter-spacing: 0.5px; z-index: 1; pointer-events: none;
   }
 
-  .trial-badge{
-    font-size:12px; text-align:center; color:var(--text); background:rgba(201,154,94,0.1);
-    border:1px solid rgba(201,154,94,0.35); border-radius:30px; padding:9px 16px;
-    margin-bottom:24px; max-width:300px; line-height:1.4;
+  .content { 
+    position: relative; 
+    z-index: 2; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    width: 100%; 
+    max-width: 900px;
   }
-  .trial-badge b{ color:var(--accent-hi); }
 
-  .scroll-hint{ font-size:10px; color:var(--muted); text-align:center; letter-spacing:1px; text-transform:uppercase; opacity:0.7; }
+  .topbar { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 36px; }
+  .logo-slot {
+    width: 96px; height: 96px; border-radius: 50%;
+    background: var(--panel);
+    border: 1.5px dashed var(--line); display: flex; align-items: center; justify-content: center;
+    overflow: hidden; flex-shrink: 0; flex-direction: column; gap: 4px;
+  }
+  .logo-slot .plus { font-size: 22px; color: var(--accent-hi); line-height: 1; }
+  .logo-slot .hint { font-size: 8px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; text-align: center; }
+  .logo-slot img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+
+  .logo { font-family: 'Bebas Neue', sans-serif; font-size: clamp(34px, 5vw, 48px); letter-spacing: 2px; font-weight: 900; line-height: 1; }
+  .logo span { color: var(--accent-hi); }
+
+  .tagline { font-family: 'Caveat', cursive; font-size: clamp(22px, 3.5vw, 28px); color: var(--accent-hi); text-align: center; margin-bottom: 8px; transform: rotate(-1.5deg); }
+  
+  /* TYPOGRAPHY & GRADIENTS LOCKED FOR ALL DISPLAYS */
+  .headline { 
+    font-weight: 800; 
+    font-size: clamp(32px, 5.5vw, 56px); 
+    line-height: 1.12; 
+    text-align: center; 
+    letter-spacing: -0.5px; 
+    margin-bottom: 18px; 
+    text-shadow: 0 4px 24px rgba(0,0,0,0.6); 
+    max-width: 950px;
+  }
+
+  .headline .grad { 
+    background: linear-gradient(180deg, #FFFFFF 0%, #E8C58A 60%, #C99A5E 100%) !important; 
+    -webkit-background-clip: text !important; 
+    background-clip: text !important; 
+    -webkit-text-fill-color: transparent !important; 
+    color: #E8C58A;
+  }
+
+  .sub { 
+    font-size: clamp(14.5px, 2vw, 17px); 
+    line-height: 1.6; 
+    color: var(--muted); 
+    text-align: center; 
+    max-width: 620px; 
+    margin-bottom: 28px; 
+  }
+
+  /* CLICKABLE CTA WRAPPER & BUTTON */
+  .cta-link {
+    width: 100%;
+    max-width: 320px;
+    text-decoration: none;
+    margin-bottom: 28px;
+    z-index: 10;
+  }
+
+  .cta-btn { 
+    width: 100%; 
+    padding: 17px; 
+    border-radius: 14px; 
+    border: none; 
+    background: linear-gradient(135deg, #C99A5E 0%, #8A6440 100%) !important; 
+    color: #191410 !important; 
+    font-weight: 800; 
+    font-size: 16px; 
+    cursor: pointer; 
+    box-shadow: 0 14px 34px rgba(0,0,0,0.5); 
+    transition: transform 0.2s ease, filter 0.2s ease;
+    pointer-events: auto !important;
+  }
+
+  .cta-btn:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+  }
+
+  .cta-sub { font-size: 11.5px; color: var(--muted); font-style: italic; margin-bottom: 30px; }
+
+  .proof-row { display: flex; align-items: center; gap: 12px; background: rgba(26,23,20,0.75); backdrop-filter: blur(6px); border: 1px solid var(--line); border-radius: 40px; padding: 9px 18px 9px 9px; margin-bottom: 26px; }
+  .avatar-stack { display: flex; }
+  .avatar-stack .av { width: 32px; height: 32px; border-radius: 50%; border: 2px dashed var(--line); background: var(--panel); margin-left: -10px; display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--muted); opacity: 0.6; overflow: hidden; }
+  .avatar-stack .av:first-child { margin-left: 0; }
+  .stars { color: var(--accent-hi); font-size: 12px; letter-spacing: 1px; }
+  .proof-note { color: var(--muted); font-size: 11.5px; }
+
+  /* DRAMATIC FEATURE CLIPS STAGE */
+  .clip-stage { position: relative; width: 100%; max-width: 480px; height: 340px; margin-bottom: 14px; }
+  .clip {
+    position: absolute; width: 168px; height: 236px; border-radius: 16px;
+    background: linear-gradient(155deg, var(--card-hi), var(--card));
+    border: 1px solid var(--line); box-shadow: 0 22px 48px rgba(0,0,0,0.55);
+    display: flex; flex-direction: column; justify-content: flex-end; padding: 12px;
+    opacity: 0; animation-fill-mode: forwards; animation-iteration-count: 1;
+    left: 50%; top: 50%; margin-left: -84px; margin-top: -118px;
+  }
+  .clip .tag { font-size: 9.5px; font-weight: 700; color: var(--accent-hi); text-transform: uppercase; letter-spacing: 0.4px; background: rgba(0,0,0,0.5); padding: 3px 7px; border-radius: 6px; align-self: flex-start; }
+  .clip .play { position: absolute; top: 10px; right: 10px; width: 20px; height: 20px; border-radius: 50%; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; color: var(--accent-hi); font-size: 9px; }
+
+  .clip.k1 { animation: cycleCenter 15s linear infinite; animation-delay: 0s; z-index: 5; }
+  .clip.k2 { animation: cycleTL     15s linear infinite; animation-delay: 3s; z-index: 5; }
+  .clip.k3 { animation: cycleTR     15s linear infinite; animation-delay: 6s; z-index: 5; }
+  .clip.k4 { animation: cycleBL     15s linear infinite; animation-delay: 9s; z-index: 5; }
+  .clip.k5 { animation: cycleBR     15s linear infinite; animation-delay: 12s; z-index: 5; }
+
+  @keyframes cycleCenter {
+    0% { opacity: 0; transform: translateY(-50px) scale(0.8) rotate(0deg); }
+    6% { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); }
+    14% { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); }
+    20% { opacity: 0; transform: translateY(50px) scale(0.8) rotate(0deg); }
+    100% { opacity: 0; }
+  }
+  @keyframes cycleTL {
+    0% { opacity: 0; transform: translate(-280px,-210px) rotate(-35deg) scale(0.72); }
+    6% { opacity: 1; transform: translate(-70px,-38px) rotate(-9deg) scale(1); }
+    14% { opacity: 1; transform: translate(-70px,-38px) rotate(-9deg) scale(1); }
+    20% { opacity: 0; transform: translate(-320px,-240px) rotate(-40deg) scale(0.62); }
+    100% { opacity: 0; }
+  }
+  @keyframes cycleTR {
+    0% { opacity: 0; transform: translate(280px,-210px) rotate(35deg) scale(0.72); }
+    6% { opacity: 1; transform: translate(70px,-38px) rotate(9deg) scale(1); }
+    14% { opacity: 1; transform: translate(70px,-38px) rotate(9deg) scale(1); }
+    20% { opacity: 0; transform: translate(320px,-240px) rotate(40deg) scale(0.62); }
+    100% { opacity: 0; }
+  }
+  @keyframes cycleBL {
+    0% { opacity: 0; transform: translate(-320px,210px) rotate(28deg) scale(0.62); }
+    6% { opacity: 1; transform: translate(-58px,72px) rotate(-14deg) scale(0.96); }
+    14% { opacity: 1; transform: translate(-58px,72px) rotate(-14deg) scale(0.96); }
+    20% { opacity: 0; transform: translate(-340px,250px) rotate(30deg) scale(0.58); }
+    100% { opacity: 0; }
+  }
+  @keyframes cycleBR {
+    0% { opacity: 0; transform: translate(320px,210px) rotate(-28deg) scale(0.62); }
+    6% { opacity: 1; transform: translate(58px,72px) rotate(14deg) scale(0.96); }
+    14% { opacity: 1; transform: translate(58px,72px) rotate(14deg) scale(0.96); }
+    20% { opacity: 0; transform: translate(340px,250px) rotate(-30deg) scale(0.58); }
+    100% { opacity: 0; }
+  }
+
+  .trial-badge {
+    font-size: 12px; text-align: center; color: var(--text); background: rgba(201,154,94,0.1);
+    border: 1px solid rgba(201,154,94,0.35); border-radius: 30px; padding: 9px 16px;
+    margin-bottom: 24px; max-width: 340px; line-height: 1.4;
+  }
+  .trial-badge b { color: var(--accent-hi); }
+
+  .scroll-hint { font-size: 10px; color: var(--muted); text-align: center; letter-spacing: 1px; text-transform: uppercase; opacity: 0.7; }
 </style>
 </head>
 <body>
@@ -169,7 +252,7 @@
       <div class="logo">LUCOST <span>AI</span></div>
     </div>
 
-    <div class="tagline">✨ hey, storyteller — let's make something great ✨</div>
+    <div class="tagline">✨ hey, creator- ready to bring your ideas to life ✨</div>
     <div class="headline">
       Write the script.<br>
       Cast the faces.<br>
@@ -177,10 +260,13 @@
     </div>
 
     <div class="sub">
-      Drop in your script, bring your characters to life with a face and a voice, then pick your vibe — Anime, Drama, or Cinematic 3D. We'll handle the rest: the scenes, the sound, the whole thing, scene by scene, just for you.
+      Drop in your script and turn your words into vira videos in minutes. Bring your characters to life with a face and a voice, then pick your vibe — Anime, Drama, or Cinematic 3D. We'll handle the rest just for you.
     </div>
 
-    <button class="cta-btn">Create Your Account</button>
+    <!-- Wrapped CTA button in link tag with explicit click handler -->
+    <a href="/dashboard" class="cta-link">
+      <button class="cta-btn" type="button" onclick="window.location.href='/dashboard'">Create Your Account</button>
+    </a>
 
     <div class="proof-row">
       <div class="avatar-stack"><div class="av">👤</div><div class="av">👤</div><div class="av">👤</div><div class="av">👤</div><div class="av">👤</div></div>
@@ -204,7 +290,6 @@
   </div>
 </div>
 
-</body>
 <script>
   // ---- Fetch from backend on load ----
   const API_BASE = window.location.origin + '/api';
@@ -245,23 +330,12 @@
     }
   }
   
-  function updatePricingDisplay(data){
-    // Dynamic pricing from backend
-    // This would update the pricing tiers shown on landing
-  }
-  
-  function updateAdCarousel(ads){
-    // Update the 10-ad carousel with real ad URLs from backend
-  }
-  
-  function updateFeatureClips(clips){
-    // Update the flying clips animation with real video URLs
-  }
-  
-  function updateAvatarRow(avatars){
-    // Update the 5-avatar social proof row
-  }
+  function updatePricingDisplay(data){}
+  function updateAdCarousel(ads){}
+  function updateFeatureClips(clips){}
+  function updateAvatarRow(avatars){}
   
   loadContentFromBackend();
 </script>
+</body>
 </html>
