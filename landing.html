@@ -388,6 +388,7 @@
     display: none;
     line-height: 1.3;
     text-align: left;
+    font-weight: 600;
   }
 </style>
 </head>
@@ -418,9 +419,9 @@
       Drop in your script, bring your characters to life with a face and a voice, then pick your vibe — Anime, Drama, or Cinematic 3D. We'll handle the rest: the scenes, the sound, the whole thing, scene by scene, just for you.
     </div>
 
-    <!-- MAIN SIGN IN CTA BUTTON (Inlined onclick fallback for absolute reliability) -->
+    <!-- MAIN LANDING BUTTON -->
     <div class="btn-group">
-      <button class="cta-btn" id="openAuthModalBtn" onclick="openModalModal(event)">Sign In</button>
+      <button type="button" class="cta-btn" id="openAuthModalBtn" onclick="openAuthModal(event)">Sign In</button>
     </div>
 
     <div class="proof-row">
@@ -433,7 +434,7 @@
 
     <div class="trial-badge">🎁 New here? Get <b>2 free trial viral videos</b> when you sign up</div>
 
-    <!-- LARGER CLIPS STAGE CONTAINER -->
+    <!-- LARGER CLIPS STAGE -->
     <div class="clip-stage">
       <div class="clip k1"><span class="play">▶</span><span class="tag">Clip 1</span></div>
       <div class="clip k2"><span class="play">▶</span><span class="tag">Clip 2</span></div>
@@ -447,7 +448,7 @@
 <!-- AUTH MODAL -->
 <div class="modal-overlay" id="authModal">
   <div class="modal-card">
-    <button class="modal-close" id="closeAuthModal">&times;</button>
+    <button type="button" class="modal-close" id="closeAuthModal" onclick="closeAuthModalFunc()">&times;</button>
     
     <div class="auth-tabs">
       <div class="auth-tab active" id="tabSignIn">Sign In</div>
@@ -480,7 +481,8 @@
 
       <small class="error-msg" id="authErrorMsg"></small>
 
-      <button class="cta-btn" id="emailSubmitBtn" style="margin-top: 6px;">Sign In</button>
+      <!-- SUBMIT BUTTON WITH DIRECT GLOBAL ONCLICK -->
+      <button type="button" class="cta-btn" id="emailSubmitBtn" onclick="executeSignIn(event)" style="margin-top: 6px;">Sign In</button>
     </div>
   </div>
 </div>
@@ -490,16 +492,10 @@
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 
 <script>
-  // 1. Global Function Helper to guarantee click works anywhere
-  function openModalModal(e) {
-    if(e) e.preventDefault();
-    const modalEl = document.getElementById('authModal');
-    const errEl = document.getElementById('authErrorMsg');
-    if(modalEl) modalEl.style.display = 'flex';
-    if(errEl) errEl.style.display = 'none';
-  }
+  // Global Mode Toggle Variable
+  let isSignUpMode = false;
 
-  // 2. Firebase Web SDK Configuration
+  // 1. Firebase Initialization
   const firebaseConfig = {
     apiKey: "AIzaSyDwIAhR8bShkplR0Gkgihx2bWl0e6OloXU",
     authDomain: "lucost-ai.firebaseapp.com",
@@ -514,43 +510,52 @@
   }
   const auth = firebase.auth();
 
-  document.addEventListener("DOMContentLoaded", () => {
-    // 3. DOM Elements
+  // 2. Direct Global Handlers for Modal Opening & Closing
+  function openAuthModal(e) {
+    if (e) e.preventDefault();
     const modal = document.getElementById('authModal');
-    const openBtn = document.getElementById('openAuthModalBtn');
-    const closeBtn = document.getElementById('closeAuthModal');
-    const tabSignIn = document.getElementById('tabSignIn');
-    const tabSignUp = document.getElementById('tabSignUp');
-    const emailSubmitBtn = document.getElementById('emailSubmitBtn');
+    const err = document.getElementById('authErrorMsg');
+    if (modal) modal.style.display = 'flex';
+    if (err) err.style.display = 'none';
+  }
+
+  function closeAuthModalFunc() {
+    const modal = document.getElementById('authModal');
+    if (modal) modal.style.display = 'none';
+  }
+
+  // 3. Direct Global Auth Submit Function (Guaranteed to Run on Tap)
+  async function executeSignIn(e) {
+    if (e) e.preventDefault();
+    
+    console.log("--> Tap detected: Starting Authentication");
+
+    const emailInput = document.getElementById('emailInput');
+    const passwordInput = document.getElementById('passwordInput');
     const authErrorMsg = document.getElementById('authErrorMsg');
+    const submitBtn = document.getElementById('emailSubmitBtn');
 
-    let isSignUpMode = false;
+    const email = emailInput ? emailInput.value.trim() : '';
+    const password = passwordInput ? passwordInput.value.trim() : '';
 
-    // Direct event assignment
-    if (openBtn) {
-      openBtn.onclick = openModalModal;
+    if (authErrorMsg) authErrorMsg.style.display = 'none';
+
+    if (!email || !password) {
+      const emptyMsg = "Please enter both email and password.";
+      if (authErrorMsg) {
+        authErrorMsg.innerText = emptyMsg;
+        authErrorMsg.style.display = 'block';
+      } else {
+        alert(emptyMsg);
+      }
+      return;
     }
 
-    if (closeBtn) {
-      closeBtn.onclick = () => { modal.style.display = 'none'; };
+    if (submitBtn) {
+      submitBtn.innerText = "Processing...";
+      submitBtn.disabled = true;
     }
 
-    window.onclick = (e) => { 
-      if (e.target === modal) modal.style.display = 'none'; 
-    };
-
-    // 4. Tab Switchers (Sign In vs Create Account)
-    if (tabSignIn && tabSignUp) {
-      tabSignIn.addEventListener('click', () => {
-        isSignUpMode = false;
-        tabSignIn.classList.add('active');
-        tabSignUp.classList.remove('active');
-        emailSubmitBtn.innerText = "Sign In";
-        authErrorMsg.style.display = 'none';
-      });
-
-      tabSignUp.addEventListener('click', () => {
-        isSignUpMode = true;
-        tabSignUp.classList.add('active');
-        tabSignIn.classList.remove('active');
-        emailSubmitBtn.innerText = "Create Account";
+    try {
+      if (isSignUpMode) {
+        await auth.createUserWithEmailAndPassword(em
