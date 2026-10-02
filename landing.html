@@ -35,7 +35,7 @@
     -webkit-text-size-adjust: 100%;
   }
 
-  /* FLUID RESPONSIVE CONTAINER (Laptops spread, Phones fit) */
+  /* FLUID RESPONSIVE CONTAINER */
   .screen {
     width: 100%; 
     max-width: 1200px; 
@@ -103,7 +103,7 @@
 
   .tagline { font-family: 'Caveat', cursive; font-size: clamp(22px, 3.5vw, 28px); color: var(--accent-hi); text-align: center; margin-bottom: 8px; transform: rotate(-1.5deg); }
   
-  /* TYPOGRAPHY & GRADIENTS LOCKED FOR ALL DISPLAYS */
+  /* TYPOGRAPHY & GRADIENTS */
   .headline { 
     font-weight: 800; 
     font-size: clamp(32px, 5.5vw, 56px); 
@@ -132,17 +132,10 @@
     margin-bottom: 28px; 
   }
 
-  /* CLICKABLE CTA WRAPPER & BUTTON */
-  .cta-link {
-    width: 100%;
-    max-width: 320px;
-    text-decoration: none;
-    margin-bottom: 28px;
-    z-index: 10;
-  }
-
+  /* CTA BUTTON */
   .cta-btn { 
     width: 100%; 
+    max-width: 320px;
     padding: 17px; 
     border-radius: 14px; 
     border: none; 
@@ -154,6 +147,8 @@
     box-shadow: 0 14px 34px rgba(0,0,0,0.5); 
     transition: transform 0.2s ease, filter 0.2s ease;
     pointer-events: auto !important;
+    margin-bottom: 28px;
+    z-index: 10;
   }
 
   .cta-btn:hover {
@@ -170,7 +165,7 @@
   .stars { color: var(--accent-hi); font-size: 12px; letter-spacing: 1px; }
   .proof-note { color: var(--muted); font-size: 11.5px; }
 
-  /* DRAMATIC FEATURE CLIPS STAGE */
+  /* FEATURE CLIPS STAGE */
   .clip-stage { position: relative; width: 100%; max-width: 480px; height: 340px; margin-bottom: 14px; }
   .clip {
     position: absolute; width: 168px; height: 236px; border-radius: 16px;
@@ -239,7 +234,6 @@
 
 <div class="screen">
 
-  <!-- Background reels: 5 rotating clips, fully admin/manager managed -->
   <div class="bg-reel r1"></div><span class="reel-tag">reel 1/5</span>
   <div class="bg-reel r2"></div>
   <div class="bg-reel r3"></div>
@@ -252,7 +246,7 @@
       <div class="logo">LUCOST <span>AI</span></div>
     </div>
 
-    <div class="tagline">✨ hey, creator- ready to bring your ideas to life ✨</div>
+    <div class="tagline">✨ Hey creator — ready to bring your ideas to life? ✨</div>
     <div class="headline">
       Write the script.<br>
       Cast the faces.<br>
@@ -260,13 +254,11 @@
     </div>
 
     <div class="sub">
-      Drop in your script and turn your words into vira videos in minutes. Bring your characters to life with a face and a voice, then pick your vibe — Anime, Drama, or Cinematic 3D. We'll handle the rest just for you.
+      Drop in your script, bring your characters to life with a face and a voice, then pick your vibe — Anime, Drama, or Cinematic 3D. We'll handle the rest: the scenes, the sound, the whole thing, scene by scene, just for you.
     </div>
 
-    <!-- Wrapped CTA button in link tag with explicit click handler -->
-    <a href="/dashboard" class="cta-link">
-      <button class="cta-btn" type="button" onclick="window.location.href='/dashboard'">Create Your Account</button>
-    </a>
+    <!-- Direct Button ID for Firebase Click Listener -->
+    <button class="cta-btn" id="ctaAuthBtn" type="button">Create Your Account</button>
 
     <div class="proof-row">
       <div class="avatar-stack"><div class="av">👤</div><div class="av">👤</div><div class="av">👤</div><div class="av">👤</div><div class="av">👤</div></div>
@@ -290,13 +282,47 @@
   </div>
 </div>
 
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+
 <script>
-  // ---- Fetch from backend on load ----
+  // 1. Firebase Configuration (Paste your keys from Firebase Console here)
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT_ID.appspot.com",
+    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+    appId: "YOUR_APP_ID"
+  };
+
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
+  const auth = firebase.auth();
+
+  // 2. Firebase Sign-In Trigger
+  document.getElementById('ctaAuthBtn').addEventListener('click', async () => {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    try {
+      // Firebase Google Auth Popup opens immediately
+      const result = await auth.signInWithPopup(provider);
+      console.log("Authenticated user:", result.user.displayName);
+      
+      // Redirect to dashboard ONLY after successful login
+      window.location.href = '/dashboard';
+    } catch (error) {
+      console.error("Firebase Auth Error:", error.message);
+      alert("Sign in failed: " + error.message);
+    }
+  });
+
+  // 3. Fetch content from backend on load
   const API_BASE = window.location.origin + '/api';
   
   async function loadContentFromBackend(){
     try{
-      // Fetch logo
       const logoRes = await fetch(API_BASE + '/content/logo');
       const logoData = await logoRes.json();
       if(logoData.items && logoData.items[0]){
@@ -304,36 +330,10 @@
           <img src="${logoData.items[0].url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
         `;
       }
-      
-      // Fetch pricing tiers (dynamic)
-      const pricingRes = await fetch(API_BASE + '/admin/settings/pricing');
-      const pricingData = await pricingRes.json();
-      updatePricingDisplay(pricingData);
-      
-      // Fetch featured ads for carousel
-      const adsRes = await fetch(API_BASE + '/content/ads');
-      const adsData = await adsRes.json();
-      updateAdCarousel(adsData.items);
-      
-      // Fetch feature clips for flying animation
-      const clipsRes = await fetch(API_BASE + '/content/feature-clips');
-      const clipsData = await clipsRes.json();
-      updateFeatureClips(clipsData.items);
-      
-      // Fetch avatars
-      const avatarsRes = await fetch(API_BASE + '/content/avatars');
-      const avatarsData = await avatarsRes.json();
-      updateAvatarRow(avatarsData.items);
-      
     } catch(e){
-      console.log('Backend not connected, using defaults');
+      console.log('Backend standard defaults active');
     }
   }
-  
-  function updatePricingDisplay(data){}
-  function updateAdCarousel(ads){}
-  function updateFeatureClips(clips){}
-  function updateAvatarRow(avatars){}
   
   loadContentFromBackend();
 </script>
