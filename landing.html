@@ -386,7 +386,7 @@
     updateProfile 
   } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-  // Your Firebase configuration using your exact provided keys
+  // Your Firebase configuration
   const firebaseConfig = {
     apiKey: "AIzaSyDwIAhR8bShkplR0Gkgihx2bWl0e6OloXU",
     authDomain: "lucost-ai.firebaseapp.com",
@@ -408,14 +408,14 @@
   const signupForm = document.getElementById('signup-form');
   const signinForm = document.getElementById('signin-form');
 
-  window.openAuthModal = (mode) => {
+  function openAuthModal(mode) {
     authModal.classList.add('active');
     switchTab(mode);
-  };
+  }
 
-  window.closeAuthModal = () => {
+  function closeAuthModal() {
     authModal.classList.remove('active');
-  };
+  }
 
   function switchTab(mode) {
     if (mode === 'signup') {
@@ -431,21 +431,19 @@
     }
   }
 
-  // Event Listeners for UI
-  document.getElementById('signin-header-btn').addEventListener('click', () => openAuthModal('signin'));
-  document.getElementById('signup-cta-btn').addEventListener('click', () => openAuthModal('signup'));
-  document.getElementById('close-modal-btn').addEventListener('click', closeAuthModal);
-  signupTab.addEventListener('click', () => switchTab('signup'));
-  signinTab.addEventListener('click', () => switchTab('signin'));
+  // Bind click events safely after DOM loads
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('signin-header-btn').addEventListener('click', () => openAuthModal('signin'));
+    document.getElementById('signup-cta-btn').addEventListener('click', () => openAuthModal('signup'));
+    document.getElementById('close-modal-btn').addEventListener('click', closeAuthModal);
+    
+    signupTab.addEventListener('click', () => switchTab('signup'));
+    signinTab.addEventListener('click', () => switchTab('signin'));
 
-  // Firebase Google Sign-In Handler
-  document.getElementById('google-auth-btn').addEventListener('click', async () => {
-    try {
-      const result = await signInWithPopup(auth, googleProvider);
-      window.location.href = 'dashboard.html';
-    } catch (error) {
-      alert(error.message);
-    }
-  });
-
-  // Firebase Sign Up Ha
+    // Firebase Google Sign-In Handler
+    document.getElementById('google-auth-btn').addEventListener('click', async () => {
+      try {
+        await signInWithPopup(auth, googleProvider);
+        window.location.href = 'dashboard.html';
+      } catch (error) {
+        alert(error.
