@@ -132,21 +132,11 @@
     margin-bottom: 28px; 
   }
 
-  /* CTA BUTTONS */
-  .btn-group {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-    width: 100%;
-    max-width: 320px;
-    margin-bottom: 28px;
-    z-index: 10;
-  }
-
+  /* CTA BUTTON */
   .cta-btn { 
     width: 100%; 
-    padding: 16px; 
+    max-width: 320px;
+    padding: 17px; 
     border-radius: 14px; 
     border: none; 
     background: linear-gradient(135deg, #C99A5E 0%, #8A6440 100%) !important; 
@@ -156,25 +146,17 @@
     cursor: pointer; 
     box-shadow: 0 14px 34px rgba(0,0,0,0.5); 
     transition: transform 0.2s ease, filter 0.2s ease;
+    pointer-events: auto !important;
+    margin-bottom: 28px;
+    z-index: 10;
   }
 
-  .cta-btn-alt {
-    width: 100%;
-    padding: 14px;
-    border-radius: 14px;
-    border: 1px solid var(--line);
-    background: var(--panel) !important;
-    color: var(--text) !important;
-    font-weight: 600;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background 0.2s ease;
-  }
-
-  .cta-btn:hover, .cta-btn-alt:hover {
+  .cta-btn:hover {
     transform: translateY(-2px);
     filter: brightness(1.1);
   }
+
+  .cta-sub { font-size: 11.5px; color: var(--muted); font-style: italic; margin-bottom: 30px; }
 
   .proof-row { display: flex; align-items: center; gap: 12px; background: rgba(26,23,20,0.75); backdrop-filter: blur(6px); border: 1px solid var(--line); border-radius: 40px; padding: 9px 18px 9px 9px; margin-bottom: 26px; }
   .avatar-stack { display: flex; }
@@ -246,62 +228,6 @@
   .trial-badge b { color: var(--accent-hi); }
 
   .scroll-hint { font-size: 10px; color: var(--muted); text-align: center; letter-spacing: 1px; text-transform: uppercase; opacity: 0.7; }
-
-  /* EMAIL MODAL STYLES */
-  .modal-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(14, 12, 11, 0.85);
-    backdrop-filter: blur(8px);
-    z-index: 100;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-  }
-  .modal-card {
-    background: var(--panel);
-    border: 1px solid var(--line);
-    border-radius: 20px;
-    padding: 28px;
-    width: 100%;
-    max-width: 380px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    position: relative;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-  }
-  .modal-title { font-size: 20px; font-weight: 700; color: var(--text); text-align: center; }
-  .modal-input {
-    width: 100%;
-    padding: 12px 16px;
-    background: var(--card);
-    border: 1px solid var(--line);
-    border-radius: 10px;
-    color: var(--text);
-    font-family: inherit;
-    font-size: 14px;
-    outline: none;
-  }
-  .modal-input:focus { border-color: var(--accent-hi); }
-  .modal-close {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    background: none;
-    border: none;
-    color: var(--muted);
-    font-size: 18px;
-    cursor: pointer;
-  }
-  .auth-mode-toggle {
-    font-size: 12px;
-    color: var(--accent-hi);
-    text-align: center;
-    cursor: pointer;
-    margin-top: 4px;
-  }
 </style>
 </head>
 <body>
@@ -331,11 +257,8 @@
       Drop in your script, bring your characters to life with a face and a voice, then pick your vibe — Anime, Drama, or Cinematic 3D. We'll handle the rest: the scenes, the sound, the whole thing, scene by scene, just for you.
     </div>
 
-    <!-- BUTTON GROUP -->
-    <div class="btn-group">
-      <button class="cta-btn" id="ctaAuthBtn" type="button">Continue with Google</button>
-      <button class="cta-btn-alt" id="openEmailModalBtn" type="button">Continue with Email</button>
-    </div>
+    <!-- Direct Button ID for Firebase Click Listener -->
+    <button class="cta-btn" id="ctaAuthBtn" type="button">Create Your Account</button>
 
     <div class="proof-row">
       <div class="avatar-stack"><div class="av">👤</div><div class="av">👤</div><div class="av">👤</div><div class="av">👤</div><div class="av">👤</div></div>
@@ -349,25 +272,13 @@
 
     <div class="clip-stage">
       <div class="clip k1"><span class="play">▶</span><span class="tag">Clip 1</span></div>
-      <div class="clip k2"><span class="play">▶</span><span class="tag">Clip 2</span></div>
+      <div class="clip k2"><span class="play">▶</span><span class="tag">Clip 3</span></div>
       <div class="clip k3"><span class="play">▶</span><span class="tag">Clip 3</span></div>
       <div class="clip k4"><span class="play">▶</span><span class="tag">Clip 4</span></div>
       <div class="clip k5"><span class="play">▶</span><span class="tag">Clip 5</span></div>
     </div>
 
     <div class="scroll-hint">▾ scroll for more</div>
-  </div>
-</div>
-
-<!-- EMAIL MODAL -->
-<div class="modal-overlay" id="emailModal">
-  <div class="modal-card">
-    <button class="modal-close" id="closeEmailModal">&times;</button>
-    <div class="modal-title" id="modalTitle">Sign In / Register</div>
-    <input type="email" id="emailInput" class="modal-input" placeholder="Your Email Address" required>
-    <input type="password" id="passwordInput" class="modal-input" placeholder="Your Password" required>
-    <button class="cta-btn" id="emailSubmitBtn">Continue with Email</button>
-    <div class="auth-mode-toggle" id="toggleAuthMode">New user? Click to Sign Up instead</div>
   </div>
 </div>
 
@@ -392,12 +303,14 @@
   }
   const auth = firebase.auth();
 
-  // 2. Google Sign-In Listener
+  // 2. Trigger Google Sign-In Popup on Button Click
   document.getElementById('ctaAuthBtn').addEventListener('click', async () => {
     const provider = new firebase.auth.GoogleAuthProvider();
     try {
       const result = await auth.signInWithPopup(provider);
       console.log("Authenticated user:", result.user.displayName);
+      
+      // Redirect to dashboard ONLY after successful login
       window.location.href = '/dashboard';
     } catch (error) {
       console.error("Firebase Auth Error:", error.message);
@@ -405,53 +318,14 @@
     }
   });
 
-  // 3. Email Authentication Logic & Modal
-  const modal = document.getElementById('emailModal');
-  const openModalBtn = document.getElementById('openEmailModalBtn');
-  const closeModalBtn = document.getElementById('closeEmailModal');
-  const emailSubmitBtn = document.getElementById('emailSubmitBtn');
-  const toggleAuthMode = document.getElementById('toggleAuthMode');
-  let isSignUpMode = false;
-
-  openModalBtn.addEventListener('click', () => modal.style.display = 'flex');
-  closeModalBtn.addEventListener('click', () => modal.style.display = 'none');
-
-  toggleAuthMode.addEventListener('click', () => {
-    isSignUpMode = !isSignUpMode;
-    document.getElementById('modalTitle').innerText = isSignUpMode ? "Create Account" : "Sign In";
-    toggleAuthMode.innerText = isSignUpMode ? "Already have an account? Sign In" : "New user? Click to Sign Up instead";
-  });
-
-  emailSubmitBtn.addEventListener('click', async () => {
-    const email = document.getElementById('emailInput').value.trim();
-    const password = document.getElementById('passwordInput').value.trim();
-
-    if (!email || !password) {
-      alert("Please enter both email and password.");
-      return;
-    }
-
-    try {
-      if (isSignUpMode) {
-        await auth.createUserWithEmailAndPassword(email, password);
-      } else {
-        await auth.signInWithEmailAndPassword(email, password);
-      }
-      window.location.href = '/dashboard';
-    } catch (error) {
-      console.error("Email Auth Error:", error.message);
-      alert("Authentication error: " + error.message);
-    }
-  });
-
-  // 4. Automatically redirect if user is already authenticated
+  // 3. Automatically redirect if user is already authenticated
   auth.onAuthStateChanged((user) => {
     if (user) {
       window.location.href = '/dashboard';
     }
   });
 
-  // 5. Fetch dynamic content from backend on load
+  // 4. Fetch dynamic content from backend on load
   const API_BASE = window.location.origin + '/api';
   
   async function loadContentFromBackend(){
