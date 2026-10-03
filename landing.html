@@ -301,14 +301,17 @@
     </div>
 
     <button class="cta-btn" id="signup-cta-btn">Create Your Account</button>
+    
 
     <div class="proof-row">
       <div class="avatar-stack"><div class="av">👤</div><div class="av">👤</div><div class="av">👤</div><div class="av">👤</div></div>
       <div>
+        
         <div class="stars">★★★★★</div>
         <div class="proof-note">Loved by 800,000+ creators worldwide</div>
       </div>
     </div>
+
     
 
     <div class="trial-badge">🎁 New here? Get <b>2 free 30-second trials</b> when you sign up</div>
@@ -478,7 +481,7 @@
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(userCredential.user, { displayName: name });
-      window.location.href = 'dashboard.html';
+      window.location.href = '/root/ dashboard.html';
     } catch (error) {
       alert("Sign-Up Error: " + error.message);
     }
@@ -499,6 +502,5 @@
       } else {
         alert("Sign-In Error: " + error.message);
       }
-    }
   });
 </script>
