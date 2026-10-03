@@ -351,9 +351,17 @@
         <input type="email" id="signup-email" placeholder="storyteller@example.com" required />
       </div>
       <div class="form-group">
-        <label>Password</label>
-        <input type="password" id="signup-password" placeholder="••••••••" required />
-      </div>
+          <label>Password</label>
+          <div class="password-wrapper">
+            <input type="password" id="signup-password" placeholder="••••••••" required />
+            <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('signup-password', this)" aria-label="Toggle Password Visibility">
+              <svg class="eye-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            </button>
+          </div>
+        </div>
       <button type="submit" class="submit-btn">Create Account</button>
     </form>
 
@@ -364,9 +372,17 @@
         <input type="email" id="signin-email" placeholder="storyteller@example.com" required />
       </div>
       <div class="form-group">
-        <label>Password</label>
-        <input type="password" id="signin-password" placeholder="••••••••" required />
-      </div>
+          <label>Password</label>
+          <div class="password-wrapper">
+            <input type="password" id="signin-password" placeholder="••••••••" required />
+            <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('signin-password', this)" aria-label="Toggle Password Visibility">
+              <svg class="eye-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            </button>
+          </div>
+        </div>
       <button type="submit" class="submit-btn">Sign In to Dashboard</button>
     </form>
   </div>
@@ -465,6 +481,24 @@
       window.location.href = 'dashboard.html';
     } catch (error) {
       alert("Sign-Up Error: " + error.message);
+    }
+    // Email/Password Sign-In Handler
+  signinForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('signin-email').value;
+    const password = document.getElementById('signin-password').value;
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      window.location.href = 'dashboard.html';
+    } catch (error) {
+      if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
+        alert("No account found with this email. Please sign up first!");
+      } else if (error.code === 'auth/wrong-password') {
+        alert("Incorrect password. Please try again.");
+      } else {
+        alert("Sign-In Error: " + error.message);
+      }
     }
   });
 </script>
