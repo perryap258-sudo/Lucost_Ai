@@ -344,7 +344,7 @@
     <form class="auth-form active" id="signup-form">
       <div class="form-group">
         <label>Full Name</label>
-        <input type="text" id="signup-name" placeholder="John Doe" required />
+        <input type="text" id="signup-name" placeholder="John Doe" />
       </div>
       <div class="form-group">
         <label>Email</label>
@@ -398,6 +398,11 @@
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const googleProvider = new GoogleAuthProvider();
+
+  // Force Google to display the email selection screen every time
+  googleProvider.setCustomParameters({
+    prompt: 'select_account'
+  });
 
   // Modal UI Elements
   const authModal = document.getElementById('authModal');
