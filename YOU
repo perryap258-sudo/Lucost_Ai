@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LUCOST AI — Landing v2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Caveat:wght@600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    /* Cream Theme Palette */
+    --void:#FAF6EE; 
+    --panel:rgba(255, 252, 245, 0.85); 
+    --card:rgba(247, 241, 230, 0.95); 
+    --card-hi:#FFFDF8;
+    --line:#E2D7C3; 
+    --text:#2C2218; 
+    --muted:#7A6E5D;
+    --accent:#8A6440; 
+    --accent-hi:#B57E3E; 
+    --accent-dim:#D1B896;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{ background:var(--void); font-family:'Inter',sans-serif; color:var(--text); min-height:100vh; display:flex; justify-content:center; }
+
+  /* Responsive screen structure */
+  .screen{
+    width:100%; max-width:1200px; min-height:100vh; position:relative; overflow:hidden;
+    display:flex; flex-direction:column; align-items:center; padding:26px 20px 50px;
+  }
+
+  /* ---------- Rotating background video reels ---------- */
+  .bg-reel{
+    position:absolute; inset:0; opacity:0; z-index:0;
+    animation: reelCycle 35s infinite;
+  }
+  .bg-reel::after{
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(180deg, rgba(250,246,238,0.55) 0%, rgba(250,246,238,0.65) 45%, rgba(250,246,238,0.75) 100%);
+  }
+
+  .bg-reel.r1{ background:radial-gradient(circle at 30% 20%, #e6d5c1, #c4a98b 70%); animation-delay:0s; }
+  .bg-reel.r2{ background:radial-gradient(circle at 70% 30%, #d8c2a7, #b09172 70%); animation-delay:7s; }
+  .bg-reel.r3{ background:radial-gradient(circle at 50% 15%, #ebdcc8, #be9e7d 70%); animation-delay:14s; }
+  .bg-reel.r4{ background:radial-gradient(circle at 20% 35%, #dec9b0, #b59574 70%); animation-delay:21s; }
+  .bg-reel.r5{ background:radial-gradient(circle at 80% 20%, #e3ceb6, #ba9b78 70%); animation-delay:28s; }
+  
+  @keyframes reelCycle{
+    0%{ opacity:1; }
+    20%{ opacity:1; }
+    34.3%{ opacity:0; }
+    85.7%{ opacity:0; }
+    100%{ opacity:1; }
+  }
+  .reel-tag{
+    position:absolute; top:10px; right:10px; font-size:8px; color:var(--muted);
+    opacity:0.6; letter-spacing:0.5px; z-index:1;
+  }
+
+  .content{ position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; width:100%; max-width:800px; }
+
+  .topbar{ display:flex; flex-direction:column; align-items:center; gap:10px; margin-bottom:32px; width: 100%; position: relative; }
+  .header-actions{ position: absolute; right: 0; top: 0; }
+  .header-btn{ background: transparent; border: 1px solid var(--line); padding: 8px 16px; border-radius: 20px; font-weight: 600; color: var(--text); cursor: pointer; font-size: 13px; }
+  .header-btn:hover{ background: var(--card-hi); }
+
+  .logo-slot{
+    width:96px; height:96px; border-radius:50%;
+    background:var(--panel);
+    border:1.5px dashed var(--line); display:flex; align-items:center; justify-content:center;
+    overflow:hidden; flex-shrink:0; flex-direction:column; gap:4px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  }
+  .logo-slot .plus{ font-size:22px; color:var(--accent-hi); line-height:1; }
+  .logo-slot .hint{ font-size:8px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; text-align:center; }
+  .logo-slot img{ width:100%; height:100%; object-fit:cover; border-radius:50%; }
+  .logo{ font-family:'Bebas Neue',sans-serif; font-size: clamp(34px, 5vw, 44px); letter-spacing:2px; font-weight:900; line-height:1; }
+  .logo span{ color:var(--accent-hi); }
+
+  /* Straight/non-slanting tagline */
+  .tagline{ font-family:'Caveat',cursive; font-size: clamp(22px, 3.5vw, 28px); color:var(--accent-hi); text-align:center; margin-bottom:8px; transform:none; }
+  
+  /* Reduced font size for headline */
+  .headline{ 
+    font-weight:800; 
+    font-size: clamp(24px, 4vw, 38px); 
+    line-height:1.2; 
+    text-align:center; 
+    letter-spacing:-0.5px; 
+    margin-bottom:18px; 
+    text-shadow:0 2px 10px rgba(255,255,255,0.8); 
+  }
+
+  /* Black top to deep brown */
+  .headline .grad{ 
+    background:linear-gradient(180deg, #1F1813 0%, #6E4A25 100%); 
+    -webkit-background-clip:text; 
+    background-clip:text; 
+    color:transparent; 
+  }
+
+  /* Subtitle color changed to brown */
+  .sub{ 
+    font-size: clamp(14px, 2vw, 17px); 
+    line-height:1.6; 
+    color: #5C4033; 
+    text-align:center; 
+    max-width:620px; 
+    margin-bottom:28px; 
+  }
+
+  .cta-btn{ 
+    width:100%; 
+    max-width:360px; 
+    padding:18px 24px; 
+    border-radius:14px; 
+    border:none; 
+    background:linear-gradient(135deg,var(--accent-hi),var(--accent)); 
+    color:#FFFDF8; 
+    font-weight:800; 
+    font-size:16px; 
+    cursor:pointer; 
+    box-shadow:0 10px 25px rgba(138, 100, 64, 0.3); 
+    margin-bottom:10px; 
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .cta-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 30px rgba(138, 100, 64, 0.4);
+  }
+  .cta-sub{ font-size:11.5px; color:var(--muted); font-style:italic; margin-bottom:30px; }
+
+  .proof-row{ display:flex; align-items:center; gap:12px; background:rgba(255, 253, 248, 0.85); backdrop-filter:blur(6px); border:1px solid var(--line); border-radius:40px; padding:9px 18px 9px 9px; margin-bottom:8px; box-shadow:0 4px 15px rgba(0,0,0,0.04); }
+  .avatar-stack{ display:flex; }
+  .avatar-stack .av{ width:32px; height:32px; border-radius:50%; border:2px dashed var(--line); background:var(--panel); margin-left:-10px; display:flex; align-items:center; justify-content:center; font-size:14px; color:var(--muted); opacity:0.8; overflow:hidden; }
+  .avatar-stack .av:first-child{ margin-left:0; }
+  .stars{ color:var(--accent-hi); font-size:12px; letter-spacing:1px; }
+  .proof-note{ color:var(--text); font-size:11.5px; font-weight: 500; }
+  .placeholder-tag{ font-size:8.5px; color:var(--muted); text-align:center; margin-bottom:36px; text-transform:uppercase; letter-spacing:0.5px; opacity:0.8; }
+
+  /* Animated Clips */
+  .clip-stage{ position:relative; width:100%; max-width:600px; height:440px; margin-bottom:14px; }
+  .clip{
+    position:absolute; 
+    width: clamp(180px, 25vw, 240px); 
+    height: clamp(250px, 35vw, 330px); 
+    border-radius:20px;
+    background:linear-gradient(155deg,var(--card-hi),var(--card));
+    border:1px solid var(--line); box-shadow:0 20px 40px rgba(70, 50, 30, 0.15);
+    display:flex; flex-direction:column; justify-content:flex-end; padding:16px;
+    opacity:0; animation-fill-mode:forwards; animation-iteration-count:1;
+  }
+  .clip .tag{ font-size:11px; font-weight:700; color:#FFFDF8; text-transform:uppercase; letter-spacing:0.4px; background:rgba(44, 34, 24, 0.65); backdrop-filter:blur(4px); padding:5px 10px; border-radius:8px; align-self:flex-start; }
+  .clip .play{ position:absolute; top:14px; right:14px; width:28px; height:28px; border-radius:50%; background:rgba(44, 34, 24, 0.5); backdrop-filter:blur(4px); display:flex; align-items:center; justify-content:center; color:#FFFDF8; font-size:11px; }
+
+  .clip{ left:50%; top:50%; transform: translate(-50%, -50%); margin-left:0; margin-top:0; }
+  .clip.k1{ animation:cycleCenter 15s linear infinite; animation-delay:0s; z-index:5; }
+  .clip.k2{ animation:cycleTL     15s linear infinite; animation-delay:3s; z-index:5; }
+  .clip.k3{ animation:cycleTR     15s linear infinite; animation-delay:6s; z-index:5; }
+  .clip.k4{ animation:cycleBL     15s linear infinite; animation-delay:9s; z-index:5; }
+  .clip.k5{ animation:cycleBR     15s linear infinite; animation-delay:12s; z-index:5; }
+
+  @keyframes cycleCenter{
+    0%{ opacity:0; transform:translate(-50%, -70%) scale(0.8) rotate(0deg); }
+    6%{ opacity:1; transform:translate(-50%, -50%) scale(1) rotate(0deg); }
+    14%{ opacity:1; transform:translate(-50%, -50%) scale(1) rotate(0deg); }
+    20%{ opacity:0; transform:translate(-50%, -30%) scale(0.8) rotate(0deg); }
+    100%{ opacity:0; }
+  }
+  @keyframes cycleTL{
+    0%{ opacity:0; transform:translate(-150%, -120%) rotate(-35deg) scale(0.72); }
+    6%{ opacity:1; transform:translate(-70%, -55%) rotate(-6deg) scale(1); }
+    14%{ opacity:1; transform:translate(-70%, -55%) rotate(-6deg) scale(1); }
+    20%{ opacity:0; transform:translate(-170%, -140%) rotate(-40deg) scale(0.62); }
+    100%{ opacity:0; }
+  }
+  @keyframes cycleTR{
+    0%{ opacity:0; transform:translate(50%, -120%) rotate(35deg) scale(0.72); }
+    6%{ opacity:1; transform:translate(-30%, -55%) rotate(6deg) scale(1); }
+    14%{ opacity:1; transform:translate(-30%, -55%) rotate(6deg) scale(1); }
+    20%{ opacity:0; transform:translate(70%, -140%) rotate(40deg) scale(0.62); }
+    100%{ opacity:0; }
+  }
+  @keyframes cycleBL{
+    0%{ opacity:0; transform:translate(-160%, 20%) rotate(28deg) scale(0.62); }
+    6%{ opacity:1; transform:translate(-65%, -40%) rotate(-8deg) scale(0.96); }
+    14%{ opacity:1; transform:translate(-65%, -40%) rotate(-8deg) scale(0.96); }
+    20%{ opacity:0; transform:translate(-180%, 40%) rotate(30deg) scale(0.58); }
+    100%{ opacity:0; }
+  }
+  @keyframes cycleBR{
+    0%{ opacity:0; transform:translate(60%, 20%) rotate(-28deg) scale(0.62); }
+    6%{ opacity:1; transform:translate(-35%, -40%) rotate(8deg) scale(0.96); }
+    14%{ opacity:1; transform:translate(-35%, -40%) rotate(8deg) scale(0.96); }
+    20%{ opacity:0; transform:translate(80%, 40%) rotate(-30deg) scale(0.58); }
+    100%{ opacity:0; }
+  }
+
+  .trial-badge{
+    font-size:12px; text-align:center; color:var(--text); background:rgba(255, 253, 248, 0.9);
+    border:1px solid rgba(181, 126, 62, 0.35); border-radius:30px; padding:9px 20px;
+    margin-bottom:24px; max-width:400px; line-height:1.4; box-shadow:0 4px 12px rgba(0,0,0,0.03);
+  }
+  .trial-badge b{ color:var(--accent-hi); }
+
+  .scroll-hint{ font-size:10px; color:var(--muted); text-align:center; letter-spacing:1px; text-transform:uppercase; opacity:0.8; }
+
+  /* ---------- Modal Overlay & Form Styles ---------- */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(14, 12, 11, 0.6);
+    backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center;
+    z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+  }
+  .modal-overlay.active { opacity: 1; pointer-events: auto; }
+
+  .auth-card {
+    background: var(--card-hi); border: 1px solid var(--line);
+    width: 90%; max-width: 400px; border-radius: 20px; padding: 30px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.2); position: relative;
+    transform: translateY(20px); transition: transform 0.3s ease;
+  }
+  .modal-overlay.active .auth-card { transform: translateY(0); }
+
+  .close-modal {
+    position: absolute; top: 16px; right: 20px; background: none;
+    border: none; font-size: 20px; color: var(--muted); cursor: pointer;
+  }
+
+  .auth-tabs { display: flex; border-bottom: 1px solid var(--line); margin-bottom: 20px; }
+  .tab-btn {
+    flex: 1; padding: 12px; background: none; border: none; font-weight: 700;
+    color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent;
+    font-size: 15px; transition: all 0.2s ease;
+  }
+  .tab-btn.active { color: var(--accent-hi); border-bottom-color: var(--accent-hi); }
+
+  .google-btn {
+    width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--line);
+    background: #fff; color: var(--text); font-weight: 600; font-size: 14px;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    cursor: pointer; transition: background 0.2s ease; margin-bottom: 16px;
+  }
+  .google-btn:hover { background: #f7f5f0; }
+
+  .divider {
+    display: flex; align-items: center; text-align: center; color: var(--muted);
+    font-size: 12px; margin-bottom: 16px;
+  }
+  .divider::before, .divider::after {
+    content: ''; flex: 1; border-bottom: 1px solid var(--line);
+  }
+  .divider span { padding: 0 10px; }
+
+  .auth-form { display: none; flex-direction: column; gap: 16px; }
+  .auth-form.active { display: flex; }
+
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group label { font-size: 12px; font-weight: 600; color: var(--muted); }
+  .form-group input {
+    padding: 12px; border-radius: 10px; border: 1px solid var(--line);
+    background: var(--void); color: var(--text); font-size: 14px; outline: none;
+  }
+  .form-group input:focus { border-color: var(--accent-hi); }
+
+  .submit-btn {
+    padding: 14px; border-radius: 10px; border: none;
+    background: linear-gradient(135deg,var(--accent-hi),var(--accent));
+    color: #FFFDF8; font-weight: 800; cursor: pointer; margin-top: 8px; font-size: 15px;
+  }
+</style>
+</head>
+<body>
+
+<div class="screen">
+
+  <div class="bg-reel r1"></div><span class="reel-tag">reel 1/5</span>
+  <div class="bg-reel r2"></div>
+  <div class="bg-reel r3"></div>
+  <div class="bg-reel r4"></div>
+  <div class="bg-reel r5"></div>
+
+  <div class="content">
+    <div class="topbar">
+      <div class="header-actions">
+        <button class="header-btn" id="signin-header-btn">Sign In</button>
+      </div>
+      <div class="logo-slot"><span class="plus">+</span><span class="hint">Logo</span></div>
+      <div class="logo">LUCOST <span>AI</span></div>
+    </div>
+
+    <div class="tagline">✨ TEXT-TO-VIDEO GENERATION POWERED BY AI ✨</div>
+    <div class="headline">
+      Transform Your Text Into High-Quality Ai Videos In Seconds<br>
+      Turn Any Script Into Cinematic Ai Video.<br>
+      <span class="grad">Watch it become the content that you want.</span>
+    </div>
+
+    <div class="sub">
+      Automatically convert scripts into complete, production-ready videos. Generate custom AI avatars, professional voiceovers, and dynamic scenes automatically from plain text.
+    </div>
+
+    <button class="cta-btn" id="signup-cta-btn">Create Your Account</button>
+
+    <div class="proof-row">
+      <div class="avatar-stack"><div class="av">👤</div><div class="av">👤</div><div class="av">👤</div><div class="av">👤</div></div>
+      <div>
+        <div class="stars">★★★★★</div>
+        <div class="proof-note">Loved by 800,000+ creators worldwide</div>
+      </div>
+    </div>
+    
+
+    <div class="trial-badge">🎁 New here? Get <b>2 free 30-second trials</b> when you sign up</div>
+
+    <div class="clip-stage">
+      <div class="clip k1"><span class="play">▶</span><span class="tag">Cinematic 3D</span></div>
+      <div class="clip k2"><span class="play">▶</span><span class="tag">Narration Anime</span></div>
+      <div class="clip k3"><span class="play">▶</span><span class="tag">CGI Idol</span></div>
+      <div class="clip k4"><span class="play">▶</span><span class="tag">Drama</span></div>
+      <div class="clip k5"><span class="play">▶</span><span class="tag">Drama Anime</span></div>
+    </div>
+  </div>
+
+<!-- Modal Dialog -->
+<div class="modal-overlay" id="authModal">
+  <div class="auth-card">
+    <button class="close-modal" id="close-modal-btn">&times;</button>
+    
+    <div class="auth-tabs">
+      <button class="tab-btn active" id="tab-signup">Sign Up</button>
+      <button class="tab-btn" id="tab-signin">Sign In</button>
+    </div>
+
+    <!-- Google Login Option -->
+    <button class="google-btn" id="google-auth-btn">
+      <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.616z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"/></svg>
+      Continue with Google
+    </button>
+
+    <div class="divider"><span>or with email</span></div>
+
+    <!-- Sign Up Form -->
+    <form class="auth-form active" id="signup-form">
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="signup-name" placeholder="John Doe" required />
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="signup-email" placeholder="storyteller@example.com" required />
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="signup-password" placeholder="••••••••" required />
+      </div>
+      <button type="submit" class="submit-btn">Create Account</button>
+    </form>
+
+    <!-- Sign In Form -->
+    <form class="auth-form" id="signin-form">
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="signin-email" placeholder="storyteller@example.com" required />
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="signin-password" placeholder="••••••••" required />
+      </div>
+      <button type="submit" class="submit-btn">Sign In to Dashboard</button>
+    </form>
+  </div>
+</div>
+
+<!-- Firebase Modular SDK Setup -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { 
+    getAuth, 
+    GoogleAuthProvider, 
+    signInWithPopup, 
+    createUserWithEmailAndPassword, 
+    signInWithEmailAndPassword,
+    updateProfile 
+  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+  // Your Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyDwIAhR8bShkplR0Gkgihx2bWl0e6OloXU",
+    authDomain: "lucost-ai.firebaseapp.com",
+    projectId: "lucost-ai",
+    storageBucket: "lucost-ai.firebasestorage.app",
+    messagingSenderId: "925474631626",
+    appId: "1:925474631626:web:39ccdb149ba6a325bf2933"
+  };
+
+  // Initialize Firebase & Auth
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const googleProvider = new GoogleAuthProvider();
+
+  // Modal UI Elements
+  const authModal = document.getElementById('authModal');
+  const signupTab = document.getElementById('tab-signup');
+  const signinTab = document.getElementById('tab-signin');
+  const signupForm = document.getElementById('signup-form');
+  const signinForm = document.getElementById('signin-form');
+
+  function openAuthModal(mode) {
+    authModal.classList.add('active');
+    switchTab(mode);
+  }
+
+  function closeAuthModal() {
+    authModal.classList.remove('active');
+  }
+
+  function switchTab(mode) {
+    if (mode === 'signup') {
+      signupTab.classList.add('active');
+      signinTab.classList.remove('active');
+      signupForm.classList.add('active');
+      signinForm.classList.remove('active');
+    } else {
+      signinTab.classList.add('active');
+      signupTab.classList.remove('active');
+      signinForm.classList.add('active');
+      signupForm.classList.remove('active');
+    }
+  }
+
+  // Bind UI Events
+  document.getElementById('signin-header-btn').addEventListener('click', () => openAuthModal('signin'));
+  document.getElementById('signup-cta-btn').addEventListener('click', () => openAuthModal('signup'));
+  document.getElementById('close-modal-btn').addEventListener('click', closeAuthModal);
+
+  signupTab.addEventListener('click', () => switchTab('signup'));
+  signinTab.addEventListener('click', () => switchTab('signin'));
+
+  // Google Sign-In Handler
+  document.getElementById('google-auth-btn').addEventListener('click', async () => {
+    try {
+      await signInWithPopup(auth, googleProvider);
+      window.location.href = 'dashboard.html';
+    } catch (error) {
+      alert("Google Sign-In Error: " + error.message);
+    }
+  });
+
+  // Email/Password Sign-Up Handler
+  signupForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = document.getElementById('signup-name').value;
+    const email = document.getElementById('signup-email').value;
+    const pa
