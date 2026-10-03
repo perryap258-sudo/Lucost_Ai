@@ -452,4 +452,14 @@
     e.preventDefault();
     const name = document.getElementById('signup-name').value;
     const email = document.getElementById('signup-email').value;
-    const pa
+    const password = document.getElementById('signup-password').value;
+
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      await updateProfile(userCredential.user, { displayName: name });
+      window.location.href = 'dashboard.html';
+    } catch (error) {
+      alert("Sign-Up Error: " + error.message);
+    }
+  });
+</script>
