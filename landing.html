@@ -341,88 +341,58 @@
     </button>
 
     <div class="divider"><span>or with email</span></div>
-
-    <!-- Sign Up Form -->
-    <form class="auth-form active" id="signup-form">
-      <div class="form-group">
-        <label>Full Name</label>
-        <input type="text" id="signup-name" placeholder="John Doe" />
-      </div>
-      <div class="form-group">
-        <label>Email</label>
-        <input type="email" id="signup-email" placeholder="storyteller@example.com" required />
-      </div>
-      <div class="form-group">
-         <head>
-  <!-- Your other head elements -->
-  <style>
-    .password-wrapper {
-      position: relative;
-      display: flex;
-      align-items: center;
-    }
-    .password-wrapper input {
-      width: 100%;
-      padding-right: 45px;
-    }
-    .toggle-password-btn {
-      position: absolute;
-      right: 12px;
-      background: none;
-      border: none;
-      cursor: pointer;
-      color: var(--muted);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-  </style>
-</head>
-            </button>
-          </div>
-        </div>
-      <button type="submit" class="submit-btn">Create Account</button>
-    </form>
-
-    <!-- Sign In Form -->
-    <form class="auth-form" id="signin-form">
-      <div class="form-group">
+    
+<!-- Sign Up Form -->
+<form class="auth-form" id="signin-form" onsubmit="return handleSignInSubmit(event)">
+    <!-- Email Field -->
+    <div class="form-group">
         <label>Email</label>
         <input type="email" id="signin-email" placeholder="storyteller@example.com" required />
-      </div>
-      <div class="form-group">
-<head>
-  <!-- Your other head elements -->
-  <style>
-    .password-wrapper {
-      position: relative;
-      display: flex;
-      align-items: center;
-    }
-    .password-wrapper input {
-      width: 100%;
-      padding-right: 45px;
-    }
-    .toggle-password-btn {
-      position: absolute;
-      right: 12px;
-      background: none;
-      border: none;
-      cursor: pointer;
-      color: var(--muted);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-  </style>
-</head>
+    </div>
+
+    <!-- Password Field with Nested SVG Toggle -->
+    <div class="form-group">
+        <label>Password</label>
+        <div class="password-wrapper">
+            <input type="password" id="signin-password" placeholder="********" required />
+            <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('signin-password', this)" aria-label="Toggle password visibility">
+                <!-- Default State: Normal solid-filled eye (hidden) -->
+                <svg class="eye-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
             </button>
-          </div>
         </div>
-      <button type="submit" class="submit-btn">Sign In to Dashboard</button>
-    </form>
-  </div>
-</div>
+    </div>
+
+    <button type="submit" class="submit-btn">Sign In to Dashboard</button>
+</form>
+    
+   <!-- Sign In Form -->
+<form class="auth-form" id="signin-form" onsubmit="return handleSignInSubmit(event)">
+    <!-- Email Field -->
+    <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="signin-email" placeholder="storyteller@example.com" required />
+    </div>
+
+    <!-- Password Field with Nested SVG Toggle -->
+    <div class="form-group">
+        <label>Password</label>
+        <div class="password-wrapper">
+            <input type="password" id="signin-password" placeholder="********" required />
+            <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility('signin-password', this)" aria-label="Toggle password visibility">
+                <!-- Default State: Normal solid-filled eye (hidden) -->
+                <svg class="eye-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <button type="submit" class="submit-btn">Sign In to Dashboard</button>
+</form>
 
 <!-- Firebase Modular SDK Setup -->
 <script type="module">
@@ -518,42 +488,50 @@
     } catch (error) {
       alert("Sign-Up Error: " + error.message);
     }
-    // Email/Password Sign-In Handler
-  signinForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const email = document.getElementById('signin-email').value;
-    const password = document.getElementById('signin-password').value;
+    function togglePasswordVisibility(fieldId, btn) {
+    const passwordInput = document.getElementById(fieldId);
+    const svgIcon = btn.querySelector('svg');
 
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-      window.location.href = 'dashboard.html';
-    } catch (error) {
-      if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
-        alert("No account found with this email. Please sign up first!");
-      } else if (error.code === 'auth/wrong-password') {
-        alert("Incorrect password. Please try again.");
-      } else {
-        alert("Sign-In Error: " + error.message);
-     function togglePasswordVisibility(fieldId, btn) {
-  const passwordInput = document.getElementById(fieldId);
-  const svgIcon = btn.querySelector('svg');
-
-  if (passwordInput.type === "password") {
-    passwordInput.type = "text";
-    // Change to crossed-out (cancelled) eye icon
-    svgIcon.innerHTML = `
-      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-      <line x1="1" y1="1" x2="23" y2="23"></line>
-    `;
-  } else {
-    passwordInput.type = "password";
-    // Change back to normal open eye icon
-    svgIcon.innerHTML = `
-      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-      <circle cx="12" cy="12" r="3"></circle>
-    `;
-  }
+    if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+        // VISIBLE: Swaps to outlined crossed-out eye with a stroke
+        svgIcon.setAttribute("fill", "none");
+        svgIcon.setAttribute("stroke", "currentColor");
+        svgIcon.setAttribute("stroke-width", "2");
+        svgIcon.innerHTML = `
+            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+            <line x1="1" y1="1" x2="23" y2="23"></line>
+        `;
+    } else {
+        passwordInput.type = "password";
+        // HIDDEN: Returns to normal solid eye without stroke
+        svgIcon.removeAttribute("stroke");
+        svgIcon.removeAttribute("stroke-width");
+        svgIcon.setAttribute("fill", "currentColor");
+        svgIcon.innerHTML = `
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+        `;
+    }
 }
+
+function handleSignInSubmit(event) {
+    const password = document.getElementById('signin-password').value;
+    
+    // Regex rule: 
+    // ^[A-Z] -> Starts with capital letter
+    // [a-z]+ -> Followed by lowercase letters (at least 1, combined with total length min 8)
+    // (?=.{8,}) -> Ensures minimum 8 characters total length
+    // [0-9]+ -> Ends with 1 or more numbers
+    // [.,!?;:]+$ -> Ends with 1 or more punctuation marks
+    const passwordRegex = /^(?=.{8,})[A-Z][a-z]+[0-9]+[.,!?;:]+$/;
+
+    if (!passwordRegex.test(password)) {
+        alert("Password must be at least 8 characters long, start with a capital letter, contain lowercase letters, and end with number(s) and punctuation mark(s).");
+        event.preventDefault();
+        return false;
+    }
+    return true;
 }
     }
   });
