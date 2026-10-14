@@ -361,15 +361,15 @@
 
         <div class="form-group">
             <label>Full Name</label>
-            <input type="text" id="signup-name" placeholder="John Doe" />
+            <input type="text" id="signup-name" placeholder="John Doe" autocomplete="name" />
         </div>
         <div class="form-group">
             <label>Email</label>
-            <input type="text" id="signup-email" placeholder="storyteller@example.com" />
+            <input type="email" id="signup-email" placeholder="storyteller@example.com" autocomplete="email" />
         </div>
         <div class="form-group">
             <label>Password</label>
-            <input type="password" id="signup-password" placeholder="********" />
+            <input type="password" id="signup-password" placeholder="********" autocomplete="new-password" />
             <div class="password-hints" style="font-size: 11px; margin-top: 6px; display: flex; flex-direction: column; gap: 3px;">
                 <span id="hint-start" style="color: #7A6E5D;">• Starts with a capital letter</span>
                 <span id="hint-length" style="color: #7A6E5D;">• At least 8 characters long (lowercase after first)</span>
@@ -394,11 +394,11 @@
 
         <div class="form-group">
             <label>Email</label>
-            <input type="text" id="signin-email" placeholder="storyteller@example.com" />
+            <input type="email" id="signin-email" placeholder="storyteller@example.com" autocomplete="email" />
         </div>
         <div class="form-group">
             <label>Password</label>
-            <input type="password" id="signin-password" placeholder="********" />
+            <input type="password" id="signin-password" placeholder="********" autocomplete="current-password" />
         </div>
         <button type="submit" class="submit-btn">Sign In to Dashboard</button>
     </form>
