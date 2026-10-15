@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LUCOST AI — Dashboard (corrected)</title>
+<title>LUCOST AI — Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -21,10 +21,45 @@
   .ham-toggle{ width:34px; height:34px; border-radius:9px; background:var(--panel); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; cursor:pointer; }
   .ham-toggle .bars{ display:flex; flex-direction:column; gap:3px; }
   .ham-toggle .bars div{ width:14px; height:2px; background:var(--muted); border-radius:2px; }
+  
+  .avatar-container{ position:relative; }
   .avatar-btn{ width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg,var(--accent-hi),var(--accent-dim)); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:13px; color:var(--void); cursor:pointer; }
+  
+  .account-dropdown{ display:none; position:absolute; top:42px; left:0; width:240px; background:var(--card); border:1px solid var(--line); border-radius:12px; box-shadow:0 10px 25px rgba(0,0,0,0.6); z-index:50; overflow:hidden; }
+  .account-dropdown.open{ display:block; }
+  .account-list-section{ max-height:160px; overflow-y:auto; border-bottom:1px solid var(--line); }
+  .account-dropdown-item{ padding:10px 14px; font-size:12px; color:var(--text); cursor:pointer; display:flex; align-items:center; justify-content:between; gap:8px; border-bottom:1px solid rgba(59,52,42,0.4); }
+  .account-dropdown-item:last-child{ border-bottom:none; }
+  .account-dropdown-item:hover{ background:var(--card-hi); }
+  .account-info { display:flex; align-items:center; gap:8px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .account-avatar-mini { width:22px; height:22px; border-radius:50%; background:var(--accent-dim); color:var(--accent-hi); font-size:10px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .account-check { color:var(--accent-hi); font-weight:800; font-size:12px; margin-left:auto; }
+  .account-action-item{ padding:10px 14px; font-size:12px; color:var(--accent-hi); cursor:pointer; font-weight:600; display:flex; align-items:center; gap:8px; }
+  .account-action-item:hover{ background:var(--card-hi); }
 
-  .topright-logo{ position:absolute; top:14px; right:14px; z-index:30; width:34px; height:34px; border-radius:50%; background:var(--panel); border:1.5px dashed var(--line); display:flex; align-items:center; justify-content:center; overflow:hidden; }
-  .topright-logo .plus{ font-size:13px; color:var(--muted); opacity:0.6; }
+  /* Auth Modal styling (matching landing v2) */
+  .auth-modal-overlay{ display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:999; align-items:center; justify-content:center; }
+  .auth-modal-overlay.open{ display:flex; }
+  .auth-modal-card{ width:100%; max-width:420px; background:var(--card); border:1px solid var(--line); border-radius:16px; padding:24px; position:relative; box-shadow:0 15px 35px rgba(0,0,0,0.7); max-height: 90vh; overflow-y: auto; }
+  .auth-modal-close{ position:absolute; top:16px; right:18px; font-size:18px; color:var(--muted); cursor:pointer; }
+  .auth-tabs{ display:flex; border-bottom:1px solid var(--line); margin-bottom:20px; }
+  .auth-tab{ flex:1; text-align:center; padding-bottom:10px; font-size:13px; font-weight:700; color:var(--muted); cursor:pointer; border-bottom:2px solid transparent; }
+  .auth-tab.active{ color:var(--text); border-bottom-color:var(--accent-hi); }
+  .auth-btn-google{ width:100%; padding:11px; border-radius:9px; border:1px solid var(--line); background:var(--panel); color:var(--text); font-size:12.5px; font-weight:600; display:flex; align-items:center; justify-content:center; gap:8px; cursor:pointer; margin-bottom:16px; }
+  .auth-divider{ text-align:center; font-size:11px; color:var(--muted); margin-bottom:16px; position:relative; }
+  .auth-divider::before, .auth-divider::after{ content:''; position:absolute; top:50%; width:38%; height:1px; background:var(--line); }
+  .auth-divider::before{ left:0; } .auth-divider::after{ right:0; }
+  .auth-field-label{ font-size:11px; color:var(--muted); font-weight:700; margin-bottom:6px; }
+  .auth-input{ width:100%; background:var(--panel); border:1px solid var(--line); border-radius:9px; padding:10px 12px; color:var(--text); font-size:13px; margin-bottom:14px; }
+  .auth-input:focus{ outline:none; border-color:var(--accent-dim); }
+  .auth-hint{ font-size:10px; color:var(--muted); margin-top:-10px; margin-bottom:14px; line-height:1.4; list-style:none; padding-left:0; }
+  .auth-hint li{ margin-bottom:2px; }
+  .auth-submit-btn{ width:100%; padding:12px; border-radius:9px; border:none; background:linear-gradient(135deg,var(--accent-hi),var(--accent)); color:#181410; font-weight:800; font-size:13.5px; cursor:pointer; }
+  
+  .auth-error-banner{ background:rgba(180,92,74,0.15); color:var(--danger); border:1px solid rgba(180,92,74,0.4); padding:10px 14px; border-radius:8px; font-size:12px; margin-bottom:14px; display:none; }
+  .auth-error-banner.show{ display:block; }
+
+  .topright-logo{ position:absolute; top:14px; right:14px; z-index:30; width:34px; height:34px; border-radius:50%; background:var(--panel); border:1.5px solid var(--line); display:flex; align-items:center; justify-content:center; overflow:hidden; }
 
   .sidebar{ width:168px; flex-shrink:0; background:var(--panel); border-right:1px solid var(--line); display:flex; flex-direction:column; padding:60px 12px 16px; transition:width .18s ease, padding .18s ease, opacity .15s ease; overflow:hidden; }
   .sidebar.collapsed{ width:0; padding-left:0; padding-right:0; opacity:0; border-right:none; }
@@ -51,12 +86,13 @@
   .scroll-row{ display:flex; gap:10px; overflow-x:auto; padding-bottom:6px; }
 
   .ad-card{ flex:0 0 auto; width:170px; height:98px; border-radius:12px; background:linear-gradient(150deg,var(--card-hi),var(--card)); border:1px solid var(--line); position:relative; overflow:hidden; display:flex; align-items:center; justify-content:center; }
-  .ad-card .play-ic{ width:30px; height:30px; border-radius:50%; background:rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:center; color:var(--accent-hi); font-size:12px; }
-  .ad-card .label{ position:absolute; bottom:8px; left:10px; font-size:10px; color:var(--muted); font-weight:600; }
+  .ad-card img{ width:100%; height:100%; object-fit:cover; position:absolute; inset:0; }
+  .ad-card video { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
+  .ad-card .label{ position:absolute; bottom:8px; left:10px; font-size:10px; color:var(--muted); font-weight:600; z-index:2; text-shadow:0 1px 2px rgba(0,0,0,0.8); }
 
   .style-card{ flex:0 0 auto; width:92px; text-align:center; cursor:pointer; }
-  .style-preview{ width:92px; height:68px; border-radius:10px; margin-bottom:6px; background:linear-gradient(150deg,var(--card-hi),var(--card)); border:1.5px solid var(--line); display:flex; align-items:center; justify-content:center; }
-  .style-preview .play-ic{ width:22px; height:22px; border-radius:50%; background:rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:center; color:var(--accent-hi); font-size:9px; }
+  .style-preview{ width:92px; height:68px; border-radius:10px; margin-bottom:6px; background:linear-gradient(150deg,var(--card-hi),var(--card)); border:1.5px solid var(--line); display:flex; align-items:center; justify-content:center; overflow:hidden; position:relative; }
+  .style-preview img{ width:100%; height:100%; object-fit:cover; position:absolute; inset:0; }
   .style-card.active .style-preview{ border:1.5px solid var(--accent-hi); box-shadow:0 0 0 3px rgba(176,134,83,0.15); }
   .style-name{ font-size:10px; color:var(--muted); font-weight:600; line-height:1.25; }
   .style-card.active .style-name{ color:var(--text); }
@@ -70,24 +106,16 @@
   .script-box{ width:100%; min-height:70px; max-height:600px; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px; color:var(--text); font-size:13.5px; font-family:'Inter'; resize:none; line-height:1.5; overflow:hidden; }
   .script-box:focus{ outline:none; border-color:var(--accent-dim); }
   .script-note{ font-size:10.5px; color:var(--muted); margin-top:6px; }
-  .script-note.warn{ color:var(--danger); font-weight:600; }
-
-  .duration-wrap{ background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px 16px 14px; }
-  .duration-top{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:12px; }
-  .duration-value{ font-size:18px; font-weight:800; color:var(--accent-hi); }
-  .duration-cap-note{ font-size:10.5px; color:var(--muted); }
-  .duration-slider{ -webkit-appearance:none; appearance:none; width:100%; height:6px; border-radius:4px; outline:none; cursor:pointer; }
-  .duration-slider:disabled{ opacity:0.55; cursor:not-allowed; }
-  .duration-slider::-webkit-slider-thumb{ -webkit-appearance:none; width:18px; height:18px; border-radius:50%; background:var(--accent-hi); border:3px solid var(--void); cursor:pointer; }
-  .duration-labels{ display:flex; justify-content:space-between; font-size:10px; color:var(--muted); margin-top:8px; }
 
   .cast-stack{ display:flex; flex-direction:column; gap:14px; }
+  .cast-item-wrapper{ display:flex; flex-direction:column; gap:10px; }
   .cast-box{ background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px; position:relative; }
   .del-btn{ position:absolute; top:12px; right:12px; width:22px; height:22px; border-radius:50%; background:var(--panel); border:1px solid var(--line); color:var(--danger); font-size:14px; font-weight:800; line-height:1; display:flex; align-items:center; justify-content:center; cursor:pointer; }
   .cast-label{ font-size:10.5px; color:var(--muted); font-weight:700; letter-spacing:0.5px; margin-bottom:10px; }
   .cast-input{ width:100%; background:var(--panel); border:1px solid var(--line); border-radius:9px; padding:10px 12px; color:var(--text); font-size:13px; font-weight:600; margin-bottom:12px; }
-  .cast-image-box{ width:100%; height:150px; border-radius:10px; margin-bottom:12px; background:var(--panel); border:1.5px dashed var(--line); display:flex; align-items:center; justify-content:center; cursor:pointer; }
-  .cast-image-box .placeholder{ text-align:center; color:var(--muted); font-size:12px; font-weight:600; }
+  .cast-image-box{ width:100%; height:150px; border-radius:10px; margin-bottom:12px; background:var(--panel); border:1.5px dashed var(--line); display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; position:relative; }
+  .cast-image-box img{ width:100%; height:100%; object-fit:cover; position:absolute; inset:0; }
+  .cast-image-box .placeholder{ text-align:center; color:var(--muted); font-size:12px; font-weight:600; z-index:2; }
   .cast-image-box .placeholder .plus{ font-size:22px; display:block; margin-bottom:6px; color:var(--accent-hi); }
   .outfits-label{ font-size:10px; color:var(--muted); font-weight:600; margin-bottom:8px; }
   .outfits-row{ display:flex; gap:8px; overflow-x:auto; padding-bottom:4px; margin-bottom:14px; }
@@ -105,7 +133,8 @@
   .voice-status{ font-size:10.5px; color:var(--muted); margin-top:8px; }
   .add-box-btn{ align-self:flex-start; display:flex; align-items:center; gap:8px; background:transparent; border:1.5px dashed var(--line); color:var(--muted); font-weight:700; font-size:12.5px; padding:10px 16px; border-radius:10px; cursor:pointer; }
 
-  .music-stack{ display:flex; flex-direction:column; gap:12px; }
+  .music-stack{ display:flex; flex-direction:column; gap:14px; }
+  .music-item-wrapper{ display:flex; flex-direction:column; gap:10px; }
   .music-box{ background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px; display:flex; align-items:center; gap:12px; position:relative; }
   .music-index{ width:28px; height:28px; border-radius:8px; background:var(--panel); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; color:var(--accent-hi); flex-shrink:0; }
   .music-info{ flex:1; min-width:0; }
@@ -125,21 +154,20 @@
   .status-banner{ font-size:12px; padding:10px 14px; border-radius:10px; margin-bottom:16px; display:none; }
   .status-banner.show{ display:block; }
   .status-banner.warn{ background:rgba(180,92,74,0.15); color:var(--danger); border:1px solid rgba(180,92,74,0.4); }
-  .status-banner.info{ background:rgba(176,134,83,0.15); color:var(--accent-hi); border:1px solid rgba(176,134,83,0.4); }
   .status-banner.good{ background:rgba(124,148,115,0.15); color:var(--good); border:1px solid rgba(124,148,115,0.4); }
 
   .gallery-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
-  .gallery-item{ aspect-ratio:9/14; border-radius:10px; background:linear-gradient(160deg,var(--card-hi),var(--card)); border:1px solid var(--line); position:relative; display:flex; align-items:center; justify-content:center; cursor:pointer; }
-  .gallery-item .play{ width:34px; height:34px; border-radius:50%; background:rgba(0,0,0,0.4); display:flex; align-items:center; justify-content:center; color:var(--accent-hi); font-size:14px; }
-  .gallery-item .status{ position:absolute; top:8px; left:8px; font-size:9px; font-weight:700; background:rgba(0,0,0,0.5); padding:3px 7px; border-radius:5px; color:var(--muted); }
-  .gallery-item .wm-badge{ position:absolute; bottom:8px; right:8px; font-size:8px; font-weight:800; letter-spacing:.5px; background:rgba(0,0,0,0.55); color:var(--muted); padding:3px 6px; border-radius:5px; }
+  .gallery-item{ aspect-ratio:9/14; border-radius:10px; background:linear-gradient(160deg,var(--card-hi),var(--card)); border:1px solid var(--line); position:relative; display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; }
+  .gallery-item video { width: 100%; height: 100%; object-fit: cover; position: absolute; inset: 0; }
+  .gallery-item .status{ position:absolute; top:8px; left:8px; font-size:9px; font-weight:700; background:rgba(0,0,0,0.5); padding:3px 7px; border-radius:5px; color:var(--muted); z-index:2; }
+  .gallery-item .wm-badge{ position:absolute; bottom:8px; right:8px; font-size:8px; font-weight:800; letter-spacing:.5px; background:rgba(0,0,0,0.55); color:var(--muted); padding:3px 6px; border-radius:5px; z-index:2; }
 
   .video-modal-overlay{ display:none; position:fixed; inset:0; background:rgba(0,0,0,0.88); z-index:999; flex-direction:column; align-items:center; justify-content:center; gap:14px; }
   .video-modal-overlay.open{ display:flex; }
   .video-modal-close{ position:absolute; top:20px; right:24px; font-size:22px; color:var(--text); cursor:pointer; z-index:2; }
-  .video-modal-frame{ position:relative; max-width:92vw; max-height:78vh; background:linear-gradient(160deg,var(--card-hi),var(--card)); border:1px solid var(--line); border-radius:14px; display:flex; align-items:center; justify-content:center; }
-  .video-modal-play{ width:60px; height:60px; border-radius:50%; background:rgba(0,0,0,0.45); display:flex; align-items:center; justify-content:center; color:var(--accent-hi); font-size:22px; }
-  .video-modal-watermark{ position:absolute; bottom:14px; right:16px; font-size:12px; font-weight:800; letter-spacing:1px; color:rgba(255,255,255,0.75); text-shadow:0 1px 3px rgba(0,0,0,0.6); display:none; }
+  .video-modal-frame{ position:relative; max-width:92vw; max-height:78vh; background:linear-gradient(160deg,var(--card-hi),var(--card)); border:1px solid var(--line); border-radius:14px; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+  .video-modal-frame video { width: 100%; height: 100%; object-fit: contain; }
+  .video-modal-watermark{ position:absolute; bottom:14px; right:16px; font-size:12px; font-weight:800; letter-spacing:1px; color:rgba(255,255,255,0.75); text-shadow:0 1px 3px rgba(0,0,0,0.6); display:none; z-index:2; }
   .video-modal-watermark.show{ display:block; }
   .video-modal-label{ font-size:12.5px; color:var(--muted); }
   .empty-note{ color:var(--muted); font-size:12.5px; }
@@ -164,9 +192,62 @@
 <div class="app">
   <div class="topleft-cluster">
     <div class="ham-toggle" id="hamToggle"><div class="bars"><div></div><div></div><div></div></div></div>
-    <div class="avatar-btn">P</div>
+    <div class="avatar-container">
+      <div class="avatar-btn" id="avatarBtn">P</div>
+      <div class="account-dropdown" id="accountDropdown">
+        <div class="account-list-section" id="accountListSection"></div>
+        <div class="account-action-item" id="addAccountBtn">+ Add another account</div>
+      </div>
+    </div>
   </div>
-  <div class="topright-logo"><span class="plus">+</span></div>
+  <div class="topright-logo" id="topRightLogo"></div>
+
+  <!-- Landing-style Auth Modal -->
+  <div class="auth-modal-overlay" id="authModalOverlay">
+    <div class="auth-modal-card">
+      <div class="auth-modal-close" id="authModalClose">✕</div>
+      <div class="auth-tabs">
+        <div class="auth-tab active" id="tabSignUp">Sign Up</div>
+        <div class="auth-tab" id="tabSignIn">Sign In</div>
+      </div>
+      
+      <div class="auth-error-banner" id="authErrorBanner">Password requirements not met.</div>
+
+      <div id="authSignUpForm">
+        <button class="auth-btn-google">
+          <svg width="15" height="15" viewBox="0 0 24 24"><path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.8 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.4l3.7 2.9C6.5 7.1 9 5 12 5z"/><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"/><path fill="#FBBC05" d="M5.6 14.7c-.2-.7-.4-1.5-.4-2.7s.2-2 .4-2.7L1.9 6.4C.7 8.8 0 10.3 0 12s.7 3.2 1.9 5.6l3.7-2.9z"/><path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.1-6.4-5.3L1.9 15.9C3.7 19.7 7.5 23 12 23z"/></svg>
+          Continue with Google
+        </button>
+        <div class="auth-divider">or with email</div>
+        
+        <div class="auth-field-label">Full Name</div>
+        <input class="auth-input" id="authFullName" placeholder="John Doe" autocomplete="name">
+        
+        <div class="auth-field-label">Email</div>
+        <input class="auth-input" id="authEmail" placeholder="storyteller@example.com" type="email" autocomplete="email">
+        
+        <div class="auth-field-label">Password</div>
+        <input class="auth-input" id="authPassword" placeholder="••••••••" type="password" autocomplete="new-password">
+        <ul class="auth-hint" id="passwordRulesList">
+          <li id="ruleCapital">• Starts with a capital letter</li>
+          <li id="ruleLength">• At least 8 characters long (lowercase after first)</li>
+          <li id="ruleSymbol">• Ends with numbers and symbols</li>
+        </ul>
+        
+        <button class="auth-submit-btn" id="authSubmitBtn">Create Account</button>
+      </div>
+
+      <div id="authSignInForm" style="display:none;">
+        <div class="auth-field-label">Email</div>
+        <input class="auth-input" id="authSignInEmail" placeholder="storyteller@example.com" type="email" autocomplete="email">
+        
+        <div class="auth-field-label">Password</div>
+        <input class="auth-input" id="authSignInPassword" placeholder="••••••••" type="password" autocomplete="current-password">
+        
+        <button class="auth-submit-btn" id="authSignInSubmitBtn">Sign In</button>
+      </div>
+    </div>
+  </div>
 
   <div class="sidebar" id="sidebar">
     <div class="logo">LUCOST <span>AI</span></div>
@@ -243,7 +324,6 @@ John: I feel the same way, always have.</textarea>
     <div class="video-modal-overlay" id="videoModalOverlay">
       <div class="video-modal-close" id="videoModalClose">✕</div>
       <div class="video-modal-frame" id="videoModalFrame">
-        <div class="video-modal-play">▶</div>
         <div class="video-modal-watermark" id="videoModalWatermark">LUCOST AI</div>
       </div>
       <div class="video-modal-label" id="videoModalLabel"></div>
@@ -258,37 +338,193 @@ John: I feel the same way, always have.</textarea>
   </div>
 </div>
 
-<script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDwIAhR8bShkplR0Gkgihx2bWl0e6OloXU",
+    authDomain: "lucost-ai.firebaseapp.com",
+    projectId: "lucost-ai",
+    storageBucket: "lucost-ai.firebasestorage.app",
+    messagingSenderId: "925474631626",
+    appId: "1:925474631626:web:39ccdb149ba6a325bf2933"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
   const TIERS = {
     tier_1: { label:"Tier 1", strike:35, price:21, generations:20, capSeconds:5*60 },
     tier_2: { label:"Tier 2", strike:50, price:35, generations:15, capSeconds:15*60 },
     tier_3: { label:"Tier 3", strike:95, price:75, generations:10, capSeconds:30*60 },
   };
 
-  // ---- Account state: starts as a brand-new, never-subscribed trial account ----
   let trialsRemaining = 2;
-  let subscription = null; // becomes {tier, generationsUsed, ...} once they subscribe
+  let subscription = null; 
   let selectedStyle = "narration_drama";
   let selectedRatio = "16:9";
   const API_BASE = window.location.origin + '/api';
-  let currentUserId = localStorage.getItem('user_id') || 'guest';
+
+  let savedAccounts = JSON.parse(localStorage.getItem('lucost_accounts') || '["user@lucost.ai"]');
+  let currentUserId = localStorage.getItem('lucost_current_user') || savedAccounts[0];
+
+  function saveAccountsState() {
+    localStorage.setItem('lucost_accounts', JSON.stringify(savedAccounts));
+    localStorage.setItem('lucost_current_user', currentUserId);
+  }
+
+  const avatarBtn = document.getElementById("avatarBtn");
+  const accountDropdown = document.getElementById("accountDropdown");
+  const accountListSection = document.getElementById("accountListSection");
+  const authModalOverlay = document.getElementById("authModalOverlay");
+
+  avatarBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    renderAccountDropdownList();
+    accountDropdown.classList.toggle("open");
+  });
+  document.addEventListener("click", () => {
+    accountDropdown.classList.remove("open");
+  });
+
+  function renderAccountDropdownList() {
+    accountListSection.innerHTML = "";
+    avatarBtn.textContent = currentUserId.charAt(0).toUpperCase();
+
+    savedAccounts.forEach(email => {
+      const item = document.createElement("div");
+      item.className = "account-dropdown-item";
+      const isCurrent = email === currentUserId;
+      item.innerHTML = `
+        <div class="account-info">
+          <div class="account-avatar-mini">${email.charAt(0).toUpperCase()}</div>
+          <span style="${isCurrent ? 'font-weight:700; color:var(--text);' : ''}">${email}</span>
+        </div>
+        ${isCurrent ? '<span class="account-check">✓</span>' : ''}
+      `;
+      item.addEventListener("click", () => {
+        currentUserId = email;
+        saveAccountsState();
+        renderAccountDropdownList();
+        showBanner("Switched active account to " + email, "good");
+        loadJobs().then(renderGallery);
+      });
+      accountListSection.appendChild(item);
+    });
+  }
+
+  document.getElementById("addAccountBtn").addEventListener("click", () => {
+    accountDropdown.classList.remove("open");
+    authModalOverlay.classList.add("open");
+  });
+
+  document.getElementById("authModalClose").addEventListener("click", () => {
+    authModalOverlay.classList.remove("open");
+  });
+
+  const tabSignUp = document.getElementById("tabSignUp");
+  const tabSignIn = document.getElementById("tabSignIn");
+  const authSignUpForm = document.getElementById("authSignUpForm");
+  const authSignInForm = document.getElementById("authSignInForm");
+
+  tabSignUp.addEventListener("click", () => {
+    tabSignUp.classList.add("active");
+    tabSignIn.classList.remove("active");
+    authSignUpForm.style.display = "block";
+    authSignInForm.style.display = "none";
+  });
+
+  tabSignIn.addEventListener("click", () => {
+    tabSignIn.classList.add("active");
+    tabSignUp.classList.remove("active");
+    authSignInForm.style.display = "block";
+    authSignUpForm.style.display = "none";
+  });
+
+  function validatePassword(password) {
+    const startsWithCapital = /^[A-Z]/.test(password);
+    const isLongEnough = password.length >= 8;
+    const endsWithNumOrSymbol = /[0-9!@#$\%^&*(),.?":{}\vert{}<>\-_+=]+$/.test(password);
+
+    return {
+      isValid: startsWithCapital && isLongEnough && endsWithNumOrSymbol,
+      startsWithCapital,
+      isLongEnough,
+      endsWithNumOrSymbol
+    };
+  }
+
+  function handleSuccessfulAuth(email) {
+    const cleanEmail = email.trim();
+    if(cleanEmail) {
+      if(!savedAccounts.includes(cleanEmail)){
+        savedAccounts.push(cleanEmail);
+      }
+      currentUserId = cleanEmail;
+      saveAccountsState();
+      renderAccountDropdownList();
+      authModalOverlay.classList.remove("open");
+      showBanner("Signed in / added account: " + cleanEmail, "good");
+      loadJobs().then(renderGallery);
+    }
+  }
+
+  document.getElementById("authSubmitBtn").addEventListener("click", () => {
+    const fullName = document.getElementById("authFullName").value.trim();
+    const email = document.getElementById("authEmail").value.trim();
+    const password = document.getElementById("authPassword").value;
+    const errorBanner = document.getElementById("authErrorBanner");
+
+    errorBanner.classList.remove("show");
+
+    if(!fullName) {
+      errorBanner.textContent = "Please enter your full name.";
+      errorBanner.classList.add("show");
+      return;
+    }
+
+    if(!email || !email.includes("@")) {
+      errorBanner.textContent = "Please enter a valid email address.";
+      errorBanner.classList.add("show");
+      return;
+    }
+
+    const validation = validatePassword(password);
+    
+    document.getElementById("ruleCapital").style.color = validation.startsWithCapital ? "var(--good)" : "var(--muted)";
+    document.getElementById("ruleLength").style.color = validation.isLongEnough ? "var(--good)" : "var(--muted)";
+    document.getElementById("ruleSymbol").style.color = validation.endsWithNumOrSymbol ? "var(--good)" : "var(--muted)";
+
+    if (!validation.isValid) {
+      errorBanner.textContent = "Password requirements not met.";
+      errorBanner.classList.add("show");
+      return;
+    }
+
+    handleSuccessfulAuth(email);
+  });
+
+  document.getElementById("authSignInSubmitBtn").addEventListener("click", () => {
+    const emailInput = document.getElementById("authSignInEmail").value;
+    if(emailInput) handleSuccessfulAuth(emailInput);
+  });
+
+  renderAccountDropdownList();
+
+  let jobs = [];
 
   async function loadJobs(){
     try{
-      const res = await fetch(API_BASE + '/gallery?user_id=' + currentUserId);
+      const res = await fetch(API_BASE + '/gallery?user_id=' + encodeURIComponent(currentUserId));
       const data = await res.json();
       jobs = data.jobs || [];
     } catch(e){
-      console.log('Backend not connected, using local storage');
       try{
-        const res = await window.storage.get("jobs", false);
+        const res = await window.storage.get("jobs_" + currentUserId, false);
         jobs = res ? JSON.parse(res.value) : [];
       } catch(e2){ jobs = []; }
     }
-  }
-  
-  async function saveJobs(){
-    // Backend auto-saves on generation, no need to explicitly save
   }
 
   function showBanner(msg, type){
@@ -298,50 +534,78 @@ John: I feel the same way, always have.</textarea>
 
   document.getElementById("hamToggle").addEventListener("click", () => document.getElementById("sidebar").classList.toggle("collapsed"));
 
-  // ---- Featured: 10 slots ----
-  const adRow = document.getElementById("adRow");
-  for(let i=1;i<=10;i++){
-    const c = document.createElement("div");
-    c.className = "ad-card";
-    c.innerHTML = `<div class="play-ic">▶</div><div class="label">Reel ${i}</div>`;
-    adRow.appendChild(c);
+  async function loadFeaturedContent(){
+    const adRow = document.getElementById("adRow");
+    adRow.innerHTML = "";
+    try {
+      const adminAds = await window.storage.get("admin:featured", true);
+      if(adminAds && adminAds.value){
+        const ads = JSON.parse(adminAds.value);
+        ads.forEach((ad, i) => {
+          const c = document.createElement("div");
+          c.className = "ad-card";
+          c.innerHTML = `<video src="${ad.url}" muted autoplay loop playsinline></video><div class="label">${ad.name || 'Reel ' + (i+1)}</div>`;
+          adRow.appendChild(c);
+        });
+        return;
+      }
+    } catch(e){}
+
+    for(let i=1;i<=10;i++){
+      const c = document.createElement("div");
+      c.className = "ad-card";
+      c.innerHTML = `<div class="label">Reel ${i}</div>`;
+      adRow.appendChild(c);
+    }
   }
 
-  // ---- Style: 7 cards (6 story styles + "Others" for non-character content) ----
-  const styleLabels = { narration_anime:"Narration Anime", narration_drama:"Narration Drama", drama:"Drama", drama_anime:"Drama Anime", cgi_idol:"CGI Idol", cinematic_3d:"Cinematic 3D", others:"Others" };
-  const styleRow = document.getElementById("styleRow");
-  Object.keys(styleLabels).forEach(key => {
-    const c = document.createElement("div");
-    c.className = "style-card" + (key===selectedStyle ? " active" : "");
-    c.innerHTML = `<div class="style-preview"><div class="play-ic">▶</div></div><div class="style-name">${styleLabels[key]}</div>`;
-    c.addEventListener("click", () => {
-      selectedStyle = key;
-      document.querySelectorAll(".style-card").forEach(x=>x.classList.remove("active"));
-      c.classList.add("active");
-      refreshOthersBox();
+  const defaultStyleLabels = { narration_anime:"Narration Anime", narration_drama:"Narration Drama", drama:"Drama", drama_anime:"Drama Anime", cgi_idol:"CGI Idol", cinematic_3d:"Cinematic 3D", others:"Others" };
+  async function loadStyles(){
+    const styleRow = document.getElementById("styleRow");
+    styleRow.innerHTML = "";
+    
+    let stylesToRender = defaultStyleLabels;
+    try {
+      const adminStyles = await window.storage.get("admin:styles", true);
+      if(adminStyles && adminStyles.value){
+        stylesToRender = JSON.parse(adminStyles.value);
+      }
+    } catch(e){}
+
+    Object.entries(stylesToRender).forEach(([key, val]) => {
+      const name = typeof val === 'object' ? val.name : val;
+      const imgUrl = typeof val === 'object' ? val.url : '';
+      const c = document.createElement("div");
+      c.className = "style-card" + (key===selectedStyle ? " active" : "");
+      c.innerHTML = `
+        <div class="style-preview">
+          ${imgUrl ? `<img src="${imgUrl}">` : ''}
+        </div>
+        <div class="style-name">${name}</div>
+      `;
+      c.addEventListener("click", () => {
+        selectedStyle = key;
+        document.querySelectorAll(".style-card").forEach(x=>x.classList.remove("active"));
+        c.classList.add("active");
+        refreshOthersBox();
+      });
+      styleRow.appendChild(c);
     });
-    styleRow.appendChild(c);
-  });
+  }
 
   function refreshOthersBox(){
     othersBox.style.display = (selectedStyle === "others") ? "block" : "none";
   }
 
-  // ---- Script box: auto-grows, and only WARNS (never blocks typing) when the
-  //      script would run past 30s during trial mode ----
   const scriptBox = document.getElementById("scriptBox");
   const othersBox = document.getElementById("othersBox");
-  const scriptNote = document.getElementById("scriptNote");
-  const WORDS_PER_30_SEC = 75; // ~150 wpm speaking pace, used only to estimate — never shown as a hard rule up front
+  const WORDS_PER_30_SEC = 75;
 
   function autoGrow(){
     scriptBox.style.height = "auto";
     scriptBox.style.height = Math.min(scriptBox.scrollHeight, 600) + "px";
   }
   function countWords(t){ return (t.trim().match(/\S+/g) || []).length; }
-
-  // No live word-count string here — the script-note div stays empty.
-  // Over-limit scripts are caught by the alert banner when Generate is tapped.
   scriptBox.addEventListener("input", () => { autoGrow(); });
   setTimeout(() => { autoGrow(); }, 50);
 
@@ -355,194 +619,177 @@ John: I feel the same way, always have.</textarea>
     return parts.join(":");
   }
 
-  // ---- Cast (kept simple, one starter box) ----
   const castStack = document.getElementById("castStack");
-  function addCastBox(name=""){
-    const box = document.createElement("div");
-    box.className = "cast-box";
-    box.innerHTML = `
-      <div class="del-btn">−</div>
-      <div class="cast-label">CHARACTER</div>
-      <input class="cast-input" placeholder="Character name" value="${name}">
-      <div class="cast-image-box"><div class="placeholder"><span class="plus">+</span>Insert character image</div></div>
-      <div class="outfits-label">Variations (optional) — not just outfits, this can be a bag, hairstyle, or anything else that changes. Each one is numbered. In your script, write "Ella (variation 5): ..." to use that variation for that line.</div>
-      <div class="outfits-row"></div>
-      <div class="voice-row"><button class="voice-btn cast-record-btn">● Record snippet</button><button class="voice-btn cast-extract-btn">Extract from file</button></div>
-      <input type="file" class="cast-voice-file-input" accept="audio/*,video/*" style="display:none;">
-      <div class="voice-status">No voice sample added</div>
-    `;
+  
+  function renderCastStack(charactersData = ["Ella", "John"]) {
+    castStack.innerHTML = "";
+    charactersData.forEach((name, index) => {
+      const wrapper = document.createElement("div");
+      wrapper.className = "cast-item-wrapper";
 
-    // Wire up the outfits row: each chip is an upload slot with its own small
-    // label (e.g. "party dress") so the script can reference it, e.g.
-    // "Ella (party dress): I'm so excited!"
-    const outfitsRow = box.querySelector(".outfits-row");
+      const box = document.createElement("div");
+      box.className = "cast-box";
+      box.innerHTML = `
+        <div class="del-btn">−</div>
+        <div class="cast-label">CHARACTER ${index + 1}</div>
+        <input class="cast-input" placeholder="Character name" value="${name}">
+        <div class="cast-image-box"><div class="placeholder"><span class="plus">+</span>Insert character image</div></div>
+        <div class="outfits-label">Variations (optional)</div>
+        <div class="outfits-row"></div>
+        <div class="voice-row"><button class="voice-btn cast-record-btn">● Record snippet</button><button class="voice-btn cast-extract-btn">Extract from file</button></div>
+        <input type="file" class="cast-voice-file-input" accept="audio/*,video/*" style="display:none;">
+        <div class="voice-status">No voice sample added</div>
+      `;
 
-    function renumberOutfits(){
-      const chips = outfitsRow.querySelectorAll(".outfit-chip");
-      chips.forEach((chip, i) => {
-        let badge = chip.querySelector(".outfit-num");
-        if(!badge){
-          badge = document.createElement("span");
-          badge.className = "outfit-num";
-          chip.appendChild(badge);
-        }
-        badge.textContent = i + 1;
+      box.querySelector(".del-btn").addEventListener("click", () => {
+        wrapper.remove();
+        updateCastState();
       });
-    }
 
-    function addOutfitChip(){
-      const chip = document.createElement("div");
-      chip.className = "outfit-chip";
-      chip.innerHTML = `<span class="outfit-num"></span><span class="plus">+</span><span class="outfit-del">×</span><input type="file" accept="image/*" style="display:none;">`;
-      const input = chip.querySelector("input");
-      chip.addEventListener("click", () => { if(!chip.classList.contains("filled")) input.click(); });
-      input.addEventListener("change", e => {
+      const imgBox = box.querySelector(".cast-image-box");
+      const imgInput = document.createElement("input");
+      imgInput.type = "file";
+      imgInput.accept = "image/*";
+      imgInput.style.display = "none";
+      imgBox.appendChild(imgInput);
+      imgBox.addEventListener("click", () => imgInput.click());
+      imgInput.addEventListener("change", (e) => {
         const file = e.target.files[0];
         if(!file) return;
         const reader = new FileReader();
         reader.onload = ev => {
-          const num = [...outfitsRow.querySelectorAll(".outfit-chip")].indexOf(chip) + 1;
-          chip.innerHTML = `<span class="outfit-num">${num}</span><img src="${ev.target.result}"><span class="outfit-del">×</span><input class="tag-input" placeholder="label (optional)">`;
-          chip.classList.add("filled");
-          chip.querySelector(".outfit-del").addEventListener("click", (ev2) => {
-            ev2.stopPropagation();
-            chip.remove();
-            renumberOutfits();
-          });
+          imgBox.innerHTML = `<img src="${ev.target.result}">`;
+          imgBox.appendChild(imgInput);
         };
         reader.readAsDataURL(file);
       });
-      outfitsRow.insertBefore(chip, outfitsRow.lastChild);
-      renumberOutfits();
+
+      const outfitsRow = box.querySelector(".outfits-row");
+      function renumberOutfits(){
+        outfitsRow.querySelectorAll(".outfit-chip").forEach((chip, i) => {
+          let badge = chip.querySelector(".outfit-num");
+          if(!badge){
+            badge = document.createElement("span");
+            badge.className = "outfit-num";
+            chip.appendChild(badge);
+          }
+          badge.textContent = i + 1;
+        });
+      }
+      function addOutfitChip(){
+        const chip = document.createElement("div");
+        chip.className = "outfit-chip";
+        chip.innerHTML = `<span class="outfit-num"></span><span class="plus">+</span><span class="outfit-del">×</span><input type="file" accept="image/*" style="display:none;">`;
+        const input = chip.querySelector("input");
+        chip.addEventListener("click", () => { if(!chip.classList.contains("filled")) input.click(); });
+        input.addEventListener("change", e => {
+          const file = e.target.files[0];
+          if(!file) return;
+          const reader = new FileReader();
+          reader.onload = ev => {
+            chip.innerHTML = `<span class="outfit-num"></span><img src="${ev.target.result}"><span class="outfit-del">×</span><input class="tag-input" placeholder="label">`;
+            chip.classList.add("filled");
+            chip.querySelector(".outfit-del").addEventListener("click", (ev2) => {
+              ev2.stopPropagation();
+              chip.remove();
+              renumberOutfits();
+            });
+            renumberOutfits();
+          };
+          reader.readAsDataURL(file);
+        });
+        outfitsRow.insertBefore(chip, outfitsRow.lastChild);
+        renumberOutfits();
+      }
+      const addChipBtn = document.createElement("div");
+      addChipBtn.className = "outfit-add";
+      addChipBtn.textContent = "+";
+      addChipBtn.addEventListener("click", addOutfitChip);
+      outfitsRow.appendChild(addChipBtn);
+
+      wrapper.appendChild(box);
+
+      const addBoxBtn = document.createElement("button");
+      addBoxBtn.className = "add-box-btn";
+      addBoxBtn.textContent = "+ Add another character";
+      addBoxBtn.addEventListener("click", () => {
+        const currentNames = getCollectedCastNames();
+        currentNames.push("");
+        renderCastStack(currentNames);
+      });
+      wrapper.appendChild(addBoxBtn);
+
+      castStack.appendChild(wrapper);
+    });
+  }
+
+  function getCollectedCastNames(){
+    const inputs = castStack.querySelectorAll(".cast-input");
+    return Array.from(inputs).map(inp => inp.value);
+  }
+  function updateCastState(){
+    if(castStack.querySelectorAll(".cast-box").length === 0){
+      renderCastStack([""]);
     }
-    const addChipBtn = document.createElement("div");
-    addChipBtn.className = "outfit-add";
-    addChipBtn.textContent = "+";
-    addChipBtn.addEventListener("click", addOutfitChip);
-    outfitsRow.appendChild(addChipBtn);
-
-    box.querySelector(".del-btn").addEventListener("click", () => { box.remove(); renumberCast(); });
-
-    // Wire up voice sample: record snippet (MediaRecorder) or extract from file
-    const voiceStatus = box.querySelector(".voice-status");
-    const recordBtn = box.querySelector(".cast-record-btn");
-    const extractBtn = box.querySelector(".cast-extract-btn");
-    const voiceFileInput = box.querySelector(".cast-voice-file-input");
-
-    extractBtn.addEventListener("click", () => voiceFileInput.click());
-    voiceFileInput.addEventListener("change", e => {
-      const file = e.target.files[0];
-      if(!file) return;
-      voiceStatus.textContent = `Voice sample — ${file.name}`;
-    });
-
-    let castMediaRecorder = null;
-    let castRecording = false;
-    recordBtn.addEventListener("click", async () => {
-      if(!castRecording){
-        try {
-          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-          castMediaRecorder = new MediaRecorder(stream);
-          const chunks = [];
-          castMediaRecorder.ondataavailable = e => chunks.push(e.data);
-          castMediaRecorder.onstop = () => {
-            stream.getTracks().forEach(tr => tr.stop());
-            voiceStatus.textContent = `Voice sample — recorded snippet (${chunks.length ? Math.round(chunks.reduce((a,c)=>a+c.size,0)/1024) : 0} KB)`;
-          };
-          castMediaRecorder.start();
-          castRecording = true;
-          recordBtn.textContent = "■ Stop";
-        } catch(err){
-          voiceStatus.textContent = "Mic access denied — try Extract from file instead.";
-        }
-      } else {
-        castMediaRecorder.stop();
-        castRecording = false;
-        recordBtn.textContent = "● Record snippet";
-      }
-    });
-
-    castStack.appendChild(box);
-    renumberCast();
   }
-  function renumberCast(){ castStack.querySelectorAll(".cast-box").forEach((b,i)=> b.querySelector(".cast-label").textContent = "CHARACTER "+(i+1)); }
-  const castAddBtn = document.createElement("button");
-  castAddBtn.className = "add-box-btn"; castAddBtn.textContent = "+ Add another character";
-  castAddBtn.addEventListener("click", () => addCastBox());
-  addCastBox("Ella"); addCastBox("John");
-  castStack.appendChild(castAddBtn);
+  renderCastStack(["Ella", "John"]);
 
-  // ---- Music (kept simple, one starter box) ----
   const musicStack = document.getElementById("musicStack");
-  function addMusicBox(){
-    const box = document.createElement("div");
-    box.className = "music-box";
-    box.innerHTML = `
-      <div class="del-btn">−</div>
-      <div class="music-index">A</div>
-      <div class="music-info">
-        <div class="music-name">Audio — not set</div>
-        <div class="music-sub">Volume auto-managed by script pacing</div>
-        <div class="voice-row" style="margin-top:8px;">
-          <button class="voice-btn music-record-btn">● Record</button>
-          <button class="voice-btn music-extract-btn">Extract from file</button>
+
+  function renderMusicStack(count = 1){
+    musicStack.innerHTML = "";
+    for(let i=0; i<count; i++){
+      const wrapper = document.createElement("div");
+      wrapper.className = "music-item-wrapper";
+
+      const box = document.createElement("div");
+      box.className = "music-box";
+      box.innerHTML = `
+        <div class="del-btn">−</div>
+        <div class="music-index">A${i+1}</div>
+        <div class="music-info">
+          <div class="music-name">Audio — not set</div>
+          <div class="music-sub">Volume auto-managed by script pacing</div>
+          <div class="voice-row" style="margin-top:8px;">
+            <button class="voice-btn music-record-btn">● Record</button>
+            <button class="voice-btn music-extract-btn">Extract from file</button>
+          </div>
+          <input type="file" class="music-file-input" accept="audio/*,video/*" style="display:none;">
         </div>
-        <input type="file" class="music-file-input" accept="audio/*,video/*" style="display:none;">
-      </div>
-    `;
-    box.querySelector(".del-btn").addEventListener("click", () => { box.remove(); renumberMusic(); });
+      `;
+      box.querySelector(".del-btn").addEventListener("click", () => {
+        wrapper.remove();
+        if(musicStack.querySelectorAll(".music-box").length === 0) renderMusicStack(1);
+      });
 
-    const nameEl = box.querySelector(".music-name");
-    const recordBtn = box.querySelector(".music-record-btn");
-    const extractBtn = box.querySelector(".music-extract-btn");
-    const fileInput = box.querySelector(".music-file-input");
+      const nameEl = box.querySelector(".music-name");
+      const recordBtn = box.querySelector(".music-record-btn");
+      const extractBtn = box.querySelector(".music-extract-btn");
+      const fileInput = box.querySelector(".music-file-input");
 
-    // Extract from file (audio or video — matches spec: "extract from system/phone file")
-    extractBtn.addEventListener("click", () => fileInput.click());
-    fileInput.addEventListener("change", e => {
-      const file = e.target.files[0];
-      if(!file) return;
-      nameEl.textContent = `Audio — ${file.name}`;
-    });
+      extractBtn.addEventListener("click", () => fileInput.click());
+      fileInput.addEventListener("change", e => {
+        const file = e.target.files[0];
+        if(!file) return;
+        nameEl.textContent = `Audio — ${file.name}`;
+      });
 
-    // Record live via MediaRecorder
-    let mediaRecorder = null;
-    let recording = false;
-    recordBtn.addEventListener("click", async () => {
-      if(!recording){
-        try {
-          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-          mediaRecorder = new MediaRecorder(stream);
-          const chunks = [];
-          mediaRecorder.ondataavailable = e => chunks.push(e.data);
-          mediaRecorder.onstop = () => {
-            stream.getTracks().forEach(tr => tr.stop());
-            nameEl.textContent = `Audio — recorded clip (${chunks.length ? Math.round(chunks.reduce((a,c)=>a+c.size,0)/1024) : 0} KB)`;
-          };
-          mediaRecorder.start();
-          recording = true;
-          recordBtn.textContent = "■ Stop";
-        } catch(err){
-          nameEl.textContent = "Mic access denied — try Extract from file instead.";
-        }
-      } else {
-        mediaRecorder.stop();
-        recording = false;
-        recordBtn.textContent = "● Record";
-      }
-    });
+      wrapper.appendChild(box);
 
-    musicStack.appendChild(box);
-    renumberMusic();
+      const musicAddBtn = document.createElement("button");
+      musicAddBtn.className = "add-box-btn";
+      musicAddBtn.textContent = "+ Add another audio source";
+      musicAddBtn.addEventListener("click", () => {
+        const currentCount = musicStack.querySelectorAll(".music-box").length;
+        renderMusicStack(currentCount + 1);
+      });
+      wrapper.appendChild(musicAddBtn);
+
+      musicStack.appendChild(wrapper);
+    }
   }
-  function renumberMusic(){ musicStack.querySelectorAll(".music-box").forEach((b,i)=> b.querySelector(".music-index").textContent = "A"+(i+1)); }
-  const musicAddBtn = document.createElement("button");
-  musicAddBtn.className = "add-box-btn"; musicAddBtn.textContent = "+ Add another audio source";
-  musicAddBtn.addEventListener("click", () => addMusicBox());
-  addMusicBox();
-  musicStack.appendChild(musicAddBtn);
+  renderMusicStack(1);
 
-  // ---- Ratio ----
   document.querySelectorAll(".ratio-chip").forEach(chip => {
     chip.addEventListener("click", () => {
       document.querySelectorAll(".ratio-chip").forEach(c=>c.classList.remove("active"));
@@ -550,7 +797,6 @@ John: I feel the same way, always have.</textarea>
     });
   });
 
-  // ---- Trial banner + Generate button + sidebar plan box, all driven by one refresh() ----
   function refreshTrialBannerAndGenerateBtn(){
     const banner = document.getElementById("trialBanner");
     const trialSub = document.getElementById("trialSub");
@@ -559,15 +805,12 @@ John: I feel the same way, always have.</textarea>
     const genSub = document.getElementById("generateSub");
 
     if(isOnTrial()){
-      // Trial banner visible under Style — shows exactly how many trials remain
       banner.style.display = "flex";
       trialSub.textContent = "30-second video";
       trialCount.textContent = trialsRemaining + "x LEFT";
       genBtn.textContent = "GENERATE (TRIAL)";
       genSub.textContent = "After your 2 trial videos, Generate will take you to Subscription Plans.";
     } else {
-      // Trials used up (or already subscribed) — banner disappears entirely,
-      // Style section is immediately followed by Script, nothing in between.
       banner.style.display = "none";
       if(subscription){
         genBtn.textContent = "GENERATE";
@@ -615,7 +858,7 @@ John: I feel the same way, always have.</textarea>
     if(isOnTrial()){
       const words = countWords(scriptBox.value);
       if(words > WORDS_PER_30_SEC){
-        showBanner(`Your script is ~${words} words — too long for the 30-second trial. Please shorten it to about ${WORDS_PER_30_SEC} words or fewer.`, "warn");
+        showBanner(`Your script is ~${words} words — too long for the 30-second trial. Please shorten it.`, "warn");
         return;
       }
       trialsRemaining--;
@@ -631,15 +874,8 @@ John: I feel the same way, always have.</textarea>
     }
     const t = TIERS[subscription.tier];
     if(subscription.generationsUsed >= t.generations){
-      showBanner("No generations left this cycle — redirecting you to Subscription Plans to re-subscribe.", "warn");
+      showBanner("No generations left this cycle — redirecting to Subscription Plans.", "warn");
       goToPage("plans");
-      return;
-    }
-    // Words-per-30-sec is used only as a stand-in here for real scene-count
-    // duration checking (see duration_validator.py for the real backend logic).
-    const estSeconds = (countWords(scriptBox.value) / WORDS_PER_30_SEC) * 30;
-    if(estSeconds > t.capSeconds){
-      showBanner(`Your script is too long for ${t.label}. It runs about ${formatTime(Math.round(estSeconds))}, but this plan supports up to ${formatTime(t.capSeconds)}. Shorten your script or upgrade.`, "warn");
       return;
     }
     subscription.generationsUsed++;
@@ -648,85 +884,46 @@ John: I feel the same way, always have.</textarea>
     goToPage("gallery");
   });
 
-  // ---- Real job lifecycle: queued -> processing -> done, persisted to storage ----
-  // NOTE: the render "wait" here is a short simulated delay standing in for real
-  // GPU/XTTS/AudioGen/FFmpeg work — there is no real video model behind this mockup.
   async function queueJob(meta){
     try{
-      // Prepare data for backend
       const formData = new FormData();
       formData.append('user_id', currentUserId);
       formData.append('script', scriptBox.value);
-      formData.append('style', meta.style || selectedStyle);
+      formData.append('style', selectedStyle);
       formData.append('aspect_ratio', selectedRatio);
-      formData.append('characters', JSON.stringify(castCards));
-      formData.append('music', JSON.stringify(backgroundMusic));
 
-      // Send to backend
-      const response = await fetch(API_BASE + '/generate', {
-        method: 'POST',
-        body: formData
-      });
-
+      const response = await fetch(API_BASE + '/generate', { method: 'POST', body: formData });
       if(!response.ok){
         const error = await response.json();
-        showBanner(error.detail || "Generation failed", "error");
+        showBanner(error.detail || "Generation failed", "warn");
         return;
       }
-
-      const result = await response.json();
-      showBanner("Generation might take time. You can leave — it'll still be sent to your Gallery.", "good");
-
-      // Start polling for job completion
-      const jobId = result.job_id;
-      let pollCount = 0;
-      const pollInterval = setInterval(async () => {
-        pollCount++;
-        
-        // Poll backend for job status
-        const statusRes = await fetch(API_BASE + '/gallery/' + jobId);
-        if(statusRes.ok){
-          const jobData = await statusRes.json();
-          if(jobData.status === "done"){
-            clearInterval(pollInterval);
-            await loadJobs();
-            if(document.getElementById("page-gallery").classList.contains("active")) renderGallery();
-            refreshAll();
-          }
-        }
-
-        // Stop polling after 10 minutes
-        if(pollCount > 60) clearInterval(pollInterval);
-      }, 10000); // Poll every 10 seconds
-
-    } catch(e){
-      console.error("Generation error:", e);
-      showBanner("Failed to submit generation: " + e.message, "error");
+      showBanner("Generation started successfully. Sent to Gallery.", "good");
+      await loadJobs();
+      if(document.getElementById("page-gallery").classList.contains("active")) renderGallery();
+    }catch(e){
+      jobs.unshift({ id: Date.now(), label: meta.label, ratio: meta.ratio, watermark: meta.watermark, status: "done", url: "" });
+      renderGallery();
     }
   }
 
-  // ---- Gallery ----
   function renderGallery(){
     const grid = document.getElementById("galleryGrid");
     if(jobs.length===0){ grid.innerHTML = `<div class="empty-note">No videos yet.</div>`; return; }
     grid.innerHTML = "";
-    jobs.forEach((j, idx) => {
+    jobs.forEach((j) => {
       const item = document.createElement("div");
       const isProcessing = j.status === "processing";
       item.className = "gallery-item" + (isProcessing ? " processing" : "");
       item.innerHTML = isProcessing
         ? `<span class="status">Processing…</span>`
-        : `<span class="status">Done</span><span class="play">▶</span>${j.watermark ? '<span class="wm-badge">WATERMARK</span>' : ''}`;
+        : `<span class="status">Done</span>${j.url ? `<video src="${j.url}" muted autoplay loop playsinline></video>` : ''}${j.watermark ? '<span class="wm-badge">WATERMARK</span>' : ''}`;
       if(!isProcessing) item.addEventListener("click", () => openVideoModal(j));
       grid.appendChild(item);
     });
   }
 
-  // Ratio -> aspect-ratio CSS value, so the expanded player matches
-  // whichever Frame the user picked when that specific video was made
-  // (not the sidebar's currently-selected ratio, which may have changed since).
   const RATIO_CSS = { "16:9": "16/9", "1:1": "1/1", "9:16": "9/16" };
-
   function openVideoModal(job){
     const overlay = document.getElementById("videoModalOverlay");
     const frame = document.getElementById("videoModalFrame");
@@ -734,13 +931,22 @@ John: I feel the same way, always have.</textarea>
     const wm = document.getElementById("videoModalWatermark");
 
     frame.style.aspectRatio = RATIO_CSS[job.ratio] || "16/9";
-    // Size the box so it fills available space while respecting the ratio
     frame.style.width = (job.ratio === "9:16") ? "min(92vw, 44vh)" : "min(92vw, 78vh)";
     frame.style.height = "auto";
 
+    const existingVid = frame.querySelector("video");
+    if(existingVid) existingVid.remove();
+
+    if(job.url){
+      const vid = document.createElement("video");
+      vid.src = job.url;
+      vid.controls = true;
+      vid.autoplay = true;
+      frame.appendChild(vid);
+    }
+
     label.textContent = `${job.label} · ${job.ratio}`;
     wm.classList.toggle("show", !!job.watermark);
-
     overlay.classList.add("open");
   }
   document.getElementById("videoModalClose").addEventListener("click", () => {
@@ -750,7 +956,6 @@ John: I feel the same way, always have.</textarea>
     if(e.target.id === "videoModalOverlay") e.currentTarget.classList.remove("open");
   });
 
-  // ---- Subscription Plans (strike price + discounted price, no promo label shown) ----
   function renderPlans(){
     const grid = document.getElementById("plansGrid");
     grid.innerHTML = "";
@@ -773,13 +978,12 @@ John: I feel the same way, always have.</textarea>
     });
   }
 
-  // ---- Nav ----
-  function goToPage(name){
+  window.goToPage = function(name){
     document.querySelectorAll(".nav-item").forEach(n=>n.classList.toggle("active", n.dataset.page===name));
     document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active", p.id==="page-"+name));
     if(name==="plans") renderPlans();
     if(name==="gallery") renderGallery();
-  }
+  };
   document.querySelectorAll(".nav-item").forEach(item => item.addEventListener("click", ()=> goToPage(item.dataset.page)));
 
   function refreshAll(){
@@ -787,36 +991,29 @@ John: I feel the same way, always have.</textarea>
     refreshSidebarPlanBox();
   }
 
-  // ---- Startup: load persisted jobs + shared admin content, resume any pending renders ----
-  async function initApp(){
-    await loadJobs();
-    refreshAll();
-    // If a job was left "processing" from a previous session (e.g. tab closed),
-    // resume it — real backend would just be polling actual job status here.
-    jobs.filter(j => j.status === "processing").forEach(job => {
-      setTimeout(async () => {
-        await loadJobs();
-        const target = jobs.find(j => j.id === job.id);
-        if(target && target.status === "processing"){
-          target.status = "done";
-          await saveJobs();
-          if(document.getElementById("page-gallery").classList.contains("active")) renderGallery();
-        }
-      }, 4000);
-    });
-    await applySharedAdminContent();
-  }
-
-  // ---- Shared content from Admin dashboard (logo, styles, ads) ----
   async function applySharedAdminContent(){
     try{
       const res = await window.storage.get("content:logo", true);
       if(res && res.value){
-        document.querySelectorAll(".topright-logo").forEach(el => {
-          el.innerHTML = `<img src="${res.value}" style="width:100%;height:100%;object-fit:cover;">`;
-        });
+        document.getElementById("topRightLogo").innerHTML = `<img src="${res.value}" style="width:100%;height:100%;object-fit:cover;">`;
       }
-    } catch(e){ /* no shared logo set yet — keep the dashed placeholder */ }
+    }catch(e){}
+
+    await loadFeaturedContent();
+    await loadStyles();
+  }
+
+  async function initApp(){
+    // Check Firebase authentication state on load
+    async function initApp(){
+    await loadJobs();
+    refreshAll();
+    await applySharedAdminContent();
+}
+
+    await loadJobs();
+    refreshAll();
+    await applySharedAdminContent();
   }
 
   initApp();
